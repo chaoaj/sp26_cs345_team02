@@ -1,3 +1,5 @@
+// spritesheet is 360 x 90, 4 frames. each frame is 90 x 90
+
 var playerWidth = 40;
 var playerHeight = 40;
 var playerStats;
