@@ -7,6 +7,8 @@ let titleBg;
 let currentScreen = "title";
 
 function setupTitleScreen() {
+    titleBg = document.getElementById("titlebackground");
+
     playButton = createButton("Play");
     playButton.position(width / 2 - 20, height / 2 + 40);
     playButton.mousePressed(startGame);
@@ -18,6 +20,8 @@ function setupTitleScreen() {
     encycButton = createButton("Encyclopedia");
     encycButton.position(width / 2 - 43, height / 2 + 100);
     encycButton.mousePressed(openEncyclopedia);
+
+    drawTitleScreen();
 }
 
 function drawTitleScreen() {
@@ -31,6 +35,7 @@ function drawTitleScreen() {
 
 function startGame() {
     hideTitleScreenElements();
+    titleBg.remove();
     currentScreen = "game";
 }
 
