@@ -1,85 +1,76 @@
 let playButton;
-let titleText;
 let settingsButton;
 let encycButton;
+let titleText;
+let titleBg;
+
 let currentScreen = "title";
 
-function preload() {
-    title = loadImage("images/PlaceholderBG.png"); // Background image for title screen
-    title.width = 400;
-    title.height = 400;
-    titleText = "FrontGuard"; // I spent way too long trying to display the actual logo image
-    // I'm just gonna use text for now...
-
-}
-
-function setup() {
-    createCanvas(400, 400);
-    background(title);
-
+function setupTitleScreen() {
     playButton = createButton("Play");
+    playButton.position(width / 2 - 20, height / 2 + 40);
     playButton.mousePressed(startGame);
-    playButton.position(width / 2, height / 2);
 
     settingsButton = createButton("Settings");
-    settingsButton.position(width / 2, height / 2 + 40);
+    settingsButton.position(width / 2 - 30, height / 2 + 70);
     settingsButton.mousePressed(openSettings);
 
     encycButton = createButton("Encyclopedia");
-    encycButton.position(width / 2, height / 2 + 80);
+    encycButton.position(width / 2 - 43, height / 2 + 100);
     encycButton.mousePressed(openEncyclopedia);
+}
+
+function drawTitleScreen() {
+    image(titleBg, width / 2, height / 2, width, height);
 
     fill(0);
     textSize(24);
-    textAlign(CENTER);
+    textAlign(CENTER, CENTER);
+    image(titleLogo, width / 2, 120, 160 * 2, 120 * 2);
 }
 
 function startGame() {
-    playButton.remove();
-    settingsButton.remove();
-    encycButton.remove();
+    hideTitleScreenElements();
     currentScreen = "game";
-    
-    // this is where the main should start
-    background(0);
 }
-
-
-function draw() {
-    if (currentScreen === "title") {
-        text(titleText, width / 2, height / 4);
-    }
-    // other screens are static so theres no need to redraw
-
-}
-
-/*
-function showImage(src, width) {
-    let img = document.createElement("img");
-    img.src = src;
-    img.width = width;
-    document.body.appendChild(img);
-}
-*/
 
 // Placeholder for open settings.
 function openSettings() {
-    playButton.hide();
-    settingsButton.hide();
-    encycButton.hide();
+    hideTitleScreenElements();
     currentScreen = "settings";
-    background(50);
-    fill(255);
-    text("Settings", width / 2, height / 4);
 }
 
 // Placeholder for open encyclopedia.
 function openEncyclopedia() {
+    hideTitleScreenElements();
+    currentScreen = "encyclopedia";
+}
+
+
+function drawSettingsScreen() {
+    background(50);
+    fill(255);
+    textSize(24);
+    textAlign(CENTER, CENTER);
+    text("Settings", width / 2, height / 4);
+}
+
+function drawEncyclopediaScreen() {
+    background(50);
+    fill(255);
+    textSize(24);
+    textAlign(CENTER, CENTER);
+    text("Encyclopedia", width / 2, height / 4);
+}
+
+function hideTitleScreenElements() {
     playButton.hide();
     settingsButton.hide();
     encycButton.hide();
-    currentScreen = "encyclopedia";
-    background(50);
-    fill(255);
-    text("Encyclopedia", width / 2, height / 4);
+}
+
+function showTitleScreenElements() {
+    playButton.show();
+    settingsButton.show();
+    encycButton.show();
 }
