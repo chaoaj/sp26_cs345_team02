@@ -5,6 +5,8 @@ let encycButton;
 let currentScreen = "title";
 
 function preload() {
+    titlelogo = document.body.getElementById("titlelogo");
+    titlelogo.width = 300;
     title = loadImage("images/PlaceholderBG.png"); // Background image for title screen
     title.width = 400;
     title.height = 400;
@@ -48,6 +50,7 @@ function startGame() {
 function draw() {
     if (currentScreen === "title") {
         text(titleText, width / 2, height / 4);
+        
     }
     // other screens are static so theres no need to redraw
 
