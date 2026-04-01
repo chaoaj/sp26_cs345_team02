@@ -39,6 +39,8 @@ function startGame() {
     settingsButton.remove();
     encycButton.remove();
     currentScreen = "game";
+    
+    // this is where the main should start
     background(0);
 }
 
@@ -48,6 +50,7 @@ function draw() {
         text(titleText, width / 2, height / 4);
     }
     // other screens are static so theres no need to redraw
+
 }
 
 /*
