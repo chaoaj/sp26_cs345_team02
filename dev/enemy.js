@@ -1,6 +1,14 @@
 // empty array that stores all the enemies that are on the screen
 var enemies = [];
 
+// wave scaling — all rates are in enemies per second
+var waveConfig = {
+    waveLength: 1200,  // frames per wave (20s at 60fps)
+    baseSpawnRate: 10,  // enemies/sec on wave 1
+    spawnIncreasePerWave: 1,  // enemies/sec added each wave
+    maxSpawnRate: 12   // enemies/sec cap
+};
+
 // just an object that holds the stats of the enemy
 var enemyStats = {
     // size of the enemy (circle);
@@ -23,16 +31,11 @@ var prepTime = 200
 // counts down until the next enemy can spawn in a current wave
 var enemyTimer = 0;
 
-// how many frames the game waits before spawning a new enemy
-// smaller num = faster spawn times
-var enemyDelay = 20;
+// current spawn delay in frames — set each wave by beginWave()
+var enemyDelay = spawnRateToDelay(waveConfig.baseSpawnRate);
 
-// how long the wave lasts, in frames again so 240 = 4 secs at 60fps
-// or n / 60 = seconds
-var waveTimer = 240
-
-// how long a wave should last before completley resetting
-var waveLength = 1200;
+// counts down the remaining frames in the current wave
+var waveTimer = 0;
 
 
 function updateEnemies() {
@@ -57,12 +60,22 @@ function updateEnemies() {
     }
 
     for (var i = enemies.length - 1; i >= 0; i--) {
+        // recalculate direction toward nearest tower or base each frame
+        var target = getNearestTarget(enemies[i]);
+        var dx = target.x - enemies[i].x;
+        var dy = target.y - enemies[i].y;
+        var d = dist(enemies[i].x, enemies[i].y, target.x, target.y);
+        if (d > 0) {
+            enemies[i].xSpeed = (dx / d) * enemyStats.speed;
+            enemies[i].ySpeed = (dy / d) * enemyStats.speed;
+        }
+
         enemies[i].x += enemies[i].xSpeed;
         enemies[i].y += enemies[i].ySpeed;
 
-        if (enemies[i].x < -150 || 
-            enemies[i].x > width + 150 || 
-            enemies[i].y < -150 || 
+        if (enemies[i].x < -150 ||
+            enemies[i].x > width + 150 ||
+            enemies[i].y < -150 ||
             enemies[i].y > height + 150)
             {
             enemies.splice(i, 1);
@@ -70,10 +83,34 @@ function updateEnemies() {
     }
 }
 
+// returns the nearest tower to the enemy, or the base if no towers exist
+function getNearestTarget(enemy) {
+    var nearest = base;
+    var nearestDist = dist(enemy.x, enemy.y, base.x, base.y);
+
+    for (var j = 0; j < towers.length; j++) {
+        var d = dist(enemy.x, enemy.y, towers[j].x, towers[j].y);
+        if (d < nearestDist) {
+            nearestDist = d;
+            nearest = towers[j];
+        }
+    }
+
+    return nearest;
+}
+
+// converts enemies-per-second to a frame delay
+function spawnRateToDelay(enemiesPerSecond) {
+    return round(60 / enemiesPerSecond);
+}
+
 function beginWave() {
     waveInProg = true;
-    waveTimer = waveLength;
+    waveTimer = waveConfig.waveLength;
     enemyTimer = 0;
+    var rate = min(waveConfig.maxSpawnRate,
+                   waveConfig.baseSpawnRate + waveNum * waveConfig.spawnIncreasePerWave);
+    enemyDelay = spawnRateToDelay(rate);
 }
 
 function stopWave() {
@@ -119,10 +156,3 @@ function drawEnemies() {
     }
 }
 
-function checkEnemyPosition() {
-
-}
-
-function enemyMovementTowardTowers() {
-
-}

@@ -47,6 +47,8 @@ function keyPressed() {
   if (keyCode == 83) lastInput = "DOWN";
   // D
   if (keyCode == 68) lastInput = "RIGHT";
+  // T - place a tower at the player's current position
+  if (keyCode == 84) placeTower(playerStats.x, playerStats.y);
 }
 
 // controller inputs functions will go below here
