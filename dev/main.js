@@ -3,15 +3,19 @@
 
 // this loads the images
 function preload() {
-  titleBg = loadImage("images/PlaceholderBG.png");
+  titleBg = loadImage("images/titleBackground.png");
   titleLogo = loadImage("images/FrontGuardTitle.png");
   titlePlayButton = loadImage("images/PlayButton.png");
+  titleSettingsButton = loadImage("images/settingsButton.png");
+  titleEncyclopediaButton = loadimage("images/EncyclopediaButton.png");
 }
 
 
 function setup() {
   createCanvas(1000, 1000);
   imageMode(CENTER);
+  textAlign(CENTER, CENTER);
+
   setupTitleScreen();
   setupPlayer();
 }

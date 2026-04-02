@@ -7,7 +7,7 @@ let titleBg;
 let currentScreen = "title";
 
 function setupTitleScreen() {
-    titleBg = document.getElementById("titlebackground");
+    //titleBg = document.getElementById("titlebackground");
 
     playButton = createButton("Play");
     playButton.position(width / 2 - 20, height / 2 + 40);
@@ -20,22 +20,19 @@ function setupTitleScreen() {
     encycButton = createButton("Encyclopedia");
     encycButton.position(width / 2 - 43, height / 2 + 100);
     encycButton.mousePressed(openEncyclopedia);
-
-    drawTitleScreen();
 }
 
 function drawTitleScreen() {
     image(titleBg, width / 2, height / 2, width, height);
-
-    fill(0);
-    textSize(24);
-    textAlign(CENTER, CENTER);
-    image(titleLogo, width / 2, 120, 160 * 2, 120 * 2);
+    image(titleLogo, width / 2, 280, 160 * 5, 120 * 5);
+    //fill(0);
+    //textSize(24);
+    //textAlign(CENTER, CENTER);
 }
 
 function startGame() {
     hideTitleScreenElements();
-    titleBg.remove();
+    //titleBg.remove();
     currentScreen = "game";
 }
 

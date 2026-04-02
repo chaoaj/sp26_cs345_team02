@@ -6,10 +6,10 @@ var enemyStats = {
     // size of the enemy (circle);
     size: 15,
     // movement speed
-    speed: 1.2,
+    speed: 3,
     // how far from the center enemies spawn on the canvas
     // bigger num = farther
-    spawnRadius: 340
+    spawnRadius: 800
 };
 
 var waveNum = 1;
