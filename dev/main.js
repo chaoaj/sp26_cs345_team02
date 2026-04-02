@@ -24,6 +24,9 @@ function draw() {
     
     movePlayer();
     drawPlayer();
+
+    updateEnemies();
+    drawEnemies();
   } else if (currentScreen == "settings") {
     drawSettingsScreen();
   } else if (currentScreen == "encyclopedia") {
