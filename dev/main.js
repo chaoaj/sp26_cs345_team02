@@ -9,6 +9,8 @@ var base = {
   maxHealth: healthConfig.base
 };
 
+var controller;
+
 function drawBase() {
   // base body
   fill(80, 180, 80);
@@ -70,14 +72,27 @@ function setup() {
 
   setupTitleScreen();
   setupPlayer();
+
+  controller = createController();
+
+  controller.onButtonPressed(onPress);
+  controller.onAxesPressed(onPress);
+
+  controller.onButtonReleased(onRelease);
+  controller.onAxesReleased(onRelease);
 }
 
 function draw() {
+  controller.draw(width/2, height/2);
+
   if (currentScreen == "title") {
     drawTitleScreen();
+  } else if (controller.controllersNotCalibrated().length > 0) {
+    controller.calibrate(true);
+    return
   } else if (currentScreen == "game") {
     background(200);
-    
+
     movePlayer();
     drawPlayer();
 
