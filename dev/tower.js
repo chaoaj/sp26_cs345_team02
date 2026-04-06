@@ -34,8 +34,29 @@ function drawHealthBar(x, y, barWidth, health, maxHealth) {
     rect(x - barWidth / 2, barY, barWidth * ratio, barH);
 }
 
-// places a tower at the given x, y position
+// returns false if (x, y) would overlap an existing tower or the main base
+function canPlaceTower(x, y) {
+    var halfSize = towerStats.size / 2;
+
+    // check against the main base
+    if (dist(x, y, base.x, base.y) < halfSize + base.size / 2) {
+        return false;
+    }
+
+    // check against every existing tower
+    for (var i = 0; i < towers.length; i++) {
+        if (dist(x, y, towers[i].x, towers[i].y) < halfSize + towers[i].size / 2) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// places a tower at the given x, y position (silently rejected if position is blocked)
 function placeTower(x, y) {
+    if (!canPlaceTower(x, y)) return;
+
     var tower = {};
     tower.x = x;
     tower.y = y;
