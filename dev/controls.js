@@ -43,6 +43,7 @@ function movePlayer() {
 }
 
 function keyPressed() {
+  console.log(keyCode);
   // W
   if (keyCode == 87) {
     up = true;
@@ -63,8 +64,31 @@ function keyPressed() {
     right = true;
     lastInput = "RIGHT";
   }
+  // P - toggle pause (only during gameplay)
+  if (keyCode == 80 && currentScreen == "game") {
+    paused = !paused;
+  }
+
+  // R - reset to main menu
+  if (keyCode == 82) {
+    resetGame();
+  }
+
   // T - place a tower at the player's current position
-  if (keyCode == 84) placeTower(playerStats.x, playerStats.y);
+  if (keyCode == 84) {
+    placeTower(playerStats.x, playerStats.y);
+  }
+
+  // 1-3 - select tower type
+  if (keyCode == 49) {
+    activeTowerType = "normal";
+  }
+  if (keyCode == 50) {
+    activeTowerType = "attack";
+  }
+  if (keyCode == 51) {
+    activeTowerType = "healing";
+  }
 }
 
 // controller inputs functions will go below here

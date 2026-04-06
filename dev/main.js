@@ -10,6 +10,7 @@ var base = {
 };
 
 var controller;
+var paused = false;
 
 function drawBase() {
   // base body
@@ -51,6 +52,7 @@ function resetGame() {
   waveInProg = false;
   waveNum = 1;
   prepTime = 200;
+  paused = false;
   currentScreen = "title";
   showTitleScreenElements();
 }
@@ -61,7 +63,12 @@ function preload() {
   titleLogo = loadImage("images/FrontGuardTitle.png");
   titlePlayButton = loadImage("images/PlayButton.png");
   titleSettingsButton = loadImage("images/settingsButton.png");
-  titleEncyclopediaButton = loadimage("images/EncyclopediaButton.png");
+  titleEncyclopediaButton = loadImage("images/EncyclopediaButton.png");
+
+  // this loads tower images
+  // towerImages.normal = loadImage("images/normalTower.png");
+  // towerImages.attack = loadImage("images/towerAttack.png");
+  // towerImages.healing = loadImage("images/towerHealing.png");
 }
 
 
@@ -93,18 +100,30 @@ function draw() {
   } else if (currentScreen == "game") {
     background(200);
 
-    movePlayer();
+    if (!paused) {
+      movePlayer();
+      checkBaseCollisions();
+      if (currentScreen != "game") return;
+      updateEnemies();
+      checkTowerCollisions();
+    }
+
     drawPlayer();
-
     drawBase();
-    checkBaseCollisions();
-    if (currentScreen != "game") return;
-
-    updateEnemies();
     drawEnemies();
-
     drawTowers();
-    checkTowerCollisions();
+
+    // quick check if the game is paused
+    if (paused) {
+      fill(0, 0, 0, 120);
+      noStroke();
+      rectMode(CORNER);
+      rect(0, 0, width, height);
+      fill(255);
+      textSize(48);
+      textAlign(CENTER, CENTER);
+      text("PAUSED", width / 2, height / 2);
+    }
   } else if (currentScreen == "settings") {
     drawSettingsScreen();
   } else if (currentScreen == "encyclopedia") {
