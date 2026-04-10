@@ -59,6 +59,8 @@ function resetGame() {
 
 // this loads the images
 function preload() {
+  playerSprite = loadImage("images/playerSpriteWalk.png");
+  
   titleBg = loadImage("images/titleBackground.png");
   titleLogo = loadImage("images/FrontGuardTitle.png");
   titlePlayButton = loadImage("images/PlayButton.png");
