@@ -16,11 +16,11 @@ function Sprite(sheet, x, y, n) {
   this.drawPlayer = function() {
     image(this.sheet, this.x, this.y, this.w, this.h, this.w*floor(this.frame), 0, this.w, this.h);
 
-    if (keyCode == 68) { // if right key is pressed,
+    if (playerStats.facing == "RIGHT") { // if right key is pressed,
       if (this.frame > 7.9) {
         this.frame = 4; // play frames 5 to 8
       }
-    } else {
+    } else if (playerStats.facing == "LEFT") {
       if (this.frame > 3.9) { // else play frames 1 to 4
         this.frame = 0;
       }
@@ -42,7 +42,10 @@ function setupPlayer() {
     // currently in the center where the base will be
     x: width / 2,
     y: width / 2,
-    speed: 8
+    speed: 8,
+    health: 100,
+    maxHealth: 100,
+    facing: "LEFT"
   };
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
@@ -54,5 +57,5 @@ function drawPlayer() {
   player.x = playerStats.x;
   player.y = playerStats.y;
   player.drawPlayer();
+  drawHealthBar(constrain(playerStats.x, 40, width - 40), constrain(playerStats.y, 50, height), 80, playerStats.health, playerStats.maxHealth);
 }
-

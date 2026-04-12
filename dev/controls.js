@@ -28,18 +28,28 @@ function movePlayer() {
   } else if (down) {
       playerStats.y += playerStats.speed;
   }
+  playerStats.y = constrain(playerStats.y, 40, height - 40);
 
   /*
   Same reason, but this time for right and left
   */
   if (right && left) {
-    if (lastInput == "RIGHT") playerStats.x += playerStats.speed;
-    if (lastInput == "LEFT") playerStats.x -= playerStats.speed;
+    if (lastInput == "RIGHT") {
+      playerStats.x += playerStats.speed;
+      playerStats.facing = "RIGHT";
+    }
+    if (lastInput == "LEFT") {
+      playerStats.x -= playerStats.speed;
+      playerStats.facing = "LEFT";
+    }
   } else if (right) {
       playerStats.x += playerStats.speed;
+      playerStats.facing = "RIGHT";
   } else if (left) {
       playerStats.x -= playerStats.speed;
+      playerStats.facing = "LEFT";
   }
+  playerStats.x = constrain(playerStats.x, 30, width - 30);
 }
 
 function keyPressed() {

@@ -84,21 +84,6 @@ var towerTypes = {
     damage:  DamageTower
 };
 
-// shared health bar renderer used by towers and the base
-function drawHealthBar(x, y, barWidth, health, maxHealth) {
-    var ratio = max(0, health / maxHealth);
-    var barH = 5;
-    var barY = y - barWidth / 2 - 8;
-
-    noStroke();
-    fill(200, 0, 0);
-    rectMode(CORNER);
-    rect(x - barWidth / 2, barY, barWidth, barH);
-
-    fill(0, 200, 0);
-    rect(x - barWidth / 2, barY, barWidth * ratio, barH);
-}
-
 // returns false if (x, y) would overlap an existing tower or the main base
 function canPlaceTower(x, y) {
     var halfSize = 30 / 2;

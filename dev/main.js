@@ -30,6 +30,21 @@ function drawBase() {
   drawHealthBar(base.x, base.y, base.size + 10, base.health, base.maxHealth);
 }
 
+// shared health bar renderer used by towers, players, and the base
+function drawHealthBar(x, y, barWidth, health, maxHealth) {
+  var ratio = max(0, health / maxHealth);
+  var barH = 5;
+  var barY = y - barWidth / 2 - 8;
+
+  noStroke();
+  fill(200, 0, 0);
+  rectMode(CORNER);
+  rect(x - barWidth / 2, barY, barWidth, barH);
+
+  fill(0, 200, 0);
+  rect(x - barWidth / 2, barY, barWidth * ratio, barH);
+}
+
 function checkBaseCollisions() {
   for (var i = enemies.length - 1; i >= 0; i--) {
     var d = dist(enemies[i].x, enemies[i].y, base.x, base.y);
@@ -60,7 +75,7 @@ function resetGame() {
 // this loads the images
 function preload() {
   playerSprite = loadImage("images/PlayerWalkNew.png");
-  
+
   titleBg = loadImage("images/titleBackground.png");
   titleLogo = loadImage("images/FrontGuardTitle.png");
   titlePlayButton = loadImage("images/PlayButton.png");
