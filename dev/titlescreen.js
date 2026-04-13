@@ -72,7 +72,9 @@ function drawSettingsScreen() {
         ["A", "Move Left"],
         ["S", "Move Down"],
         ["D", "Move Right"],
-        ["T", "Place Tower"]
+        ["T", "Place Tower"],
+        ["P", "Pause"],
+        ["R + L-Shift", "Reset Game"]
     ];
 
     textSize(16);
