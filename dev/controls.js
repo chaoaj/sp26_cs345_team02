@@ -80,7 +80,7 @@ function keyPressed() {
   }
 
   // R - reset to main menu
-  if (keyCode == 82) {
+  if (keyIsDown(82) && keyIsDown(16)) {
     resetGame();
   }
 
