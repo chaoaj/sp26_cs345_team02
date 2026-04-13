@@ -50,6 +50,20 @@ function setupPlayer() {
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
 
+function checkPlayerCollisions() {
+  for (var i = 0; i < enemies.length; i++) {
+      var enemy = enemies[i];
+      var d1 = dist(enemy.x, enemy.y, playerStats.x, playerStats.y + 25);
+      var d2 = dist(enemy.x, enemy.y, playerStats.x, playerStats.y - 25);
+      var d3 = dist(enemy.x, enemy.y, playerStats.x, playerStats.y);
+      var collisionDist = enemy.size / 2 + playerWidth / 2;
+      if (d1 < collisionDist || d2 < collisionDist || d3 < collisionDist) {
+          playerStats.health -= damageConfig.enemyToPlayer;
+          enemies.splice(i, 1);
+      }
+  }
+}
+
 // just checks the health and restarts the game if it ever hits 0.
 function CheckHealth() {
   if (playerStats.health <= 0) {
