@@ -25,6 +25,10 @@ function Sprite(sheet, x, y, n) {
         this.frame = 0;
       }
     }
+    if (paused) {
+      this.frame = 0;
+    }
+    
     this.frame += 0.1;
 
    // below is just a regular animation cycle. can copy for enemies
