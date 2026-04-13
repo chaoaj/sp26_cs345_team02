@@ -50,6 +50,13 @@ function setupPlayer() {
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
 
+// just checks the health and restarts the game if it ever hits 0.
+function CheckHealth() {
+  if (playerStats.health <= 0) {
+    resetGame();
+  }
+}
+
 // this just draws the player
 function drawPlayer() {
   fill(0);

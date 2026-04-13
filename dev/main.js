@@ -70,6 +70,7 @@ function resetGame() {
   paused = false;
   currentScreen = "title";
   showTitleScreenElements();
+  setupPlayer();
 }
 
 // this loads the images
@@ -123,6 +124,8 @@ function draw() {
       if (currentScreen != "game") return;
       updateEnemies();
       checkTowerCollisions();
+      checkPlayerCollisions();
+      CheckHealth();
     }
 
     drawPlayer();

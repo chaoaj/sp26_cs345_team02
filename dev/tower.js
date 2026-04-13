@@ -13,12 +13,6 @@ var healthConfig = {
     tower: 100
 };
 
-// damage dealt per enemy contact — edit these to tune difficulty
-var damageConfig = {
-    enemyToTower: 25,  // flat hit; enemy is removed on contact
-    enemyToBase: 10    // flat hit; enemy is removed on contact
-};
-
 // --- Base Tower class ---
 class Tower {
     constructor(x, y) {

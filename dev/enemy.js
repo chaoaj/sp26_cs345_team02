@@ -9,6 +9,13 @@ var waveConfig = {
     maxSpawnRate: 12   // enemies/sec cap
 };
 
+// damage dealt per enemy contact — edit these to tune difficulty
+var damageConfig = {
+    enemyToTower: 25,   // flat hit; enemy is removed on contact
+    enemyToBase: 10,    // flat hit; enemy is removed on contact
+    enemyToPlayer: 10   // flat hit; enemy is removed on contact
+};
+
 // just an object that holds the stats of the enemy
 var enemyStats = {
     // size of the enemy (circle);
@@ -140,11 +147,25 @@ function spawnEnemy() {
     var distanceY = baseCenterY - enemy.y;
     var totalDistance = dist(enemy.x, enemy.y, baseCenterX, baseCenterY);
 
-    // how fast the enemies move dependign on their speed
+    // how fast the enemies move depending on their speed
     enemy.xSpeed = distanceX / totalDistance * enemyStats.speed;
     enemy.ySpeed = distanceY / totalDistance * enemyStats.speed;
 
     enemies.push(enemy);
+}
+
+function checkPlayerCollisions() {
+    for (var i = 0; i < enemies.length; i++) {
+        var enemy = enemies[i];
+        var d1 = dist(enemy.x, enemy.y, playerStats.x, playerStats.y + 25);
+        var d2 = dist(enemy.x, enemy.y, playerStats.x, playerStats.y - 25);
+        var d3 = dist(enemy.x, enemy.y, playerStats.x, playerStats.y);
+        var collisionDist = enemy.size / 2 + playerWidth / 2;
+        if (d1 < collisionDist || d2 < collisionDist || d3 < collisionDist) {
+            playerStats.health -= damageConfig.enemyToPlayer;
+            enemies.splice(i, 1);
+        }
+    }
 }
 
 function drawEnemies() {
@@ -155,4 +176,3 @@ function drawEnemies() {
         circle(enemies[i].x, enemies[i].y, enemies[i].size);
     }
 }
-
