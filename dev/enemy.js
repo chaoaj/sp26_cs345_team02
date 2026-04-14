@@ -1,5 +1,7 @@
 // empty array that stores all the enemies that are on the screen
 var enemies = [];
+// stores dead enemy positions and the frame they died on
+var killedEnemies = [];
 
 // wave scaling — all rates are in enemies per second
 var waveConfig = {
@@ -24,7 +26,9 @@ var enemyStats = {
     speed: 3,
     // how far from the center enemies spawn on the canvas
     // bigger num = farther
-    spawnRadius: 800
+    spawnRadius: 800,
+    // decides how much money is given to the player when this enemy is killed
+    moneyDropped: 5
 };
 
 var waveNum = 1;
@@ -161,4 +165,10 @@ function drawEnemies() {
     for (var i = 0; i < enemies.length; i++) {
         circle(enemies[i].x, enemies[i].y, enemies[i].size);
     }
+}
+
+function enemyKilled(enemyIndex, towerIndex) {
+    killedEnemies.push({x: towers[towerIndex].x, y: towers[towerIndex].y, frame: frameCount});
+    enemies.splice(enemyIndex, 1);
+    playerStats.money += enemyStats.moneyDropped;
 }

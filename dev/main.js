@@ -128,10 +128,13 @@ function draw() {
       CheckHealth();
     }
 
-    drawPlayer();
-    drawBase();
+
     drawEnemies();
     drawTowers();
+    moneyAnimation();
+    drawBase();
+    drawPlayer();
+    drawMoney();
 
     // quick check if the game is paused
     if (paused) {

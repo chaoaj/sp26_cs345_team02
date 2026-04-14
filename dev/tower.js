@@ -120,12 +120,10 @@ function checkTowerCollisions() {
 
             if (d < collisionDist) {
                 towers[j].health -= damageConfig.enemyToTower;
-
+                enemyKilled(i, j);
                 if (towers[j].health <= 0) {
                     towers.splice(j, 1);
                 }
-
-                enemies.splice(i, 1);
                 break;
             }
         }

@@ -28,7 +28,7 @@ function Sprite(sheet, x, y, n) {
     if (paused) {
       this.frame = 0;
     }
-    
+
     this.frame += 0.1;
 
    // below is just a regular animation cycle. can copy for enemies
@@ -49,7 +49,8 @@ function setupPlayer() {
     speed: 8,
     health: 100,
     maxHealth: 100,
-    facing: "LEFT"
+    facing: "LEFT",
+    money: 0
   };
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
@@ -68,7 +69,38 @@ function checkPlayerCollisions() {
   }
 }
 
-// just checks the health and restarts the game if it ever hits 0.
+// function controlling text which appears whenever an enemy is killed
+function moneyAnimation() {
+  var animationFrames = 75;
+  for (i = 0; i < killedEnemies.length; i++) {
+      var framesPassed = 1 + frameCount - killedEnemies[i].frame;
+      if (framesPassed > animationFrames) {
+          killedEnemies.splice(i, 1)
+      } else {
+          // handles the actual animation for specific enemies
+          textAlign(CENTER);
+          var alpha = 255 - framesPassed * (255 / animationFrames);
+          stroke(0, 0, 0, alpha);
+          fill(0, 250, 24, alpha);
+          textSize(20 - framesPassed * (10 / animationFrames));
+          text("+5", killedEnemies[i].x, killedEnemies[i].y);
+          noStroke();
+      }
+  }
+}
+
+// display the money the player has
+function drawMoney() {
+  var size = 35;
+  fill(255);
+  stroke(0);
+  textSize(size);
+  textAlign(LEFT);
+  text("Money: " + playerStats.money, 20, height - size);
+  noStroke();
+}
+
+// checks the health and restarts the game if it ever hits 0.
 function CheckHealth() {
   if (playerStats.health <= 0) {
     resetGame();
