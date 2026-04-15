@@ -68,13 +68,14 @@ function drawSettingsScreen() {
     text("Settings", width / 2, 80);
 
     var keybinds = [
-        ["W", "Move Up"],
-        ["A", "Move Left"],
-        ["S", "Move Down"],
-        ["D", "Move Right"],
-        ["T", "Place Tower"],
-        ["P", "Pause"],
-        ["R + L-Shift", "Reset Game"]
+        ["W", "Axes Up", "Move Up"],
+        ["A", "Axes Left", "Move Left"],
+        ["S", "Axes Down", "Move Down"],
+        ["D", "Axes Right", "Move Right"],
+        ["T", "X", "Place Tower"],
+        ["1-3", "replace", "Select Tower"], // This task can be marked as complete,
+        ["P", "replace", "Pause"], // after we add controller functions for each button
+        ["R + L-Shift", "replace", "Reset Game"]
     ];
 
     textSize(16);
@@ -82,17 +83,20 @@ function drawSettingsScreen() {
     var startY = 260;
     var rowHeight = 36;
     var keyX = width / 2 - 120;
-    var actionX = width / 2;
+    var controlX = width / 2;
+    var actionX = width / 2 + 120;
 
     fill(180);
-    text("Key", keyX, 160);
+    text("Keyboard", keyX, 160);
+    text("Controller", controlX, 160);
     text("Action", actionX, 160);
 
     fill(255);
     for (var i = 0; i < keybinds.length; i++) {
         var y = startY + i * rowHeight;
         text("[" + keybinds[i][0] + "]", keyX, y);
-        text(keybinds[i][1], actionX, y);
+        text("[" + keybinds[i][1] + "]", controlX, y);
+        text(keybinds[i][2], actionX, y);
     }
 }
 
@@ -102,6 +106,12 @@ function drawEncyclopediaScreen() {
     textSize(24);
     textAlign(CENTER, CENTER);
     text("Encyclopedia", width / 2, height / 4);
+
+    var encyclist = [
+        ["Normal Tower", "text"],
+        ["Healing Tower", "text"],
+        ["Attack Tower", "text"]
+    ];
 }
 
 function hideTitleScreenElements() {
