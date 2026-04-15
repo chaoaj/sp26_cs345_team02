@@ -73,9 +73,9 @@ function drawSettingsScreen() {
         ["S", "Axes Down", "Move Down"],
         ["D", "Axes Right", "Move Right"],
         ["T", "X", "Place Tower"],
-        ["1-4", "MISSING FUNCTIONALITY", "Select Tower"], // This task can be marked as complete,
-        ["P", "MISSING FUNCTIONALITY", "Pause"], // after we add controller functions for each button
-        ["R + L-Shift", "MISSING FUNCTIONALITY", "Reset Game"]
+        ["1-4", "MISSING", "Select Tower"], // This task can be marked as complete,
+        ["P", "MISSING", "Pause"], // after we add controller functions for each button
+        ["R + L-Shift", "MISSING", "Reset Game"]
     ];
 
     textSize(16);
