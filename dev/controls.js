@@ -80,7 +80,7 @@ function keyPressed() {
   }
 
   // R - reset to main menu
-  if (keyIsDown(82) && keyIsDown(16)) {
+  if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") {
     resetGame();
   }
 

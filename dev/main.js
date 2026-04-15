@@ -126,8 +126,8 @@ function draw() {
       checkTowerCollisions();
       checkPlayerCollisions();
       CheckHealth();
+      towerPlaceCoolDownAnimation();
     }
-
 
     drawEnemies();
     drawTowers();

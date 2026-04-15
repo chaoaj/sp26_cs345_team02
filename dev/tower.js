@@ -12,6 +12,11 @@ var healthConfig = {
     base: 200,
     tower: 100
 };
+// controls how long the cool down for placing a tower should be
+var towerPlaceCoolDownFrames = 50;
+
+// stores the frame last tower was placed on
+var lastTowerPlacedFrame;
 
 // --- Base Tower class ---
 class Tower {
@@ -78,8 +83,26 @@ var towerTypes = {
     damage:  DamageTower
 };
 
+// controls tower placing cool down animation
+function towerPlaceCoolDownAnimation() {
+    if (frameCount - lastTowerPlacedFrame < towerPlaceCoolDownFrames) {
+      strokeWeight(4);
+      stroke(245, 66, 66);
+      noFill();
+      angleMode(DEGREES);
+      arc(playerStats.x, playerStats.y + 60, 15, 15, -90, 270 - ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (360 / towerPlaceCoolDownFrames));
+      noStroke();
+    }
+  }
+
 // returns false if (x, y) would overlap an existing tower or the main base
 function canPlaceTower(x, y) {
+    // compare the time the last tower was placed
+    if (frameCount - lastTowerPlacedFrame < towerPlaceCoolDownFrames) {
+        // player should not be able to place a tower.
+        return false;
+    }
+
     var halfSize = 30 / 2;
 
     // check against the main base
@@ -94,6 +117,7 @@ function canPlaceTower(x, y) {
         }
     }
 
+    lastTowerPlacedFrame = frameCount;
     return true;
 }
 
