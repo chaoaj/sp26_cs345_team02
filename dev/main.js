@@ -4,7 +4,7 @@
 var base = {
   x: 500,
   y: 500,
-  size: 60,
+  size: 135,
   health: healthConfig.base,
   maxHealth: healthConfig.base
 };
@@ -16,14 +16,14 @@ function drawBase() {
   // base body
   fill(80, 180, 80);
   stroke(0);
-  strokeWeight(3);
+  strokeWeight(2);
   rectMode(CENTER);
   rect(base.x, base.y, base.size, base.size);
 
   // "BASE" label
   fill(255);
   noStroke();
-  textSize(10);
+  textSize(30);
   textAlign(CENTER, CENTER);
   text("BASE", base.x, base.y);
 
@@ -36,7 +36,8 @@ function drawHealthBar(x, y, barWidth, health, maxHealth) {
   var barH = 5;
   var barY = y - barWidth / 2 - 8;
 
-  noStroke();
+  stroke(0);
+  strokeWeight(0.5);
   fill(200, 0, 0);
   rectMode(CORNER);
   rect(x - barWidth / 2, barY, barWidth, barH);
@@ -77,6 +78,7 @@ function resetGame() {
 function preload() {
   playerSprite = loadImage("images/PlayerWalkNew.png");
 
+  // loads main menu images
   titleBg = loadImage("images/titleBackground.png");
   titleLogo = loadImage("images/FrontGuardTitle.png");
   titlePlayButton = loadImage("images/PlayButton.png");
@@ -84,9 +86,13 @@ function preload() {
   titleEncyclopediaButton = loadImage("images/EncyclopediaButton.png");
 
   // this loads tower images
-  // towerImages.normal = loadImage("images/normalTower.png");
-  // towerImages.attack = loadImage("images/towerAttack.png");
-  // towerImages.healing = loadImage("images/towerHealing.png");
+  towerImages.normal = loadImage("images/normalTower.png");
+  towerImages.attack = loadImage("images/towerAttack.png");
+  towerImages.healing = loadImage("images/towerHealing.png");
+  towerImages.explosive = loadImage("images/towerExplosive.png");
+
+  // grass background
+  grassBg = loadImage("images/grassBackground.png");
 }
 
 
@@ -116,7 +122,9 @@ function draw() {
     controller.calibrate(true);
     return
   } else if (currentScreen == "game") {
-    background(200);
+    imageMode(CORNER);
+    image(grassBg, 0, 0, width, height);
+    imageMode(CENTER);
 
     if (!paused) {
       movePlayer();
@@ -128,13 +136,13 @@ function draw() {
       CheckHealth();
     }
 
-
     drawEnemies();
     drawTowers();
     moneyAnimation();
     drawBase();
     drawPlayer();
     drawMoney();
+    drawInventory();
 
     // quick check if the game is paused
     if (paused) {

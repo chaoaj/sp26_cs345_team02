@@ -110,7 +110,8 @@ function drawEncyclopediaScreen() {
     var encyclist = [
         ["Normal Tower", "text"],
         ["Healing Tower", "text"],
-        ["Attack Tower", "text"]
+        ["Attack Tower", "text"],
+        ["Explosive Tower", "text"]
     ];
 }
 

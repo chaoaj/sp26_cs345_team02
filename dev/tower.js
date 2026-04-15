@@ -18,7 +18,7 @@ class Tower {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.size = 30;
+        this.size = 130;
         this.health = healthConfig.tower;
         this.maxHealth = healthConfig.tower;
         this.img = null;  // subclasses assign this after images are loaded
@@ -63,19 +63,21 @@ class HealingTower extends Tower {
     }
 }
 
-class DamageTower extends Tower {
+class ExplosiveTower extends Tower {
     constructor(x, y) {
         super(x, y);
-        this.img = towerImages.damage;
+        this.img = towerImages.explosive;
     }
 }
+
+// --------- Vars ---------
 
 // maps type string -> constructor; add new tower types here
 var towerTypes = {
     normal:  NormalTower,
     attack:  AttackTower,
     healing: HealingTower,
-    damage:  DamageTower
+    explosive:  ExplosiveTower
 };
 
 // returns false if (x, y) would overlap an existing tower or the main base
