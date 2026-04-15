@@ -21,7 +21,7 @@ var damageConfig = {
 // just an object that holds the stats of the enemy
 var enemyStats = {
     // size of the enemy (circle);
-    size: 15,
+    size: 30,
     // movement speed
     speed: 3,
     // how far from the center enemies spawn on the canvas

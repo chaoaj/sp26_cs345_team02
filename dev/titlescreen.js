@@ -73,9 +73,9 @@ function drawSettingsScreen() {
         ["S", "Axes Down", "Move Down"],
         ["D", "Axes Right", "Move Right"],
         ["T", "X", "Place Tower"],
-        ["1-3", "replace", "Select Tower"], // This task can be marked as complete,
-        ["P", "replace", "Pause"], // after we add controller functions for each button
-        ["R + L-Shift", "replace", "Reset Game"]
+        ["1-4", "MISSING", "Select Tower"], // This task can be marked as complete,
+        ["P", "MISSING", "Pause"], // after we add controller functions for each button
+        ["R + L-Shift", "MISSING", "Reset Game"]
     ];
 
     textSize(16);
@@ -110,7 +110,8 @@ function drawEncyclopediaScreen() {
     var encyclist = [
         ["Normal Tower", "text"],
         ["Healing Tower", "text"],
-        ["Attack Tower", "text"]
+        ["Attack Tower", "text"],
+        ["Explosive Tower", "text"]
     ];
 }
 

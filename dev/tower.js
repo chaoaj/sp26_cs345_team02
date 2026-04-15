@@ -23,7 +23,7 @@ class Tower {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.size = 30;
+        this.size = 130;
         this.health = healthConfig.tower;
         this.maxHealth = healthConfig.tower;
         this.img = null;  // subclasses assign this after images are loaded
@@ -68,29 +68,36 @@ class HealingTower extends Tower {
     }
 }
 
-class DamageTower extends Tower {
+class ExplosiveTower extends Tower {
     constructor(x, y) {
         super(x, y);
-        this.img = towerImages.damage;
+        this.img = towerImages.explosive;
     }
 }
+
+// --------- Vars ---------
 
 // maps type string -> constructor; add new tower types here
 var towerTypes = {
     normal:  NormalTower,
     attack:  AttackTower,
     healing: HealingTower,
-    damage:  DamageTower
+    explosive:  ExplosiveTower
 };
 
 // controls tower placing cool down animation
 function towerPlaceCoolDownAnimation() {
     if (frameCount - lastTowerPlacedFrame < towerPlaceCoolDownFrames) {
-      strokeWeight(4);
-      stroke(245, 66, 66);
-      noFill();
       angleMode(DEGREES);
-      arc(playerStats.x, playerStats.y + 60, 15, 15, -90, 270 - ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (360 / towerPlaceCoolDownFrames));
+      noFill();
+      stroke(0);
+      strokeWeight(6);
+      arc(playerStats.x, playerStats.y + 60, 15, 15, -90, 270 -
+        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (360 / towerPlaceCoolDownFrames));
+      stroke(255, 84, 84);
+      strokeWeight(4);
+      arc(playerStats.x, playerStats.y + 60, 15, 15, -90, 270 -
+        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (360 / towerPlaceCoolDownFrames));
       noStroke();
     }
   }
