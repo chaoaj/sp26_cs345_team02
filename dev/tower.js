@@ -18,6 +18,12 @@ var towerPlaceCoolDownFrames = 50;
 // stores the frame last tower was placed on
 var lastTowerPlacedFrame;
 
+var placeableArea = {
+    size: 800,
+    x: 0,
+    y: 0
+};
+
 // --- Base Tower class ---
 class Tower {
     constructor(x, y) {
@@ -110,7 +116,15 @@ function canPlaceTower(x, y) {
         return false;
     }
 
-    var halfSize = 30 / 2;
+    var halfSize = 60 / 2;
+
+    if (x - halfSize < placeableArea.x ||
+        x + halfSize> placeableArea.x + placeableArea.size || 
+        y - halfSize< placeableArea.y ||
+        y + halfSize > placeableArea.y + placeableArea.size)
+        {
+            return false;
+        }
 
     // check against the main base
     if (dist(x, y, base.x, base.y) < halfSize + base.size / 2) {
