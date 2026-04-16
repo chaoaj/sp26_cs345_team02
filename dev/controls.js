@@ -11,10 +11,11 @@ var controllerRight;
  * Constrains the player to the canvas.
 */
 function movePlayer() {
-  var up = keyIsDown(87) || controllerUp;       // W
-  var left = keyIsDown(65) || controllerLeft;   // A
-  var down = keyIsDown(83) || controllerDown;   // S
-  var right = keyIsDown(68) || controllerRight; // D
+  var up = keyIsDown(87) || keyIsDown(UP_ARROW) || controllerUp;       // W, UP ARROW, CONT UP
+  var left = keyIsDown(65) || keyIsDown(LEFT_ARROW) || controllerLeft;   // A, LEFT ARROW, CONT LEFT
+  var down = keyIsDown(83) || keyIsDown(DOWN_ARROW) || controllerDown;   // S, DOWN ARROW, CONT DOWN
+  var right = keyIsDown(68) || keyIsDown(RIGHT_ARROW)  || controllerRight; // D, RIGHT ARROW, CONT RIGHT
+  
 
   if (up && down) {
     if (lastInput == "UP") playerStats.y -= playerStats.speed;
@@ -61,10 +62,15 @@ function keyPressed() {
 
   // ----- MOVEMENT -----
   const MOVEMENT_KEYS = {
-    87: "UP",   // W
-    65: "LEFT", // A
-    83: "DOWN", // S
-    68: "RIGHT" // D
+    87: "UP",    // W
+    65: "LEFT",  // A
+    83: "DOWN",  // S
+    68: "RIGHT", // D
+    // ARROW KEYS
+    38: "UP",    // Up arrow
+    37: "LEFT",  // Left arrow
+    40: "DOWN",  // Down arrow
+    39: "RIGHT"  // Right arrow
   };
 
   if (MOVEMENT_KEYS[keyCode]) {
