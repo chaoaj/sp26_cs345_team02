@@ -88,19 +88,19 @@ var towerTypes = {
 // controls tower placing cool down animation
 function towerPlaceCoolDownAnimation() {
     if (frameCount - lastTowerPlacedFrame < towerPlaceCoolDownFrames) {
-      angleMode(DEGREES);
-      noFill();
-      stroke(0);
-      strokeWeight(6);
-      arc(playerStats.x, playerStats.y + 60, 15, 15, -90, 270 -
-        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (360 / towerPlaceCoolDownFrames));
-      stroke(255, 84, 84);
-      strokeWeight(4);
-      arc(playerStats.x, playerStats.y + 60, 15, 15, -90, 270 -
-        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (360 / towerPlaceCoolDownFrames));
-      noStroke();
+        angleMode(RADIANS);
+        noFill();
+        stroke(0);
+        strokeWeight(6);
+        arc(playerStats.x, playerStats.y + 60, 15, 15, -90 * PI / 180, 270 * PI / 180 -
+        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (TWO_PI / towerPlaceCoolDownFrames));
+        stroke(255, 84, 84);
+        strokeWeight(4);
+        arc(playerStats.x, playerStats.y + 60, 15, 15, -90 * PI / 180, 270 * PI / 180 -
+        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (TWO_PI / towerPlaceCoolDownFrames));
+        noStroke();
     }
-  }
+}
 
 // returns false if (x, y) would overlap an existing tower or the main base
 function canPlaceTower(x, y) {
