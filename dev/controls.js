@@ -1,4 +1,6 @@
 var lastInput = null;
+var leftBumperHeld;
+var rightBumperHeld;
 var controllerUp;
 var controllerLeft;
 var controllerDown;
@@ -15,7 +17,7 @@ function movePlayer() {
   var left = keyIsDown(65) || keyIsDown(LEFT_ARROW) || controllerLeft;   // A, LEFT ARROW, CONT LEFT
   var down = keyIsDown(83) || keyIsDown(DOWN_ARROW) || controllerDown;   // S, DOWN ARROW, CONT DOWN
   var right = keyIsDown(68) || keyIsDown(RIGHT_ARROW)  || controllerRight; // D, RIGHT ARROW, CONT RIGHT
-  
+
 
   if (up && down) {
     if (lastInput == "UP") playerStats.y -= playerStats.speed;
@@ -172,7 +174,49 @@ function onPress(e) {
   if (e.name == "axesLeft") controllerLeft = true;
   if (e.name == "axesRight") controllerRight = true;
 
-  if (e.name == "buttonBlue") placeTower(playerStats.x, playerStats.y);
+  if (e.name == "keypadUp") {
+    currentTower = 0;
+    updateTower();
+  }
+
+  if (e.name == "keypadRight") {
+    currentTower = 1;
+    updateTower();
+  }
+
+  if (e.name == "keypadDown") {
+    currentTower = 2;
+    updateTower();
+  }
+
+  if (e.name == "keypadLeft") {
+    currentTower = 3;
+    updateTower();
+  }
+
+  if (e.name == "rightAxesLeft") { // cycle left with right joystick
+    currentTower--;
+
+    if (currentTower < 0) currentTower = inventory.length - 1;
+    updateTower();
+  }
+
+  if (e.name == "rightAxesRight") { // cycle right with right joystick
+    currentTower++;
+
+    if (currentTower > 3) currentTower = 0;
+    updateTower();
+  }
+
+  if (e.name == "bumperLeft") leftBumperHeld = true; // left bumper
+
+  if (e.name == "bumperRight") rightBumperHeld = true; // right bumper
+
+  if (e.name == "select" && currentScreen == "game") paused = !paused; // pause with "select"
+
+  if (leftBumperHeld && rightBumperHeld && currentScreen == "game") resetGame(); // pause with "select"
+
+  if (e.name == "buttonBlue") placeTower(playerStats.x, playerStats.y); // place towers with blue button
 }
 
 function onRelease(e) {
@@ -180,4 +224,6 @@ function onRelease(e) {
   if (e.name == "axesDown") controllerDown = false;
   if (e.name == "axesLeft") controllerLeft = false;
   if (e.name == "axesRight") controllerRight = false;
+  if (e.name == "bumperLeft") leftBumperHeld = false;
+  if (e.name == "bumperRight") rightBumperHeld = false;
 }

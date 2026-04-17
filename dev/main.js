@@ -15,20 +15,20 @@ var paused = false;
 // this loads the images
 function preload() {
   playerSprite = loadImage("images/PlayerWalkNew.png");
-  
+
   // loads main menu images
   titleBg = loadImage("images/titleBackground.png");
   titleLogo = loadImage("images/FrontGuardTitle.png");
   titlePlayButton = loadImage("images/PlayButton.png");
   titleSettingsButton = loadImage("images/settingsButton.png");
   titleEncyclopediaButton = loadImage("images/EncyclopediaButton.png");
-  
+
   // this loads tower images
   towerImages.normal = loadImage("images/normalTower.png");
   towerImages.attack = loadImage("images/towerAttack.png");
   towerImages.healing = loadImage("images/towerHealing.png");
   towerImages.explosive = loadImage("images/towerExplosive.png");
-  
+
   // grass background
   grassBg = loadImage("images/grassBackground.png");
 }
@@ -60,7 +60,7 @@ function drawBase() {
   strokeWeight(2);
   rectMode(CENTER);
   rect(base.x, base.y, base.size, base.size);
-  
+
   // "BASE" label
   fill(255);
   noStroke();
@@ -103,6 +103,7 @@ function checkBaseCollisions() {
 }
 
 function resetGame() {
+  if (paused) return;
   enemies = [];
   towers = [];
   base.health = base.maxHealth;

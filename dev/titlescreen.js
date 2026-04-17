@@ -73,18 +73,23 @@ function drawSettingsScreen() {
         ["S", "Axes Down", "Move Down"],
         ["D", "Axes Right", "Move Right"],
         ["T", "X", "Place Tower"],
-        ["1-4", "MISSING", "Select Tower"], // This task can be marked as complete,
-        ["P", "MISSING", "Pause"], // after we add controller functions for each button
-        ["R + L-Shift", "MISSING", "Reset Game"]
+        ["1", "DPad Up", "Select Tower 1"], // This task can be marked as complete,
+        ["2", "DPad Right", "Select Tower 2"],
+        ["3", "DPad Down", "Select Tower 3"],
+        ["4", "DPad Left", "Select Tower 4"],
+        [">", "Right Axes Right", "Select Next Tower"],
+        ["<", "Right Axes Left", "Select Previous Tower"],
+        ["P", "Select", "Pause"], // after we add controller functions for each button
+        ["R + L-Shift", "R + L Bumper", "Reset Game"]
     ];
 
     textSize(16);
     textAlign(LEFT, CENTER);
     var startY = 260;
     var rowHeight = 36;
-    var keyX = width / 2 - 120;
+    var keyX = width / 2 - 150;
     var controlX = width / 2;
-    var actionX = width / 2 + 120;
+    var actionX = width / 2 + 150;
 
     fill(180);
     text("Keyboard", keyX, 160);
