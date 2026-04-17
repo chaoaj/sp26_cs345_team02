@@ -64,7 +64,6 @@ function movePlayer() {
  * - Resetting game (Shift + R)
  * - Placing tower (T)
  * - Cycling inventory (1-4, ",", and ".")
- *
  */
 function keyPressed() {
   console.log(keyCode);
