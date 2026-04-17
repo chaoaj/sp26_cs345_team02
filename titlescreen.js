@@ -68,29 +68,40 @@ function drawSettingsScreen() {
     text("Settings", width / 2, 80);
 
     var keybinds = [
-        ["W", "Move Up"],
-        ["A", "Move Left"],
-        ["S", "Move Down"],
-        ["D", "Move Right"],
-        ["T", "Place Tower"]
+        ["W", "Axes Up", "Move Up"],
+        ["A", "Axes Left", "Move Left"],
+        ["S", "Axes Down", "Move Down"],
+        ["D", "Axes Right", "Move Right"],
+        ["T", "X", "Place Tower"],
+        ["1", "DPad Up", "Select Tower 1"], // This task can be marked as complete,
+        ["2", "DPad Right", "Select Tower 2"],
+        ["3", "DPad Down", "Select Tower 3"],
+        ["4", "DPad Left", "Select Tower 4"],
+        [">", "Right Axes Right", "Select Next Tower"],
+        ["<", "Right Axes Left", "Select Previous Tower"],
+        ["P", "Select", "Pause"], // after we add controller functions for each button
+        ["R + L-Shift", "R + L Bumper", "Reset Game"]
     ];
 
     textSize(16);
     textAlign(LEFT, CENTER);
     var startY = 260;
     var rowHeight = 36;
-    var keyX = width / 2 - 120;
-    var actionX = width / 2;
+    var keyX = width / 2 - 150;
+    var controlX = width / 2;
+    var actionX = width / 2 + 150;
 
     fill(180);
-    text("Key", keyX, 160);
+    text("Keyboard", keyX, 160);
+    text("Controller", controlX, 160);
     text("Action", actionX, 160);
 
     fill(255);
     for (var i = 0; i < keybinds.length; i++) {
         var y = startY + i * rowHeight;
         text("[" + keybinds[i][0] + "]", keyX, y);
-        text(keybinds[i][1], actionX, y);
+        text("[" + keybinds[i][1] + "]", controlX, y);
+        text(keybinds[i][2], actionX, y);
     }
 }
 
@@ -100,6 +111,13 @@ function drawEncyclopediaScreen() {
     textSize(24);
     textAlign(CENTER, CENTER);
     text("Encyclopedia", width / 2, height / 4);
+
+    var encyclist = [
+        ["Normal Tower", "text"],
+        ["Healing Tower", "text"],
+        ["Attack Tower", "text"],
+        ["Explosive Tower", "text"]
+    ];
 }
 
 function hideTitleScreenElements() {

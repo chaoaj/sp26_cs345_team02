@@ -1,5 +1,7 @@
 // empty array that stores all the enemies that are on the screen
 var enemies = [];
+// stores dead enemy positions and the frame they died on
+var killedEnemies = [];
 
 // wave scaling — all rates are in enemies per second
 var waveConfig = {
@@ -9,15 +11,24 @@ var waveConfig = {
     maxSpawnRate: 12   // enemies/sec cap
 };
 
+// damage dealt per enemy contact — edit these to tune difficulty
+var damageConfig = {
+    enemyToTower: 25,   // flat hit; enemy is removed on contact
+    enemyToBase: 10,    // flat hit; enemy is removed on contact
+    enemyToPlayer: 10   // flat hit; enemy is removed on contact
+};
+
 // just an object that holds the stats of the enemy
 var enemyStats = {
     // size of the enemy (circle);
-    size: 15,
+    size: 30,
     // movement speed
     speed: 3,
     // how far from the center enemies spawn on the canvas
     // bigger num = farther
-    spawnRadius: 800
+    spawnRadius: 800,
+    // decides how much money is given to the player when this enemy is killed
+    moneyDropped: 5
 };
 
 var waveNum = 1;
@@ -140,7 +151,7 @@ function spawnEnemy() {
     var distanceY = baseCenterY - enemy.y;
     var totalDistance = dist(enemy.x, enemy.y, baseCenterX, baseCenterY);
 
-    // how fast the enemies move dependign on their speed
+    // how fast the enemies move depending on their speed
     enemy.xSpeed = distanceX / totalDistance * enemyStats.speed;
     enemy.ySpeed = distanceY / totalDistance * enemyStats.speed;
 
@@ -156,3 +167,8 @@ function drawEnemies() {
     }
 }
 
+function enemyKilled(enemyIndex, towerIndex) {
+    killedEnemies.push({x: towers[towerIndex].x, y: towers[towerIndex].y, frame: frameCount});
+    enemies.splice(enemyIndex, 1);
+    playerStats.money += enemyStats.moneyDropped;
+}

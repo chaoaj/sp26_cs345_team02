@@ -12,11 +12,16 @@ var healthConfig = {
     base: 200,
     tower: 100
 };
+// controls how long the cool down for placing a tower should be
+var towerPlaceCoolDownFrames = 50;
 
-// damage dealt per enemy contact — edit these to tune difficulty
-var damageConfig = {
-    enemyToTower: 25,  // flat hit; enemy is removed on contact
-    enemyToBase: 10    // flat hit; enemy is removed on contact
+// stores the frame last tower was placed on
+var lastTowerPlacedFrame;
+
+var placeableArea = {
+    size: 800,
+    x: 0,
+    y: 0
 };
 
 // --- Base Tower class ---
@@ -24,7 +29,7 @@ class Tower {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.size = 30;
+        this.size = 130;
         this.health = healthConfig.tower;
         this.maxHealth = healthConfig.tower;
         this.img = null;  // subclasses assign this after images are loaded
@@ -69,39 +74,57 @@ class HealingTower extends Tower {
     }
 }
 
-class DamageTower extends Tower {
+class ExplosiveTower extends Tower {
     constructor(x, y) {
         super(x, y);
-        this.img = towerImages.damage;
+        this.img = towerImages.explosive;
     }
 }
+
+// --------- Vars ---------
 
 // maps type string -> constructor; add new tower types here
 var towerTypes = {
     normal:  NormalTower,
     attack:  AttackTower,
     healing: HealingTower,
-    damage:  DamageTower
+    explosive:  ExplosiveTower
 };
 
-// shared health bar renderer used by towers and the base
-function drawHealthBar(x, y, barWidth, health, maxHealth) {
-    var ratio = max(0, health / maxHealth);
-    var barH = 5;
-    var barY = y - barWidth / 2 - 8;
-
-    noStroke();
-    fill(200, 0, 0);
-    rectMode(CORNER);
-    rect(x - barWidth / 2, barY, barWidth, barH);
-
-    fill(0, 200, 0);
-    rect(x - barWidth / 2, barY, barWidth * ratio, barH);
+// controls tower placing cool down animation
+function towerPlaceCoolDownAnimation() {
+    if (frameCount - lastTowerPlacedFrame < towerPlaceCoolDownFrames) {
+        angleMode(RADIANS);
+        noFill();
+        stroke(0);
+        strokeWeight(6);
+        arc(playerStats.x, playerStats.y + 60, 15, 15, -90 * PI / 180, 270 * PI / 180 -
+        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (TWO_PI / towerPlaceCoolDownFrames));
+        stroke(255, 84, 84);
+        strokeWeight(4);
+        arc(playerStats.x, playerStats.y + 60, 15, 15, -90 * PI / 180, 270 * PI / 180 -
+        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (TWO_PI / towerPlaceCoolDownFrames));
+        noStroke();
+    }
 }
 
 // returns false if (x, y) would overlap an existing tower or the main base
 function canPlaceTower(x, y) {
-    var halfSize = 30 / 2;
+    // compare the time the last tower was placed
+    if (frameCount - lastTowerPlacedFrame < towerPlaceCoolDownFrames) {
+        // player should not be able to place a tower.
+        return false;
+    }
+
+    var halfSize = 60 / 2;
+
+    if (x - halfSize < placeableArea.x ||
+        x + halfSize> placeableArea.x + placeableArea.size || 
+        y - halfSize< placeableArea.y ||
+        y + halfSize > placeableArea.y + placeableArea.size)
+        {
+            return false;
+        }
 
     // check against the main base
     if (dist(x, y, base.x, base.y) < halfSize + base.size / 2) {
@@ -115,6 +138,7 @@ function canPlaceTower(x, y) {
         }
     }
 
+    lastTowerPlacedFrame = frameCount;
     return true;
 }
 
@@ -141,12 +165,10 @@ function checkTowerCollisions() {
 
             if (d < collisionDist) {
                 towers[j].health -= damageConfig.enemyToTower;
-
+                enemyKilled(i, j);
                 if (towers[j].health <= 0) {
                     towers.splice(j, 1);
                 }
-
-                enemies.splice(i, 1);
                 break;
             }
         }
