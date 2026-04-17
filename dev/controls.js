@@ -50,7 +50,7 @@ function movePlayer() {
  * Reads all key inputs event in order for the games functionality.
  *
  * Includes:
- * - Movement tracking (WASD)
+ * - Movement tracking (WASD & Arrow Keys)
  * - Pause toggle (P)
  * - Resetting game (Shift + R)
  * - Placing tower (T)
