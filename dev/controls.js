@@ -13,36 +13,45 @@ var controllerRight;
  * Constrains the player to the canvas.
 */
 function movePlayer() {
+
+  var dx = 1;
+  var dy = 1;
+
   var up = keyIsDown(87) || keyIsDown(UP_ARROW) || controllerUp;       // W, UP ARROW, CONT UP
   var left = keyIsDown(65) || keyIsDown(LEFT_ARROW) || controllerLeft;   // A, LEFT ARROW, CONT LEFT
   var down = keyIsDown(83) || keyIsDown(DOWN_ARROW) || controllerDown;   // S, DOWN ARROW, CONT DOWN
   var right = keyIsDown(68) || keyIsDown(RIGHT_ARROW)  || controllerRight; // D, RIGHT ARROW, CONT RIGHT
 
 
+  if ((up || down) && (right || left)) {
+    dx = 1 / Math.sqrt(2);
+    dy = 1 / Math.sqrt(2);
+  }
+
   if (up && down) {
-    if (lastInput == "UP") playerStats.y -= playerStats.speed;
-    if (lastInput == "DOWN") playerStats.y += playerStats.speed;
+    if (lastInput == "UP") playerStats.y -= playerStats.speed * dy;
+    if (lastInput == "DOWN") playerStats.y += playerStats.speed * dy;
   } else if (up) {
-      playerStats.y -= playerStats.speed;
+      playerStats.y -= playerStats.speed * dy;
   } else if (down) {
-      playerStats.y += playerStats.speed;
+      playerStats.y += playerStats.speed * dy;
   }
   playerStats.y = constrain(playerStats.y, 40, height - 40);
 
   if (right && left) {
     if (lastInput == "RIGHT") {
-      playerStats.x += playerStats.speed;
+      playerStats.x += playerStats.speed * dx;
       playerStats.facing = "RIGHT";
     }
     if (lastInput == "LEFT") {
-      playerStats.x -= playerStats.speed;
+      playerStats.x -= playerStats.speed * dx;
       playerStats.facing = "LEFT";
     }
   } else if (right) {
-      playerStats.x += playerStats.speed;
+      playerStats.x += playerStats.speed * dx;
       playerStats.facing = "RIGHT";
   } else if (left) {
-      playerStats.x -= playerStats.speed;
+      playerStats.x -= playerStats.speed * dx;
       playerStats.facing = "LEFT";
   }
   playerStats.x = constrain(playerStats.x, 30, width - 30);
@@ -52,12 +61,11 @@ function movePlayer() {
  * Reads all key inputs event in order for the games functionality.
  *
  * Includes:
- * - Movement tracking (WASD)
+ * - Movement tracking (WASD & Arrow Keys)
  * - Pause toggle (P)
  * - Resetting game (Shift + R)
  * - Placing tower (T)
  * - Cycling inventory (1-4, ",", and ".")
- *
  */
 function keyPressed() {
   console.log(keyCode);
