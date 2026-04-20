@@ -28,6 +28,7 @@ function preload() {
   towerImages.attack = loadImage("images/towerAttack.png");
   towerImages.healing = loadImage("images/towerHealing.png");
   towerImages.explosive = loadImage("images/towerExplosive.png");
+  baseImage = loadImage("images/towernormal.png");
 
   // grass background
   grassBg = loadImage("images/grassBackground.png");
@@ -51,6 +52,9 @@ function setup() {
 
   controller.onButtonReleased(onRelease);
   controller.onAxesReleased(onRelease);
+
+  // set up base image
+  mainBase = new Sprite(baseImage, base.x, base.y, 2);
 }
 
 function drawBase() {
@@ -59,14 +63,15 @@ function drawBase() {
   stroke(0);
   strokeWeight(2);
   rectMode(CENTER);
-  rect(base.x, base.y, base.size, base.size);
+  // rect(base.x, base.y, base.size, base.size);
 
   // "BASE" label
   fill(255);
   noStroke();
   textSize(30);
   textAlign(CENTER, CENTER);
-  text("BASE", base.x, base.y);
+  // text("BASE", base.x, base.y);
+  mainBase.drawBase();
 
   drawHealthBar(base.x, base.y, base.size + 10, base.health, base.maxHealth);
 }

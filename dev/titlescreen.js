@@ -108,16 +108,31 @@ function drawSettingsScreen() {
 function drawEncyclopediaScreen() {
     background(50);
     fill(255);
-    textSize(24);
+    textSize(21);
     textAlign(CENTER, CENTER);
     text("Encyclopedia", width / 2, height / 4);
 
     var encyclist = [
-        ["Normal Tower", "text"],
-        ["Healing Tower", "text"],
-        ["Attack Tower", "text"],
-        ["Explosive Tower", "text"]
+        [towerImages.normal , "Normal Tower", "Standard tower, low health, 0 damage. $50"],
+        [towerImages.healing , "Healing Tower", "Heals the player and base +10, low health, 0 damage. $100"],
+        [towerImages.attack , "Attack Tower", "Attacks enemies, high health, 30 damage. $200"],
+        [towerImages.explosive , "Explosive Tower", "Explodes enemies, high health, 70 damage. $250"]
     ];
+
+    var startY = height / 3;
+    var rowHeight = 90;
+    var towerImageX = width / 8;
+    var towerX = 2 * width / 10;
+    var textX = 4 * width / 10;
+
+    textAlign(LEFT);
+
+    for (var i = 0; i < encyclist.length; i++) {
+        var y = startY + i * rowHeight;
+        image(encyclist[i][0], towerImageX, y);
+        text(encyclist[i][1], towerX, y);
+        text(encyclist[i][2], textX, y);
+    }
 }
 
 function hideTitleScreenElements() {

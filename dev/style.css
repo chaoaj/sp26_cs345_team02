@@ -6,7 +6,3 @@ html, body {
 canvas {
   display: block;
 }
-
-#playerWalk , #titlelogo {
-  display: none;
-}
