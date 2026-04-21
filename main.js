@@ -114,6 +114,7 @@ function resetGame() {
   currentScreen = "title";
   showTitleScreenElements();
   setupPlayer();
+  resetInventory();
 }
 
 function draw() {

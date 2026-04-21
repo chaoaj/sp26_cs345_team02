@@ -9,12 +9,31 @@ var currentTower = 0;
 // current TYPE for the tower selected
 var currentTowerType = inventory[currentTower];
 
+function resetInventory() {
+    currentTower = 0;
+    updateTower();
+}
+
 /**
  * Makes the highlighted inventory slot align with the current tower type.
  */
 function updateTower() {
     currentTowerType = inventory[currentTower];
     activeTowerType = currentTowerType;
+    switch (activeTowerType) {
+        case "normal":
+            activeTowerCost = 25;
+            break;
+        case "healing":
+            activeTowerCost = 50;
+            break;
+        case "attack":
+            activeTowerCost = 75;
+            break;
+        case "explosive":
+            activeTowerCost = 75;
+            break;
+    }
 }
 
 /**
