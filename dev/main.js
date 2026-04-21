@@ -28,7 +28,10 @@ function preload() {
   towerImages.attack = loadImage("images/towerAttack.png");
   towerImages.healing = loadImage("images/towerHealing.png");
   towerImages.explosive = loadImage("images/towerExplosive.png");
+  
+  // base images
   baseImage = loadImage("images/towernormal.png");
+  baseDamageImage = loadImage("images/towerdamage.png");
 
   // grass background
   grassBg = loadImage("images/grassBackground.png");
@@ -74,6 +77,10 @@ function drawBase() {
   mainBase.drawBase();
 
   drawHealthBar(base.x, base.y, base.size + 10, base.health, base.maxHealth);
+
+  if (base.health == base.maxHealth / 2) {
+    mainBase.sheet = baseDamageImage;
+  }
 }
 
 // shared health bar renderer used by towers, players, and the base

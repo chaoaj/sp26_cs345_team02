@@ -33,6 +33,7 @@ class Tower {
         this.health = healthConfig.tower;
         this.maxHealth = healthConfig.tower;
         this.img = null;  // subclasses assign this after images are loaded
+        this.price = null;
     }
 
     draw() {
