@@ -28,7 +28,7 @@ function preload() {
   towerImages.attack = loadImage("images/towerAttack.png");
   towerImages.healing = loadImage("images/towerHealing.png");
   towerImages.explosive = loadImage("images/towerExplosive.png");
-  
+
   // base images
   baseImage = loadImage("images/towernormal.png");
   baseDamageImage = loadImage("images/towerdamage.png");
@@ -126,6 +126,7 @@ function resetGame() {
   currentScreen = "title";
   showTitleScreenElements();
   setupPlayer();
+  resetInventory();
 }
 
 function draw() {

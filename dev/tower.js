@@ -146,6 +146,10 @@ function canPlaceTower(x, y) {
         return false;
     }
 
+    if (playerStats.money < activeTowerCost) {
+        return false;
+    }
+
     var halfSize = 60 / 2;
 
     if (x - halfSize < placeableArea.x ||
@@ -178,6 +182,7 @@ function placeTower(x, y) {
 
     var TowerClass = towerTypes[activeTowerType] || NormalTower;
     towers.push(new TowerClass(x, y));
+    playerStats.money -= activeTowerCost;
 }
 
 function drawTowers() {
