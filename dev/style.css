@@ -6,3 +6,17 @@ html, body {
 canvas {
   display: block;
 }
+
+button {
+  background-color: brown;
+  text-decoration: dotted;
+  font-style: oblique;
+  color:gold;
+  width:20%;
+  position: absolute;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: red;
+}
