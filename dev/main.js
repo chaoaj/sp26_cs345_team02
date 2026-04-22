@@ -1,44 +1,57 @@
-// This is the main file for the game. This should be where everything the main game should be
-// i.e images go into the preload function
+/**
+ * main.js is the main file of the game. This is where images and draw() functions should go.
+ * Images go into the preload() function.
+ */
 
+// ----- Resolution Size -----
+var windowWidth = 1080
+var windowHeight = 1920
+
+// ----- Game Variables -----
+var paused = false;
+var controller;
+
+// ----= Base Object ------
 var base = {
-  x: 500,
-  y: 500,
-  size: 135,
+  x: 0,
+  y: 0,
+  size: 160,
   health: healthConfig.base,
   maxHealth: healthConfig.base
 };
 
-var controller;
-var paused = false;
-
-// this loads the images
+/**
+ * This function is called once to load assets before our game runs. 
+ * Any images are to go here.
+ */
 function preload() {
-  playerSprite = loadImage("images/PlayerWalkNew.png");
-
-  // loads main menu images
+  // ----- Main Menu Images -----
   titleBg = loadImage("images/titleBackground.png");
   titleLogo = loadImage("images/FrontGuardTitle.png");
   titlePlayButton = loadImage("images/PlayButton.png");
   titleSettingsButton = loadImage("images/settingsButton.png");
   titleEncyclopediaButton = loadImage("images/EncyclopediaButton.png");
 
-  // this loads tower images
+  // ----- Player Images -----
+  playerSprite = loadImage("images/PlayerWalkNew.png");
+
+  // ----- Tower images -----
   towerImages.normal = loadImage("images/normalTower.png");
   towerImages.attack = loadImage("images/towerAttack.png");
   towerImages.healing = loadImage("images/towerHealing.png");
   towerImages.explosive = loadImage("images/towerExplosive.png");
 
-  // base images
+  // ----- Base Images -----
   baseImage = loadImage("images/towernormal.png");
   baseDamageImage = loadImage("images/towerdamage.png");
 
-  // grass background
+  // ----- Canvas images -----
   grassBg = loadImage("images/grassBackground.png");
 }
 
 function setup() {
-  createCanvas(1000, 1000);
+  // ----- Main Game Setup -----
+  createCanvas(windowWidth, windowHeight);  // 1920x1080p
   imageMode(CENTER);
   textAlign(CENTER, CENTER);
 
@@ -48,32 +61,21 @@ function setup() {
   placeableArea.x = width / 2 - placeableArea.size / 2;
   placeableArea.y = width / 2 - placeableArea.size / 2;
 
+  // ----- Controller Setup -----
   controller = createController();
-
   controller.onButtonPressed(onPress);
   controller.onAxesPressed(onPress);
-
   controller.onButtonReleased(onRelease);
   controller.onAxesReleased(onRelease);
 
-  // set up base image
+  // ----- Base Setup -----
   mainBase = new Sprite(baseImage, base.x, base.y, 2);
 }
 
+/**
+ * This function draws the main base the player is supposed to defend onto the screen. 
+ */
 function drawBase() {
-  // base body
-  fill(80, 180, 80);
-  stroke(0);
-  strokeWeight(2);
-  rectMode(CENTER);
-  // rect(base.x, base.y, base.size, base.size);
-
-  // "BASE" label
-  fill(255);
-  noStroke();
-  textSize(30);
-  textAlign(CENTER, CENTER);
-  // text("BASE", base.x, base.y);
   mainBase.drawBase();
 
   drawHealthBar(base.x, base.y, base.size + 10, base.health, base.maxHealth);
@@ -84,6 +86,16 @@ function drawBase() {
 }
 
 // shared health bar renderer used by towers, players, and the base
+/**
+ * This functions draws a health bar that is shared
+ * between towers, the player, and the main base.
+ * 
+ * @param {*} x 
+ * @param {*} y 
+ * @param {*} barWidth 
+ * @param {*} health 
+ * @param {*} maxHealth 
+ */
 function drawHealthBar(x, y, barWidth, health, maxHealth) {
   var ratio = max(0, health / maxHealth);
   var barH = 5;
@@ -178,4 +190,8 @@ function draw() {
   } else if (currentScreen == "encyclopedia") {
     drawEncyclopediaScreen();
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }

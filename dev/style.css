@@ -1,8 +1,24 @@
-html, body {
-  margin: 0;
-  padding: 0;
+html {
+  height: 100%
 }
 
-canvas {
-  display: block;
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  background-color: brown;
+  text-decoration: dotted;
+  font-style: oblique;
+  color:gold;
+  width:20%;
+  position: absolute;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: red;
 }

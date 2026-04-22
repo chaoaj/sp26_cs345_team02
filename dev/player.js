@@ -41,7 +41,7 @@ function Sprite(sheet, x, y, n) {
   this.drawBase = function() {
     this.frames = 2;
     this.w = sheet.width / this.frames;
-    image(this.sheet, this.x, this.y, this.w, this.h, this.w*floor(this.frame), 0, this.w, this.h);
+    image(this.sheet, this.x, this.y, this.w * 2, this.h * 2, this.w*floor(this.frame), 0, this.w, this.h);
 
     this.frame += 0.1;
     if (this.frame > this.frames) {
