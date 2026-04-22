@@ -72,6 +72,35 @@ class HealingTower extends Tower {
     constructor(x, y) {
         super(x, y);
         this.img = towerImages.healing;
+        this.healRange = 200;
+        this.healRate = 0.3;  // HP should be restored at each second of frame
+        this.target = null;
+    }
+
+    update() {
+        // gets target if it's destroyed, full, or out of range
+        if (this.target !== null) {
+            var stillValid = towers.includes(this.target) &&
+                             this.target.health < this.target.maxHealth &&
+                             dist(this.x, this.y, this.target.x, this.target.y) <= this.healRange;
+            if (!stillValid) this.target = null;
+        }
+
+        // This will find the next in range damaged tower
+        if (this.target === null) {
+            for (var i = 0; i < towers.length; i++) {
+                var t = towers[i];
+                if (t === this) continue;
+                if (t.health < t.maxHealth && dist(this.x, this.y, t.x, t.y) <= this.healRange) {
+                    this.target = t;
+                    break;
+                }
+            }
+        }
+
+        if (this.target !== null) {
+            this.target.health = min(this.target.health + this.healRate, this.target.maxHealth);
+        }
     }
 }
 
@@ -120,7 +149,7 @@ function canPlaceTower(x, y) {
     var halfSize = 60 / 2;
 
     if (x - halfSize < placeableArea.x ||
-        x + halfSize> placeableArea.x + placeableArea.size || 
+        x + halfSize> placeableArea.x + placeableArea.size ||
         y - halfSize< placeableArea.y ||
         y + halfSize > placeableArea.y + placeableArea.size)
         {
