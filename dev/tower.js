@@ -127,18 +127,17 @@ var towerTypes = {
 };
 
 // controls tower placing cool down animation
-function towerPlaceCoolDownAnimation() {
+function drawTowerPlaceCoolDownAnimation() {
     if (frameCount - lastTowerPlacedFrame < towerPlaceCoolDownFrames) {
+        var progress = (frameCount - lastTowerPlacedFrame) * (TWO_PI / towerPlaceCoolDownFrames)
         angleMode(RADIANS);
         noFill();
         stroke(0);
         strokeWeight(6);
-        arc(playerStats.x, playerStats.y + 60, 15, 15, -90 * PI / 180, 270 * PI / 180 -
-        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (TWO_PI / towerPlaceCoolDownFrames));
+        arc(playerStats.x, playerStats.y + 60, 15, 15, -HALF_PI, TWO_PI - HALF_PI - progress);
         stroke(255, 84, 84);
         strokeWeight(4);
-        arc(playerStats.x, playerStats.y + 60, 15, 15, -90 * PI / 180, 270 * PI / 180 -
-        ((frameCount - lastTowerPlacedFrame) % towerPlaceCoolDownFrames) * (TWO_PI / towerPlaceCoolDownFrames));
+        arc(playerStats.x, playerStats.y + 60, 15, 15, -HALF_PI, TWO_PI - HALF_PI - progress);
         noStroke();
     }
 }

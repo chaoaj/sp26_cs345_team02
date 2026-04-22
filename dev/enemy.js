@@ -6,6 +6,7 @@ var killedEnemies = [];
 // wave scaling — all rates are in enemies per second
 var waveConfig = {
     waveLength: 1200,  // frames per wave (20s at 60fps)
+    totalPrepTime: 120, // frames per break (2s at 60fps)
     baseSpawnRate: 10,  // enemies/sec on wave 1
     spawnIncreasePerWave: 1,  // enemies/sec added each wave
     maxSpawnRate: 12   // enemies/sec cap
@@ -37,7 +38,7 @@ var waveInProg = false;
 
 // this is in frames, basically it means that if this var were for example 120,
 // you would have 2 seconds of prep time before enemies spawn
-var prepTime = 200
+var prepTimeFrames = waveConfig.totalPrepTime;
 
 // counts down until the next enemy can spawn in a current wave
 var enemyTimer = 0;
@@ -51,9 +52,9 @@ var waveTimer = 0;
 
 function updateEnemies() {
     if (waveInProg == false) {
-        prepTime--;
+        prepTimeFrames--;
 
-        if (prepTime <= 0) {
+        if (prepTimeFrames <= 0) {
             beginWave();
         }
     } else {
@@ -127,7 +128,7 @@ function beginWave() {
 function stopWave() {
     waveInProg = false;
     waveNum++;
-    prepTime = 60;
+    prepTimeFrames = waveConfig.totalPrepTime;
 }
 
 function spawnEnemy() {
@@ -168,8 +169,47 @@ function drawEnemies() {
     }
 }
 
+function drawWaveAnimation(barWidthPixels) {
+    if (!waveInProg) {
+        var framesSinceLastWave = waveConfig.totalPrepTime - prepTimeFrames;
+        strokeWeight(8);
+        stroke(0);
+        line(width - barWidthPixels + (barWidthPixels / waveConfig.totalPrepTime) * framesSinceLastWave, height - 4, width - barWidthPixels, height - 4);
+        strokeWeight(6);
+        stroke(245, 66, 66);
+        line(width - barWidthPixels + (barWidthPixels / waveConfig.totalPrepTime) * framesSinceLastWave, height - 4, width - barWidthPixels, height - 4);
+        noStroke();
+    } else {
+        var framesSinceWaveStart = waveConfig.waveLength - waveTimer;
+        strokeWeight(8);
+        stroke(0);
+        line(width - (barWidthPixels / waveConfig.waveLength) * framesSinceWaveStart, height - 4, width - barWidthPixels, height - 4);
+        strokeWeight(6);
+        stroke(245, 66, 66);
+        line(width - (barWidthPixels / waveConfig.waveLength) * framesSinceWaveStart, height - 4, width - barWidthPixels, height - 4);
+        noStroke();
+    }
+}
+
+function drawWaveNumber() {
+    var textHeight = 35;
+    var textOffset = 180;
+    fill(255);
+    stroke(0);
+    strokeWeight(2);
+    textSize(textHeight);
+    textAlign(LEFT);
+    text("Wave: " + waveNum, width - textOffset, height - textHeight);
+    drawWaveAnimation(textOffset);
+    noStroke();
+}
+
 function enemyKilled(enemyIndex, towerIndex) {
-    killedEnemies.push({x: towers[towerIndex].x, y: towers[towerIndex].y, frame: frameCount});
+    if (towerIndex != -1) {
+        killedEnemies.push({x: towers[towerIndex].x, y: towers[towerIndex].y, frame: frameCount});
+    } else {
+        killedEnemies.push({x: playerStats.x, y: playerStats.y, frame: frameCount});
+    }
     enemies.splice(enemyIndex, 1);
     playerStats.money += enemyStats.moneyDropped;
 }

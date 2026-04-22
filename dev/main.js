@@ -121,7 +121,7 @@ function resetGame() {
   base.health = base.maxHealth;
   waveInProg = false;
   waveNum = 1;
-  prepTime = 200;
+  prepTimeFrames = waveConfig.totalPrepTime;
   paused = false;
   currentScreen = "title";
   showTitleScreenElements();
@@ -154,11 +154,12 @@ function draw() {
 
     drawEnemies();
     drawTowers();
-    towerPlaceCoolDownAnimation();
+    drawTowerPlaceCoolDownAnimation();
     moneyAnimation();
     drawBase();
     drawPlayer();
     drawMoney();
+    drawWaveNumber();
     drawInventory();
 
     // quick check if the game is paused

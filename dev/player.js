@@ -80,7 +80,7 @@ function checkPlayerCollisions() {
       var collisionDist = enemy.size / 2 + playerWidth / 2;
       if (d1 < collisionDist || d2 < collisionDist || d3 < collisionDist) {
           playerStats.health -= damageConfig.enemyToPlayer;
-          enemies.splice(i, 1);
+          enemyKilled(i, -1);
       }
   }
 }
