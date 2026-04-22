@@ -97,6 +97,7 @@ function moneyAnimation() {
           textAlign(CENTER);
           var alpha = 255 - framesPassed * (255 / animationFrames);
           stroke(0, 0, 0, alpha);
+          strokeWeight(3);
           fill(0, 250, 24, alpha);
           textSize(20 - framesPassed * (10 / animationFrames));
           text("+5", killedEnemies[i].x, killedEnemies[i].y);
@@ -110,6 +111,7 @@ function drawMoney() {
   var size = 35;
   fill(255);
   stroke(0);
+  strokeWeight(2);
   textSize(size);
   textAlign(LEFT);
   text("Money: " + playerStats.money, 20, height - size);
