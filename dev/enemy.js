@@ -140,6 +140,7 @@ function spawnEnemy() {
     var baseCenterY = height / 2;
 
     // TWO_PI is just a circle, it selects a random angle from 360 degrees
+    angleMode(RADIANS);
     var angle = random(TWO_PI);
 
     // enemies spawn at a random x and y in a circle around the center the base off screen

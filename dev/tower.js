@@ -58,6 +58,7 @@ class NormalTower extends Tower {
     constructor(x, y) {
         super(x, y);
         this.img = towerImages.normal;
+        this.price = 50;
     }
 }
 
@@ -65,6 +66,7 @@ class AttackTower extends Tower {
     constructor(x, y) {
         super(x, y);
         this.img = towerImages.attack;
+        this.price = 200;
     }
 }
 
@@ -72,6 +74,7 @@ class HealingTower extends Tower {
     constructor(x, y) {
         super(x, y);
         this.img = towerImages.healing;
+        this.price = 100;
     }
 }
 
@@ -79,6 +82,7 @@ class ExplosiveTower extends Tower {
     constructor(x, y) {
         super(x, y);
         this.img = towerImages.explosive;
+        this.price = 250;
     }
 }
 
@@ -110,50 +114,49 @@ function towerPlaceCoolDownAnimation() {
 }
 
 // returns false if (x, y) would overlap an existing tower or the main base
-function canPlaceTower(x, y) {
-    // compare the time the last tower was placed
+function canPlaceTower(tower) {
+    // returns false if a tower was placed within towerPlaceCoolDownFrames frames
     if (frameCount - lastTowerPlacedFrame < towerPlaceCoolDownFrames) {
-        // player should not be able to place a tower.
         return false;
     }
 
-    if (playerStats.money < activeTowerCost) {
+    // returns false if the player has less money than the tower costs
+    if (playerStats.money < tower.price) {
         return false;
     }
 
     var halfSize = 60 / 2;
 
-    if (x - halfSize < placeableArea.x ||
-        x + halfSize> placeableArea.x + placeableArea.size ||
-        y - halfSize< placeableArea.y ||
-        y + halfSize > placeableArea.y + placeableArea.size)
+    if (tower.x - halfSize < placeableArea.x ||
+        tower.x + halfSize> placeableArea.x + placeableArea.size ||
+        tower.y - halfSize< placeableArea.y ||
+        tower.y + halfSize > placeableArea.y + placeableArea.size)
         {
             return false;
         }
 
     // check against the main base
-    if (dist(x, y, base.x, base.y) < halfSize + base.size / 2) {
+    if (dist(tower.x, tower.y, base.x, base.y) < halfSize + base.size / 2) {
         return false;
     }
 
     // check against every existing tower
     for (var i = 0; i < towers.length; i++) {
-        if (dist(x, y, towers[i].x, towers[i].y) < halfSize + towers[i].size / 2) {
+        if (dist(tower.x, tower.y, towers[i].x, towers[i].y) < halfSize + towers[i].size / 2) {
             return false;
         }
     }
-
-    lastTowerPlacedFrame = frameCount;
     return true;
 }
 
 // places a tower of activeTowerType at (x, y) — rejected if position is blocked
 function placeTower(x, y) {
-    if (!canPlaceTower(x, y)) return;
-
     var TowerClass = towerTypes[activeTowerType] || NormalTower;
-    towers.push(new TowerClass(x, y));
-    playerStats.money -= activeTowerCost;
+    var tower = new TowerClass(x, y);
+    if (!canPlaceTower(tower)) return;
+    towers.push(tower);
+    lastTowerPlacedFrame = frameCount;
+    playerStats.money -= tower.price;
 }
 
 function drawTowers() {

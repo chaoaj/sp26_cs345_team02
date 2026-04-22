@@ -20,20 +20,6 @@ function resetInventory() {
 function updateTower() {
     currentTowerType = inventory[currentTower];
     activeTowerType = currentTowerType;
-    switch (activeTowerType) {
-        case "normal":
-            activeTowerCost = 50;
-            break;
-        case "healing":
-            activeTowerCost = 100;
-            break;
-        case "attack":
-            activeTowerCost = 200;
-            break;
-        case "explosive":
-            activeTowerCost = 250;
-            break;
-    }
 }
 
 /**
