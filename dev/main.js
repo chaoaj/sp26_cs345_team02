@@ -58,8 +58,11 @@ function setup() {
   setupTitleScreen();
   setupPlayer();
 
+  base.x = width / 2;
+  base.y = height / 2;
+
   placeableArea.x = width / 2 - placeableArea.size / 2;
-  placeableArea.y = width / 2 - placeableArea.size / 2;
+  placeableArea.y = height / 2 - placeableArea.size / 2;
 
   // ----- Controller Setup -----
   controller = createController();
@@ -130,6 +133,7 @@ function resetGame() {
   if (paused) return;
   enemies = [];
   towers = [];
+  explosives = [];
   base.health = base.maxHealth;
   waveInProg = false;
   waveNum = 1;
@@ -159,6 +163,8 @@ function draw() {
       checkBaseCollisions();
       if (currentScreen != "game") return;
       updateEnemies();
+      updateTowers();
+      updateExplosives();
       checkTowerCollisions();
       checkPlayerCollisions();
       CheckHealth();
@@ -166,6 +172,7 @@ function draw() {
 
     drawEnemies();
     drawTowers();
+    drawExplosives();
     drawTowerPlaceCoolDownAnimation();
     moneyAnimation();
     drawBase();

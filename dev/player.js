@@ -61,12 +61,12 @@ function setupPlayer() {
     // the current x and y position that the player spawns at
     // currently in the center where the base will be
     x: width / 2,
-    y: width / 2,
+    y: height / 2,
     speed: 8,
     health: 100,
     maxHealth: 100,
     facing: "LEFT",
-    money: 200
+    money: 9999           // Set to some large random number to allow for testing.
   };
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
