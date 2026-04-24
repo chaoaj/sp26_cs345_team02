@@ -9,15 +9,18 @@ let currentScreen = "title";
 
 function setupTitleScreen() {
     playButton = createButton("Play");
-    playButton.position(width / 2 - 20, height / 2 + 40);
+    playButton.id("mainMenuButton");
+    playButton.position(width / 2 - 15, height / 2 + 30);
     playButton.mousePressed(startGame);
 
     settingsButton = createButton("Settings");
-    settingsButton.position(width / 2 - 30, height / 2 + 70);
+    settingsButton.id("mainMenuButton");
+    settingsButton.position(width / 2 - 20, height / 2 + 80);
     settingsButton.mousePressed(openSettings);
 
     encycButton = createButton("Encyclopedia");
-    encycButton.position(width / 2 - 43, height / 2 + 100);
+    encycButton.id("mainMenuButton");
+    encycButton.position(width / 2 - 30, height / 2 + 130);
     encycButton.mousePressed(openEncyclopedia);
 
     backButton = createButton("Back");
@@ -29,6 +32,9 @@ function setupTitleScreen() {
 function drawTitleScreen() {
     image(titleBg, width / 2, height / 2, width, height);
     image(titleLogo, width / 2, 280, 160 * 5, 120 * 5);
+    image(titlePlayButton, width / 2 + 65, height / 2 + 50, 602/4, 235/4);
+    image(titleSettingsButton, width / 2 + 50, height / 2 + 100, 602/4, 235/4);
+    image(titleEncyclopediaButton, width / 2 + 40, height / 2 + 150, 602/4, 235/4);
     //fill(0);
     //textSize(24);
     //textAlign(CENTER, CENTER);
