@@ -312,12 +312,37 @@ class HealingTower extends Tower {
         this.img = towerImages.healing;
         this.price = 100;
         this.healRange = 200;
-        this.healRate = 0.1; // ~3 HP/sec
+        this.healRate = 0.1; // ~1.2 HP/sec
         this.target = null;
+        this.beamX = null;
+        this.beamY = null;
     }
 
     update() {
-        // gets target if it's destroyed, full, or out of range
+        this.beamX = null;
+        this.beamY = null;
+
+        // priority 1: player
+        if (playerStats.health < playerStats.maxHealth &&
+            dist(this.x, this.y, playerStats.x, playerStats.y) <= this.healRange) {
+            playerStats.health = min(playerStats.health + this.healRate, playerStats.maxHealth);
+            this.beamX = playerStats.x;
+            this.beamY = playerStats.y;
+            this.target = null;
+            return;
+        }
+
+        // priority 2: main base
+        if (base.health < base.maxHealth &&
+            dist(this.x, this.y, base.x, base.y) <= this.healRange) {
+            base.health = min(base.health + this.healRate, base.maxHealth);
+            this.beamX = base.x;
+            this.beamY = base.y;
+            this.target = null;
+            return;
+        }
+
+        // priority 3: nearest damaged combat tower in range
         if (this.target !== null) {
             var stillValid = towers.includes(this.target) &&
                              this.target.health < this.target.maxHealth &&
@@ -325,7 +350,6 @@ class HealingTower extends Tower {
             if (!stillValid) this.target = null;
         }
 
-        // This will find the next in range damaged tower
         if (this.target === null) {
             for (var i = 0; i < towers.length; i++) {
                 var t = towers[i];
@@ -339,16 +363,17 @@ class HealingTower extends Tower {
 
         if (this.target !== null) {
             this.target.health = min(this.target.health + this.healRate, this.target.maxHealth);
+            this.beamX = this.target.x;
+            this.beamY = this.target.y;
         }
-        this.price = 100;
     }
 
     draw() {
         super.draw();
-        if (this.target === null) return;
+        if (this.beamX === null) return;
 
-        var tx = this.target.x;
-        var ty = this.target.y;
+        var tx = this.beamX;
+        var ty = this.beamY;
 
         // glowing beam — layered strokes for a soft glow effect
         noFill();
