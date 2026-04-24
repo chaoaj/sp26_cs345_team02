@@ -5,10 +5,13 @@ var killedEnemies = [];
 
 // wave scaling — all rates are in enemies per second
 var waveConfig = {
-    waveLength: 1200,  // frames per wave (20s at 60fps)
-    baseSpawnRate: 10,  // enemies/sec on wave 1
-    spawnIncreasePerWave: 1,  // enemies/sec added each wave
-    maxSpawnRate: 12   // enemies/sec cap
+    waveLength: 1200,       // frames per wave (20s at 60fps)
+    prepTimeStart: 300,     // inter-wave cooldown on wave 1 (10s at 60fps)
+    prepTimeMin: 300,       // cooldown floor (5s at 60fps)
+    prepTimeDecay: 30,      // frames shaved off per wave (0.5s)
+    baseSpawnRate: 1,       // enemies/sec on wave 1
+    spawnIncreasePerWave: 0.5,
+    maxSpawnRate: 8
 };
 
 // damage dealt per enemy contact — edit these to tune difficulty
@@ -23,21 +26,23 @@ var enemyStats = {
     // size of the enemy (circle);
     size: 30,
     // movement speed
-    speed: 3,
+    speed: 2,
     // how far from the center enemies spawn on the canvas
     // bigger num = farther
-    spawnRadius: 800,
+    spawnRadius: 1500,
     // decides how much money is given to the player when this enemy is killed
-    moneyDropped: 5
+    moneyDropped: 15
 };
 
 var waveNum = 1;
 
 var waveInProg = false;
 
-// this is in frames, basically it means that if this var were for example 120,
-// you would have 2 seconds of prep time before enemies spawn
-var prepTime = 200
+// tracks the full duration of the current inter-wave cooldown for arc rendering
+var currentPrepTime = waveConfig.prepTimeStart;
+
+// countdown to the next wave
+var prepTimeFrames = currentPrepTime;
 
 // counts down until the next enemy can spawn in a current wave
 var enemyTimer = 0;
@@ -51,9 +56,9 @@ var waveTimer = 0;
 
 function updateEnemies() {
     if (waveInProg == false) {
-        prepTime--;
+        prepTimeFrames--;
 
-        if (prepTime <= 0) {
+        if (prepTimeFrames <= 0) {
             beginWave();
         }
     } else {
@@ -71,6 +76,9 @@ function updateEnemies() {
     }
 
     for (var i = enemies.length - 1; i >= 0; i--) {
+        // halted while locked in melee combat with a troop
+        if (enemies[i].engagedTroop !== null) continue;
+
         // recalculate direction toward nearest tower or base each frame
         var target = getNearestTarget(enemies[i]);
         var dx = target.x - enemies[i].x;
@@ -84,17 +92,26 @@ function updateEnemies() {
         enemies[i].x += enemies[i].xSpeed;
         enemies[i].y += enemies[i].ySpeed;
 
-        if (enemies[i].x < -150 ||
-            enemies[i].x > width + 150 ||
-            enemies[i].y < -150 ||
-            enemies[i].y > height + 150)
+        // if the target is a troop and we've reached it, engage (multiple enemies can pile on)
+        if (troops.includes(target) && !target.isDead) {
+            var dToTroop = dist(enemies[i].x, enemies[i].y, target.x, target.y);
+            if (dToTroop < enemies[i].size / 2 + target.size / 2) {
+                enemies[i].engagedTroop = target;
+            }
+        }
+
+        if (enemies[i].x < -WORLD_SIZE / 2 - 800 ||
+            enemies[i].x > WORLD_SIZE / 2 + 800 ||
+            enemies[i].y < -WORLD_SIZE / 2 - 800 ||
+            enemies[i].y > WORLD_SIZE / 2 + 800)
             {
             enemies.splice(i, 1);
             }
     }
 }
 
-// returns the nearest tower to the enemy, or the base if no towers exist
+// returns the nearest tower to the enemy, or the base if no towers exist.
+// enemies will break off and engage any troop spotted within troopDetectionRange.
 function getNearestTarget(enemy) {
     var nearest = base;
     var nearestDist = dist(enemy.x, enemy.y, base.x, base.y);
@@ -104,6 +121,17 @@ function getNearestTarget(enemy) {
         if (d < nearestDist) {
             nearestDist = d;
             nearest = towers[j];
+        }
+    }
+
+    // engage nearby troops — enemies divert when a troop is spotted within range
+    var troopDetectionRange = 300;
+    for (var k = 0; k < troops.length; k++) {
+        if (troops[k].isDead) continue;
+        var d = dist(enemy.x, enemy.y, troops[k].x, troops[k].y);
+        if (d < troopDetectionRange && d < nearestDist) {
+            nearestDist = d;
+            nearest = troops[k];
         }
     }
 
@@ -127,19 +155,27 @@ function beginWave() {
 function stopWave() {
     waveInProg = false;
     waveNum++;
-    prepTime = 60;
+    currentPrepTime = max(waveConfig.prepTimeMin,
+                          waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
+    prepTimeFrames = currentPrepTime;
 }
 
 function spawnEnemy() {
     var enemy = {};
 
     enemy.size = enemyStats.size;
+    enemy.level = Math.ceil(waveNum / 3);
+    enemy.health = 60 * enemy.level;
+    enemy.maxHealth = enemy.health;
+    enemy.attackRate = 0.5 * enemy.level; // damage dealt per frame during combat
+    enemy.engagedTroop = null;
 
     // this is the center of the map (or the base)
-    var baseCenterX = width / 2;
-    var baseCenterY = height / 2;
+    var baseCenterX = base.x;
+    var baseCenterY = base.y;
 
     // TWO_PI is just a circle, it selects a random angle from 360 degrees
+    //angleMode(RADIANS);
     var angle = random(TWO_PI);
 
     // enemies spawn at a random x and y in a circle around the center the base off screen
@@ -159,16 +195,69 @@ function spawnEnemy() {
 }
 
 function drawEnemies() {
-    fill(255, 0, 0);
-    noStroke();
-
     for (var i = 0; i < enemies.length; i++) {
-        circle(enemies[i].x, enemies[i].y, enemies[i].size);
+        var ox = enemies[i].engagedTroop !== null ? random(-2, 2) : 0;
+        var oy = enemies[i].engagedTroop !== null ? random(-2, 2) : 0;
+        fill(255, 0, 0);
+        noStroke();
+        circle(enemies[i].x + ox, enemies[i].y + oy, enemies[i].size);
+        if (enemies[i].health < enemies[i].maxHealth) {
+            drawHealthBar(enemies[i].x, enemies[i].y, enemies[i].size, enemies[i].health, enemies[i].maxHealth);
+        }
     }
 }
 
+function drawWaveAnimation(barWidthPixels) {
+    if (!waveInProg) {
+        // arc cooldown symbol — same style as the tower placement arc
+        var elapsed = currentPrepTime - prepTimeFrames;
+        var progress = elapsed * (TWO_PI / currentPrepTime);
+        var cx = width / 2;
+        var cy = height - 30;
+        angleMode(RADIANS);
+        noFill();
+        stroke(0);
+        strokeWeight(6);
+        arc(cx, cy, 40, 40, -HALF_PI, TWO_PI - HALF_PI - progress);
+        stroke(255, 84, 84);
+        strokeWeight(4);
+        arc(cx, cy, 40, 40, -HALF_PI, TWO_PI - HALF_PI - progress);
+        noStroke();
+    } else {
+        var framesSinceWaveStart = waveConfig.waveLength - waveTimer;
+        strokeWeight(8);
+        stroke(0);
+        line(width - (barWidthPixels / waveConfig.waveLength) * framesSinceWaveStart, height - 4, width - barWidthPixels, height - 4);
+        strokeWeight(6);
+        stroke(245, 66, 66);
+        line(width - (barWidthPixels / waveConfig.waveLength) * framesSinceWaveStart, height - 4, width - barWidthPixels, height - 4);
+        noStroke();
+    }
+}
+
+function drawWaveNumber() {
+    var textHeight = 35;
+    var textOffset = 180;
+    fill(255);
+    stroke(0);
+    strokeWeight(2);
+    textSize(textHeight);
+    textAlign(LEFT);
+    text("Wave: " + waveNum, width - textOffset, height - textHeight);
+    drawWaveAnimation(textOffset);
+    noStroke();
+}
+
 function enemyKilled(enemyIndex, towerIndex) {
-    killedEnemies.push({x: towers[towerIndex].x, y: towers[towerIndex].y, frame: frameCount});
+    // free any troop locked in combat so it can resume
+    if (enemies[enemyIndex].engagedTroop !== null) {
+        enemies[enemyIndex].engagedTroop.engagedEnemy = null;
+    }
+    if (towerIndex != -1) {
+        killedEnemies.push({x: towers[towerIndex].x, y: towers[towerIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
+    } else {
+        killedEnemies.push({x: playerStats.x, y: playerStats.y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
+    }
     enemies.splice(enemyIndex, 1);
     playerStats.money += enemyStats.moneyDropped;
 }

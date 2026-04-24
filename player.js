@@ -37,6 +37,22 @@ function Sprite(sheet, x, y, n) {
     //  this.frame = 0
   //  }
   }
+
+  this.drawBase = function() {
+    this.frames = 2;
+    this.w = sheet.width / this.frames;
+    image(this.sheet, this.x, this.y, this.w * 2, this.h * 2, this.w*floor(this.frame), 0, this.w, this.h);
+
+    this.frame += 0.1;
+    if (this.frame > this.frames) {
+      this.frame = 0;
+    }
+
+    if (paused) {
+      this.frame = 0;
+    }
+
+  }
 }
 
 function setupPlayer() {
@@ -44,13 +60,13 @@ function setupPlayer() {
   playerStats = {
     // the current x and y position that the player spawns at
     // currently in the center where the base will be
-    x: width / 2,
-    y: width / 2,
+    x: 0,
+    y: 0,
     speed: 8,
     health: 100,
     maxHealth: 100,
     facing: "LEFT",
-    money: 100
+    money: 200
   };
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
@@ -64,7 +80,7 @@ function checkPlayerCollisions() {
       var collisionDist = enemy.size / 2 + playerWidth / 2;
       if (d1 < collisionDist || d2 < collisionDist || d3 < collisionDist) {
           playerStats.health -= damageConfig.enemyToPlayer;
-          enemies.splice(i, 1);
+          enemyKilled(i, -1);
       }
   }
 }
@@ -81,9 +97,13 @@ function moneyAnimation() {
           textAlign(CENTER);
           var alpha = 255 - framesPassed * (255 / animationFrames);
           stroke(0, 0, 0, alpha);
+          strokeWeight(3);
           fill(0, 250, 24, alpha);
           textSize(20 - framesPassed * (10 / animationFrames));
-          text("+5", killedEnemies[i].x, killedEnemies[i].y);
+
+          let screenX = killedEnemies[i].x - camera.x + width / 2 + killedEnemies[i].ox;
+          let screenY = killedEnemies[i].y - camera.y + height / 2 + killedEnemies[i].oy;
+          text("+" + enemyStats.moneyDropped, screenX, screenY);
           noStroke();
       }
   }
@@ -94,6 +114,7 @@ function drawMoney() {
   var size = 35;
   fill(255);
   stroke(0);
+  strokeWeight(2);
   textSize(size);
   textAlign(LEFT);
   text("Money: " + playerStats.money, 20, height - size);
@@ -114,5 +135,10 @@ function drawPlayer() {
   player.x = playerStats.x;
   player.y = playerStats.y;
   player.drawPlayer();
-  drawHealthBar(constrain(playerStats.x, 40, width - 40), constrain(playerStats.y, 50, height), 80, playerStats.health, playerStats.maxHealth);
+  drawHealthBar(
+    playerStats.x,
+    playerStats.y,
+    80,
+    playerStats.health,
+    playerStats.maxHealth);
 }

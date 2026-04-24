@@ -9,15 +9,18 @@ let currentScreen = "title";
 
 function setupTitleScreen() {
     playButton = createButton("Play");
-    playButton.position(width / 2 - 20, height / 2 + 40);
+    playButton.id("mainMenuButton");
+    playButton.position(width / 2 - 10, height / 2 + 30);
     playButton.mousePressed(startGame);
 
     settingsButton = createButton("Settings");
-    settingsButton.position(width / 2 - 30, height / 2 + 70);
+    settingsButton.id("mainMenuButton");
+    settingsButton.position(width / 2 - 20, height / 2 + 80);
     settingsButton.mousePressed(openSettings);
 
     encycButton = createButton("Encyclopedia");
-    encycButton.position(width / 2 - 43, height / 2 + 100);
+    encycButton.id("mainMenuButton");
+    encycButton.position(width / 2 - 30, height / 2 + 130);
     encycButton.mousePressed(openEncyclopedia);
 
     backButton = createButton("Back");
@@ -29,6 +32,9 @@ function setupTitleScreen() {
 function drawTitleScreen() {
     image(titleBg, width / 2, height / 2, width, height);
     image(titleLogo, width / 2, 280, 160 * 5, 120 * 5);
+    image(titlePlayButton, width / 2 + 70, height / 2 + 47, 602/3.7, 235/3.7);
+    image(titleSettingsButton, width / 2 + 50, height / 2 + 100, 602/4, 235/4);
+    image(titleEncyclopediaButton, width / 2 + 40, height / 2 + 150, 602/4, 235/4);
     //fill(0);
     //textSize(24);
     //textAlign(CENTER, CENTER);
@@ -108,16 +114,31 @@ function drawSettingsScreen() {
 function drawEncyclopediaScreen() {
     background(50);
     fill(255);
-    textSize(24);
+    textSize(21);
     textAlign(CENTER, CENTER);
     text("Encyclopedia", width / 2, height / 4);
 
     var encyclist = [
-        ["Normal Tower", "text"],
-        ["Healing Tower", "text"],
-        ["Attack Tower", "text"],
-        ["Explosive Tower", "text"]
+        [towerImages.normal,    "Normal Tower",    "Fires arrows at approaching enemies from a distance."],
+        [towerImages.healing,   "Healing Tower",   "Restores health to nearby allies. Prioritizes the player, then the base, then combat towers."],
+        [towerImages.attack,    "Attack Tower",    "Deploys troops that chase and engage enemies in melee combat."],
+        [towerImages.explosive, "Explosive Tower", "Launches explosive projectiles that deal area damage on impact."]
     ];
+
+    var startY = height / 3;
+    var rowHeight = 90;
+    var towerImageX = width / 8;
+    var towerX = 2 * width / 10;
+    var textX = 4 * width / 10;
+
+    textAlign(LEFT);
+
+    for (var i = 0; i < encyclist.length; i++) {
+        var y = startY + i * rowHeight;
+        image(encyclist[i][0], towerImageX, y);
+        text(encyclist[i][1], towerX, y);
+        text(encyclist[i][2], textX, y);
+    }
 }
 
 function hideTitleScreenElements() {
