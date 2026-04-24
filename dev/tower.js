@@ -153,7 +153,7 @@ class AttackTower extends Tower {
         this.price = 200;
         this.health = 175;
         this.maxHealth = 175;
-        this.spawnCooldown = 300; // frames (5s at 60fps)
+        this.spawnCooldown = 120; // frames (2s at 60fps)
         this.lastSpawnFrame = -999;
         this.leashRange = 400;
         this.troopCap = 3;
@@ -191,7 +191,7 @@ class Troop {
         this.level = 1;
         this.health = 60 * this.level;
         this.maxHealth = this.health;
-        this.attackRate = 0.5 * this.level; // damage dealt per frame during combat
+        this.attackRate = 1.0 * this.level; // damage dealt per frame during combat
         this.engagedEnemy = null;
         this.inCombat = false;
         this.isDead = false;
@@ -289,6 +289,21 @@ class Troop {
                 this.y += sin(angle) * this.speed;
             }
         }
+
+        // push apart only while chasing — skip when idle at tower to avoid strange collision
+        if (nearest !== null) {
+            for (var i = 0; i < troops.length; i++) {
+                if (troops[i] === this || troops[i].isDead) continue;
+                var sep = dist(this.x, this.y, troops[i].x, troops[i].y);
+                var minSep = this.size;
+                if (sep < minSep && sep > 0) {
+                    var push = (minSep - sep) / minSep;
+                    var ax = atan2(this.y - troops[i].y, this.x - troops[i].x);
+                    this.x += cos(ax) * push * 2;
+                    this.y += sin(ax) * push * 2;
+                }
+            }
+        }
     }
 
     draw() {
@@ -312,7 +327,7 @@ class HealingTower extends Tower {
         this.img = towerImages.healing;
         this.price = 100;
         this.healRange = 200;
-        this.healRate = 0.1; // ~1.2 HP/sec
+        this.healRate = 0.1; // 6 HP/sec
         this.target = null;
         this.beamX = null;
         this.beamY = null;
