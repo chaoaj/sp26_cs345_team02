@@ -119,10 +119,10 @@ function drawEncyclopediaScreen() {
     text("Encyclopedia", width / 2, height / 4);
 
     var encyclist = [
-        [towerImages.normal , "Normal Tower", "Standard tower, low health, 0 damage. $50"],
-        [towerImages.healing , "Healing Tower", "Heals the player and base +10, low health, 0 damage. $100"],
-        [towerImages.attack , "Attack Tower", "Attacks enemies, high health, 30 damage. $200"],
-        [towerImages.explosive , "Explosive Tower", "Explodes enemies, high health, 70 damage. $250"]
+        [towerImages.normal,    "Normal Tower",    "Fires arrows at approaching enemies from a distance."],
+        [towerImages.healing,   "Healing Tower",   "Restores health to nearby allies. Prioritizes the player, then the base, then combat towers."],
+        [towerImages.attack,    "Attack Tower",    "Deploys troops that chase and engage enemies in melee combat."],
+        [towerImages.explosive, "Explosive Tower", "Launches explosive projectiles that deal area damage on impact."]
     ];
 
     var startY = height / 3;
