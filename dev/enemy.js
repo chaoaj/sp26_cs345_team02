@@ -24,10 +24,10 @@ var enemyStats = {
     // size of the enemy (circle);
     size: 30,
     // movement speed
-    speed: 3,
+    speed: 2,
     // how far from the center enemies spawn on the canvas
     // bigger num = farther
-    spawnRadius: 800,
+    spawnRadius: 1500,
     // decides how much money is given to the player when this enemy is killed
     moneyDropped: 5
 };
@@ -85,10 +85,10 @@ function updateEnemies() {
         enemies[i].x += enemies[i].xSpeed;
         enemies[i].y += enemies[i].ySpeed;
 
-        if (enemies[i].x < -150 ||
-            enemies[i].x > width + 150 ||
-            enemies[i].y < -150 ||
-            enemies[i].y > height + 150)
+        if (enemies[i].x < -WORLD_SIZE / 2 - 800 ||
+            enemies[i].x > WORLD_SIZE / 2 + 800 ||
+            enemies[i].y < -WORLD_SIZE / 2 - 800 ||
+            enemies[i].y > WORLD_SIZE / 2 + 800)
             {
             enemies.splice(i, 1);
             }
@@ -137,11 +137,11 @@ function spawnEnemy() {
     enemy.size = enemyStats.size;
 
     // this is the center of the map (or the base)
-    var baseCenterX = width / 2;
-    var baseCenterY = height / 2;
+    var baseCenterX = base.x;
+    var baseCenterY = base.y;
 
     // TWO_PI is just a circle, it selects a random angle from 360 degrees
-    angleMode(RADIANS);
+    //angleMode(RADIANS);
     var angle = random(TWO_PI);
 
     // enemies spawn at a random x and y in a circle around the center the base off screen

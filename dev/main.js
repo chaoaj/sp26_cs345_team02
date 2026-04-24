@@ -3,6 +3,8 @@
  * Images go into the preload() function.
  */
 
+// test
+const WORLD_SIZE = 2048 // image size of the bg
 // ----- Resolution Size -----
 var windowWidth = 1080
 var windowHeight = 1920
@@ -46,23 +48,25 @@ function preload() {
   baseDamageImage = loadImage("images/towerdamage.png");
 
   // ----- Canvas images -----
-  grassBg = loadImage("images/grassBackground.png");
+  grassBg = loadImage("images/OLDgrassBackgroundOLD.png");
 }
 
 function setup() {
   // ----- Main Game Setup -----
-  createCanvas(windowWidth, windowHeight);  // 1920x1080p
+  createCanvas(windowWidth, windowHeight); // makes the game fit into the window
   imageMode(CENTER);
   textAlign(CENTER, CENTER);
 
   setupTitleScreen();
   setupPlayer();
 
-  base.x = width / 2;
-  base.y = height / 2;
+  base.x = 0;
+  base.y = 0;
 
-  placeableArea.x = width / 2 - placeableArea.size / 2;
-  placeableArea.y = height / 2 - placeableArea.size / 2;
+  // this is gonna be commented out cause the grass bg is 2048x2048 and i wanna
+  // use that as the main canvas -Jason
+  //placeableArea.x = width / 2 - placeableArea.size / 2;
+  //placeableArea.y = height / 2 - placeableArea.size / 2;
 
   // ----- Controller Setup -----
   controller = createController();
@@ -79,6 +83,10 @@ function setup() {
  * This function draws the main base the player is supposed to defend onto the screen. 
  */
 function drawBase() {
+
+  mainBase.x = base.x;
+  mainBase.y = base.y;
+
   mainBase.drawBase();
 
   drawHealthBar(base.x, base.y, base.size + 10, base.health, base.maxHealth);
@@ -154,29 +162,34 @@ function draw() {
     controller.calibrate(true);
     return
   } else if (currentScreen == "game") {
-    imageMode(CORNER);
-    image(grassBg, 0, 0, width, height);
-    imageMode(CENTER);
 
     if (!paused) {
       movePlayer();
-      checkBaseCollisions();
-      if (currentScreen != "game") return;
+      updateCamera();
       updateEnemies();
       updateTowers();
       updateExplosives();
+      checkBaseCollisions();
       checkTowerCollisions();
       checkPlayerCollisions();
       CheckHealth();
     }
+    
+    push();
+    translate(width / 2 - camera.x, height / 2 - camera.y);
+    imageMode(CENTER);
+    image(grassBg, 0, 0);
 
     drawEnemies();
     drawTowers();
     drawExplosives();
-    drawTowerPlaceCoolDownAnimation();
-    moneyAnimation();
     drawBase();
     drawPlayer();
+
+    pop();
+
+    drawTowerPlaceCoolDownAnimation();
+    moneyAnimation();
     drawMoney();
     drawWaveNumber();
     drawInventory();

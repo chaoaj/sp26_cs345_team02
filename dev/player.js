@@ -60,8 +60,8 @@ function setupPlayer() {
   playerStats = {
     // the current x and y position that the player spawns at
     // currently in the center where the base will be
-    x: width / 2,
-    y: height / 2,
+    x: 0,
+    y: 0,
     speed: 8,
     health: 100,
     maxHealth: 100,
@@ -100,7 +100,10 @@ function moneyAnimation() {
           strokeWeight(3);
           fill(0, 250, 24, alpha);
           textSize(20 - framesPassed * (10 / animationFrames));
-          text("+5", killedEnemies[i].x, killedEnemies[i].y);
+
+          let screenX = killedEnemies[i].x - camera.x + width / 2;
+          let screenY = killedEnemies[i].y - camera.y + height / 2;
+          text("+5", screenX, screenY);
           noStroke();
       }
   }
@@ -132,5 +135,10 @@ function drawPlayer() {
   player.x = playerStats.x;
   player.y = playerStats.y;
   player.drawPlayer();
-  drawHealthBar(constrain(playerStats.x, 40, width - 40), constrain(playerStats.y, 50, height), 80, playerStats.health, playerStats.maxHealth);
+  drawHealthBar(
+    playerStats.x,
+    playerStats.y,
+    80,
+    playerStats.health,
+    playerStats.maxHealth);
 }

@@ -36,7 +36,7 @@ function movePlayer() {
   } else if (down) {
       playerStats.y += playerStats.speed * dy;
   }
-  playerStats.y = constrain(playerStats.y, 40, height - 40);
+  playerStats.y = constrain(playerStats.y, -WORLD_SIZE / 2, WORLD_SIZE / 2);
 
   if (right && left) {
     if (lastInput == "RIGHT") {
@@ -54,7 +54,7 @@ function movePlayer() {
       playerStats.x -= playerStats.speed * dx;
       playerStats.facing = "LEFT";
   }
-  playerStats.x = constrain(playerStats.x, 30, width - 30);
+  playerStats.x = constrain(playerStats.x, - WORLD_SIZE / 2, WORLD_SIZE / 2);
 }
 
 /**

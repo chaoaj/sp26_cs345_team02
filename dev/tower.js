@@ -18,10 +18,11 @@ var towerPlaceCoolDownFrames = 50;       // Set to 0 for testing.
 // stores the frame last tower was placed on
 var lastTowerPlacedFrame;
 
+
 var placeableArea = {
-    size: 800,
-    x: 0,
-    y: 0
+    size: 2048,
+    x: -1024,
+    y: -1024
 };
 
 // --- Base Tower class ---
@@ -237,12 +238,16 @@ function drawTowerPlaceCoolDownAnimation() {
         var progress = (frameCount - lastTowerPlacedFrame) * (TWO_PI / towerPlaceCoolDownFrames)
         angleMode(RADIANS);
         noFill();
+
+        let screenX = playerStats.x - camera.x + width / 2;
+        let screenY = playerStats.y - camera.y + height / 2;
+
         stroke(0);
         strokeWeight(6);
-        arc(playerStats.x, playerStats.y + 60, 15, 15, -HALF_PI, TWO_PI - HALF_PI - progress);
+        arc(screenX, screenY + 60, 15, 15, -HALF_PI, TWO_PI - HALF_PI - progress);
         stroke(255, 84, 84);
         strokeWeight(4);
-        arc(playerStats.x, playerStats.y + 60, 15, 15, -HALF_PI, TWO_PI - HALF_PI - progress);
+        arc(screenX, screenY + 60, 15, 15, -HALF_PI, TWO_PI - HALF_PI - progress);
         noStroke();
     }
 }
@@ -262,8 +267,8 @@ function canPlaceTower(tower) {
     var halfSize = 60 / 2;
 
     if (tower.x - halfSize < placeableArea.x ||
-        tower.x + halfSize> placeableArea.x + placeableArea.size ||
-        tower.y - halfSize< placeableArea.y ||
+        tower.x + halfSize > placeableArea.x + placeableArea.size ||
+        tower.y - halfSize < placeableArea.y ||
         tower.y + halfSize > placeableArea.y + placeableArea.size)
         {
             return false;
