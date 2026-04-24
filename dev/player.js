@@ -66,7 +66,7 @@ function setupPlayer() {
     health: 100,
     maxHealth: 100,
     facing: "LEFT",
-    money: 9999           // Set to some large random number to allow for testing.
+    money: 200
   };
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
@@ -101,9 +101,9 @@ function moneyAnimation() {
           fill(0, 250, 24, alpha);
           textSize(20 - framesPassed * (10 / animationFrames));
 
-          let screenX = killedEnemies[i].x - camera.x + width / 2;
-          let screenY = killedEnemies[i].y - camera.y + height / 2;
-          text("+5", screenX, screenY);
+          let screenX = killedEnemies[i].x - camera.x + width / 2 + killedEnemies[i].ox;
+          let screenY = killedEnemies[i].y - camera.y + height / 2 + killedEnemies[i].oy;
+          text("+" + enemyStats.moneyDropped, screenX, screenY);
           noStroke();
       }
   }

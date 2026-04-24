@@ -126,6 +126,7 @@ function checkBaseCollisions() {
   for (var i = enemies.length - 1; i >= 0; i--) {
     var d = dist(enemies[i].x, enemies[i].y, base.x, base.y);
     if (d < base.size / 2 + enemies[i].size / 2) {
+      if (enemies[i].engagedTroop !== null) enemies[i].engagedTroop.engagedEnemy = null;
       base.health -= damageConfig.enemyToBase;
       enemies.splice(i, 1);
 
@@ -142,10 +143,13 @@ function resetGame() {
   enemies = [];
   towers = [];
   explosives = [];
+  arrows = [];
+  troops = [];
   base.health = base.maxHealth;
   waveInProg = false;
   waveNum = 1;
-  prepTimeFrames = waveConfig.totalPrepTime;
+  currentPrepTime = waveConfig.prepTimeStart;
+  prepTimeFrames = currentPrepTime;
   paused = false;
   currentScreen = "title";
   showTitleScreenElements();
@@ -169,6 +173,8 @@ function draw() {
       updateEnemies();
       updateTowers();
       updateExplosives();
+      updateArrows();
+      updateTroops();
       checkBaseCollisions();
       checkTowerCollisions();
       checkPlayerCollisions();
@@ -183,6 +189,8 @@ function draw() {
     drawEnemies();
     drawTowers();
     drawExplosives();
+    drawArrows();
+    drawTroops();
     drawBase();
     drawPlayer();
 
