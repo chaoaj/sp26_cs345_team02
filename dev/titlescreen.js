@@ -35,6 +35,7 @@ function drawTitleScreen() {
     image(titlePlayButton, width / 2 + 50, height / 2 + 90, 602/3.7, 235/3.7);
     image(titleSettingsButton, width / 2 + 50, height / 2 + 140, 602/4, 235/4);
     image(titleEncyclopediaButton, width / 2 + 50, height / 2 + 190, 602/4, 235/4);
+    menuMusic.play();
     //fill(0);
     //textSize(24);
     //textAlign(CENTER, CENTER);
@@ -145,6 +146,7 @@ function hideTitleScreenElements() {
     playButton.hide();
     settingsButton.hide();
     encycButton.hide();
+    menuMusic.pause();
 }
 
 function showTitleScreenElements() {
