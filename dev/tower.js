@@ -1,3 +1,6 @@
+// max number of towers that can be placed at once
+var maxTowers = 16;
+
 // stores all placed towers
 var towers = [];
 
@@ -579,6 +582,10 @@ function canPlaceTower(tower) {
 
     // returns false if the player has less money than the tower costs
     if (playerStats.money < tower.price) {
+        return false;
+    }
+
+    if (towers.length >= maxTowers) {
         return false;
     }
 
