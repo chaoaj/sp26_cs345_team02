@@ -1,10 +1,12 @@
 var lastInput = null;
+var lastInputType = "KEYBOARD";
 var leftBumperHeld;
 var rightBumperHeld;
 var controllerUp;
 var controllerLeft;
 var controllerDown;
 var controllerRight;
+var previewTower;
 
 /**
  *  Moves the player with WASD or controller input if controller is detected.
@@ -18,9 +20,13 @@ function movePlayer() {
   var dy = 1;
 
   var up = keyIsDown(87) || keyIsDown(UP_ARROW) || controllerUp;       // W, UP ARROW, CONT UP
+  if (up && !controllerUp) lastInputType = "KEYBOARD";
   var left = keyIsDown(65) || keyIsDown(LEFT_ARROW) || controllerLeft;   // A, LEFT ARROW, CONT LEFT
+  if (left && !controllerLeft) lastInputType = "KEYBOARD";
   var down = keyIsDown(83) || keyIsDown(DOWN_ARROW) || controllerDown;   // S, DOWN ARROW, CONT DOWN
+  if (down && !controllerDown) lastInputType = "KEYBOARD";
   var right = keyIsDown(68) || keyIsDown(RIGHT_ARROW)  || controllerRight; // D, RIGHT ARROW, CONT RIGHT
+  if (right && !controllerRight) lastInputType = "KEYBOARD";
 
 
   if ((up || down) && (right || left)) {
@@ -94,7 +100,7 @@ function keyPressed() {
   if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") resetGame();
 
   // T - place a tower at the player's current position
-  if (keyCode == 84) placeTower(playerStats.x, playerStats.y);
+  if (keyCode == 84) previewTower = true;
 
   // 1-4 - select tower type
   if (keyCode == 49) {
@@ -154,8 +160,11 @@ function keyPressed() {
     if (currentTower >= inventory.length) currentTower = 0
     updateTower();
   }
+}
 
-
+function keyReleased() {
+  previewTower = false;
+  if (keyCode == 84) placeTower(playerStats.x, playerStats.y);
 }
 
 /**
@@ -167,6 +176,8 @@ function keyPressed() {
  * @param {Object} e - Controller event that handles controller input
  */
 function onPress(e) {
+
+  lastInputType = "CONTROLLER";
 
   const CONTROLLER_MAP = {
     axesUp: "UP",
@@ -224,7 +235,10 @@ function onPress(e) {
 
   if (leftBumperHeld && rightBumperHeld && currentScreen == "game") resetGame(); // pause with "select"
 
-  if (e.name == "buttonBlue") placeTower(playerStats.x, playerStats.y); // place towers with blue button
+  if (e.name == "buttonBlue") {
+    previewTower = true; // place towers with blue button
+
+  }
 }
 
 function onRelease(e) {
@@ -234,4 +248,5 @@ function onRelease(e) {
   if (e.name == "axesRight") controllerRight = false;
   if (e.name == "bumperLeft") leftBumperHeld = false;
   if (e.name == "bumperRight") rightBumperHeld = false;
+  if (e.name == "buttonBlue") placeTower(playerStats.x, playerStats.y);
 }

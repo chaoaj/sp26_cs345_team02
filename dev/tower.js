@@ -623,11 +623,26 @@ function placeTower(x, y) {
     playerStats.money -= tower.price;
 }
 
+function drawTowerPreview() {
+    if (!previewTower) return;
+
+    //some code to show a preview of towers while button is held
+}
+
 function drawTowers() {
-    // convert screen mouse to world coordinates
     var worldMouseX = mouseX - width / 2 + camera.x;
     var worldMouseY = mouseY - height / 2 + camera.y;
-
+    if (lastInputType == "CONTROLLER") {
+        // treat as if the mouse were always position at the player.
+        noCursor();
+        worldMouseX = playerStats.x;
+        worldMouseY = playerStats.y;
+    } else {
+        // convert screen mouse to world coordinates
+        cursor(ARROW);
+        worldMouseX = mouseX - width / 2 + camera.x;
+        worldMouseY = mouseY - height / 2 + camera.y;
+    }
     // find hovered tower
     var hovered = null;
     for (var i = 0; i < towers.length; i++) {
