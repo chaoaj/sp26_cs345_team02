@@ -31,7 +31,11 @@ var enemyStats = {
     // bigger num = farther
     spawnRadius: 1500,
     // decides how much money is given to the player when this enemy is killed
-    moneyDropped: 15
+    moneyDropped: 8,
+    // decides the max money a player can receive from a killed enemy
+    maxMoneyDropped: 30,
+    // decides how much to increase moneyDropped by
+    moneyIncrement: 3
 };
 
 var waveNum = 1;
@@ -56,10 +60,16 @@ var waveTimer = 0;
 function updateEnemyStats() {
     if (waveNum % 10 == 0) {
         enemyStats.speed += 1;
-        enemyStats.enemyToBase += 5;
+        enemyStats.enemyToBase += 3;
     }
-        enemyStats.damageToTower += 5
-        enemyStats.damageToPlayer += 5
+
+    if (enemyStats.moneyDropped + enemyStats.moneyIncrement > enemyStats.maxMoneyDropped) {
+        enemyStats.moneyDropped = enemyStats.maxMoneyDropped;
+    } else {
+        enemyStats.moneyDropped += enemyStats.moneyIncrement;
+    }
+    enemyStats.damageToTower += 5
+    enemyStats.damageToPlayer += 5
 
     announcement = new Announcement("Enemy stats have increased.");
     showAnnouncement = true;
@@ -170,7 +180,7 @@ function stopWave() {
                           waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
     prepTimeFrames = currentPrepTime;
 
-    if (waveNum % 5 === 0) {
+    if (waveNum % 5 == 0) {
         updateEnemyStats();
     }
 }

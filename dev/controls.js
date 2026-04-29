@@ -1,4 +1,4 @@
-var lastInput = null;
+var lastInput;
 var lastInputType = "KEYBOARD";
 var leftBumperHeld;
 var rightBumperHeld;
@@ -20,13 +20,9 @@ function movePlayer() {
   var dy = 1;
 
   var up = keyIsDown(87) || keyIsDown(UP_ARROW) || controllerUp;       // W, UP ARROW, CONT UP
-  if (up && !controllerUp) lastInputType = "KEYBOARD";
   var left = keyIsDown(65) || keyIsDown(LEFT_ARROW) || controllerLeft;   // A, LEFT ARROW, CONT LEFT
-  if (left && !controllerLeft) lastInputType = "KEYBOARD";
   var down = keyIsDown(83) || keyIsDown(DOWN_ARROW) || controllerDown;   // S, DOWN ARROW, CONT DOWN
-  if (down && !controllerDown) lastInputType = "KEYBOARD";
   var right = keyIsDown(68) || keyIsDown(RIGHT_ARROW)  || controllerRight; // D, RIGHT ARROW, CONT RIGHT
-  if (right && !controllerRight) lastInputType = "KEYBOARD";
 
 
   if ((up || down) && (right || left)) {
@@ -74,6 +70,7 @@ function movePlayer() {
  * - Cycling inventory (1-4, ",", and ".")
  */
 function keyPressed() {
+  lastInputType = "KEYBOARD";
   console.log(keyCode);
 
   // ----- MOVEMENT -----
@@ -163,8 +160,10 @@ function keyPressed() {
 }
 
 function keyReleased() {
-  previewTower = false;
-  if (keyCode == 84) placeTower(playerStats.x, playerStats.y);
+  if (keyCode == 84) {
+    previewTower = false;
+    placeTower(playerStats.x, playerStats.y);
+  }
 }
 
 /**
@@ -237,7 +236,6 @@ function onPress(e) {
 
   if (e.name == "buttonBlue") {
     previewTower = true; // place towers with blue button
-
   }
 }
 
@@ -248,5 +246,8 @@ function onRelease(e) {
   if (e.name == "axesRight") controllerRight = false;
   if (e.name == "bumperLeft") leftBumperHeld = false;
   if (e.name == "bumperRight") rightBumperHeld = false;
-  if (e.name == "buttonBlue") placeTower(playerStats.x, playerStats.y);
+  if (e.name == "buttonBlue") {
+    previewTower = false;
+    placeTower(playerStats.x, playerStats.y);
+  }
 }

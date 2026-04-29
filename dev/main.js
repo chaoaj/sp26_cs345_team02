@@ -14,7 +14,7 @@ var paused = false;
 var controller;
 
 // ----- Fonts -----
-var textFonts;
+var textFonts = {};
 
 // ----= Base Object ------
 var base = {
@@ -57,10 +57,8 @@ function preload() {
   grassBg = loadImage("images/OLDgrassBackgroundOLD.png");
 
   // ----- Fonts -----
-  textFonts = {
-    nunito: loadFont("/fonts/static/Nunito-Regular.ttf"),
-    openSans: loadFont("/fonts/static/OpenSans-Regular.ttf")
-  }
+  textFonts.nunito = loadFont("/fonts/static/Nunito-Regular.ttf"),
+  textFonts.openSans = loadFont("/fonts/static/OpenSans-Regular.ttf") 
 }
 
 function setup() {
