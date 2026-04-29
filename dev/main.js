@@ -197,7 +197,6 @@ function draw() {
     translate(width / 2 - camera.x, height / 2 - camera.y);
     imageMode(CENTER);
     image(grassBg, 0, 0);
-    drawTowerPreview();
     drawEnemies();
     drawTowers();
     drawExplosives();
@@ -205,6 +204,7 @@ function draw() {
     drawTroops();
     drawBase();
     drawPlayer();
+    drawTowerPreview();
 
     pop();
     if (showAnnouncement) announcement.show();

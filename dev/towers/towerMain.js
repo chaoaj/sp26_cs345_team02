@@ -130,11 +130,39 @@ function placeTower(x, y) {
     playerStats.money -= tower.price;
 }
 
+/** 
+ * Draw a preview of the selected tower type at the players current position.
+ * @returns N/A
+ */
 function drawTowerPreview() {
     if (!previewTower) return;
-
-    //some code to show a preview of towers while button is held
+    var img;
+    if (activeTowerType == "normal") {
+        img = towerImages.normal;
+    } else if (activeTowerType == "healing") {
+        img = towerImages.healing;
+    } else if (activeTowerType == "attack") {
+        img = towerImages.attack;
+    } else if (activeTowerType == "explosive") {
+        img = towerImages.explosive;
+    }
+    var transparentImg = createImage(100, 100);
+    transparentImg.copy(img, 0, 0, 100, 100, 0, 0, 100, 100);
+    transparentImg.loadPixels();
+    for (var i = 3; i < transparentImg.pixels.length; i += 4) {
+        if (transparentImg.pixels[i] != 0) {
+            transparentImg.pixels[i] = 160;
+        }
+        if (canPlaceTower(new Tower(playerStats.x, playerStats.y))) {
+            transparentImg.pixels[i - 2] += 100;
+        } else {
+            transparentImg.pixels[i - 3] += 100;
+        }
+    }
+    transparentImg.updatePixels();
+    image(transparentImg, playerStats.x, playerStats.y, 130, 130);
 }
+
 /**
  * Draws towers on the screen.
  * @returns N/A
@@ -143,7 +171,7 @@ function drawTowers() {
     var worldMouseX = mouseX - width / 2 + camera.x;
     var worldMouseY = mouseY - height / 2 + camera.y;
 
-    if (lastInputType == "CONTROLLER") {
+    if (lastInput.type == "CONTROLLER") {
         // treat as if the mouse were always position at the player.
         noCursor();
         worldMouseX = playerStats.x;
@@ -164,6 +192,7 @@ function drawTowers() {
         }
     }
 
+    // draw each tower
     for (var i = 0; i < towers.length; i++) {
         towers[i].draw();
     }

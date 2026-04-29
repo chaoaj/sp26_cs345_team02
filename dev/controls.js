@@ -1,5 +1,4 @@
-var lastInput;
-var lastInputType = "KEYBOARD";
+var lastInput = {};
 var leftBumperHeld;
 var rightBumperHeld;
 var controllerUp;
@@ -31,8 +30,8 @@ function movePlayer() {
   }
 
   if (up && down) {
-    if (lastInput == "UP") playerStats.y -= playerStats.speed * dy;
-    if (lastInput == "DOWN") playerStats.y += playerStats.speed * dy;
+    if (lastInput.direction == "UP") playerStats.y -= playerStats.speed * dy;
+    if (lastInput.direction == "DOWN") playerStats.y += playerStats.speed * dy;
   } else if (up) {
       playerStats.y -= playerStats.speed * dy;
   } else if (down) {
@@ -41,11 +40,11 @@ function movePlayer() {
   playerStats.y = constrain(playerStats.y, -WORLD_SIZE / 2, WORLD_SIZE / 2);
 
   if (right && left) {
-    if (lastInput == "RIGHT") {
+    if (lastInput.direction == "RIGHT") {
       playerStats.x += playerStats.speed * dx;
       playerStats.facing = "RIGHT";
     }
-    if (lastInput == "LEFT") {
+    if (lastInput.direction == "LEFT") {
       playerStats.x -= playerStats.speed * dx;
       playerStats.facing = "LEFT";
     }
@@ -70,7 +69,7 @@ function movePlayer() {
  * - Cycling inventory (1-4, ",", and ".")
  */
 function keyPressed() {
-  lastInputType = "KEYBOARD";
+  lastInput.type = "KEYBOARD";
   console.log(keyCode);
 
   // ----- MOVEMENT -----
@@ -87,7 +86,7 @@ function keyPressed() {
   };
 
   if (MOVEMENT_KEYS[keyCode]) {
-    lastInput = MOVEMENT_KEYS[keyCode];
+    lastInput.direction = MOVEMENT_KEYS[keyCode];
   }
 
   // ----- GAME CONTROLS ------
@@ -176,7 +175,7 @@ function keyReleased() {
  */
 function onPress(e) {
 
-  lastInputType = "CONTROLLER";
+  lastInput.type = "CONTROLLER";
 
   const CONTROLLER_MAP = {
     axesUp: "UP",
@@ -185,7 +184,7 @@ function onPress(e) {
     axesRight: "RIGHT"
   };
 
-  if (CONTROLLER_MAP[e.name]) lastInput = CONTROLLER_MAP[e.name];
+  if (CONTROLLER_MAP[e.name]) lastInput.direction = CONTROLLER_MAP[e.name];
 
   if (e.name == "axesUp") controllerUp = true;
   if (e.name == "axesDown") controllerDown = true;
