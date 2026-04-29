@@ -206,6 +206,8 @@ function spawnEnemy() {
     enemy.xSpeed = distanceX / totalDistance * enemyStats.speed;
     enemy.ySpeed = distanceY / totalDistance * enemyStats.speed;
 
+    enemyToDraw = new Sprite(enemySprite, enemy.x, enemy.y, 4);
+
     enemies.push(enemy);
 }
 
@@ -215,7 +217,10 @@ function drawEnemies() {
         var oy = enemies[i].engagedTroop !== null ? random(-2, 2) : 0;
         fill(255, 0, 0);
         noStroke();
-        circle(enemies[i].x + ox, enemies[i].y + oy, enemies[i].size);
+        // circle(enemies[i].x + ox, enemies[i].y + oy, enemies[i].size);
+        enemyToDraw.x = enemies[i].x + ox;
+        enemyToDraw.y = enemies[i].y + oy;
+        enemyToDraw.drawEnemy();
         if (enemies[i].health < enemies[i].maxHealth) {
             drawHealthBar(enemies[i].x, enemies[i].y, enemies[i].size, enemies[i].health, enemies[i].maxHealth);
         }

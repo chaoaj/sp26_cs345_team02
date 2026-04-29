@@ -40,6 +40,9 @@ function preload() {
   // ----- Player Images -----
   playerSprite = loadImage("images/PlayerWalkNew.png");
 
+  // ----- Enemy Image -----
+  enemySprite = loadImage("images/enemyNormal.png");
+  
   // ----- Tower images -----
   towerImages.normal = loadImage("images/normalTower.png");
   towerImages.attack = loadImage("images/towerAttack.png");
