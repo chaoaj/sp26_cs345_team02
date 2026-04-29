@@ -162,7 +162,7 @@ class Troop {
             var d = dist(this.x, this.y, troops[i].x, troops[i].y)
             var minDist =  this.size;
 
-            if (d < minDist && dist > 0) {
+            if (d < minDist && d > 0) {
 
                 var angle = atan2(this.y - troops[i].y, this.x - troops[i].x);
                 var push = (minDist - d) / minDist;

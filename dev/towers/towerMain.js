@@ -300,4 +300,36 @@ function checkTowerCollisions() {
  */
 function sellTower() {
 
+    var worldMouseX = mouseX - width / 2 + camera.x;
+    var worldMouseY = mouseY - height / 2 + camera.y;
+
+    for (var i = towers.length - 1; i >= 0; i--) {
+        
+        var d = dist(worldMouseX, worldMouseY, towers[i].x, towers[i].y);
+
+        if (d < towers[i].size) {
+
+            var soldTower = towers[i];
+
+            var refund = soldTower.price / 2;
+            playerStats.money += refund;
+
+            // this whole block is just a special case to delete troopers if the barrack tower is sold
+            for (var j = troops.length - 1; j >= 0; j--) {
+
+                if (troops[j].tower == soldTower) {
+                    for (var k = 0; k < enemies.length; k++) {
+                        if (enemies[k].engagedTroop == troops[j]) {
+                            enemies[k].engagedTroop = null;
+                        }
+                    }
+                    troops.splice(j, 1);
+                }
+            }
+
+            towers.splice(i, 1);
+
+            return;
+        }
+    }
 }
