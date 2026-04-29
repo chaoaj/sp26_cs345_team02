@@ -1,4 +1,5 @@
 var lastInput = null;
+var lastInputType = "KEYBOARD";
 var leftBumperHeld;
 var rightBumperHeld;
 var controllerUp;
@@ -19,9 +20,13 @@ function movePlayer() {
   var dy = 1;
 
   var up = keyIsDown(87) || keyIsDown(UP_ARROW) || controllerUp;       // W, UP ARROW, CONT UP
+  if (up && !controllerUp) lastInputType = "KEYBOARD";
   var left = keyIsDown(65) || keyIsDown(LEFT_ARROW) || controllerLeft;   // A, LEFT ARROW, CONT LEFT
+  if (left && !controllerLeft) lastInputType = "KEYBOARD";
   var down = keyIsDown(83) || keyIsDown(DOWN_ARROW) || controllerDown;   // S, DOWN ARROW, CONT DOWN
+  if (down && !controllerDown) lastInputType = "KEYBOARD";
   var right = keyIsDown(68) || keyIsDown(RIGHT_ARROW)  || controllerRight; // D, RIGHT ARROW, CONT RIGHT
+  if (right && !controllerRight) lastInputType = "KEYBOARD";
 
 
   if ((up || down) && (right || left)) {
@@ -171,6 +176,8 @@ function keyReleased() {
  * @param {Object} e - Controller event that handles controller input
  */
 function onPress(e) {
+
+  lastInputType = "CONTROLLER";
 
   const CONTROLLER_MAP = {
     axesUp: "UP",
