@@ -61,6 +61,8 @@ function preload() {
     nunito: loadFont("/fonts/static/Nunito-Regular.ttf"),
     openSans: loadFont("/fonts/static/OpenSans-Regular.ttf")
   }
+  // ----- Sound -----
+  menuMusic = new Audio("audio/mainMenuMusic.mp3");
 }
 
 function setup() {
