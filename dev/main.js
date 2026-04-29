@@ -57,8 +57,10 @@ function preload() {
   grassBg = loadImage("images/OLDgrassBackgroundOLD.png");
 
   // ----- Fonts -----
-  textFonts.nunito = loadFont("/fonts/static/Nunito-Regular.ttf"),
-  textFonts.openSans = loadFont("/fonts/static/OpenSans-Regular.ttf") 
+  textFonts.nunito = loadFont("/fonts/static/Nunito-Regular.ttf");
+  textFonts.openSans = loadFont("/fonts/static/OpenSans-Regular.ttf");
+  // ----- Sound -----
+  menuMusic = new Audio("audio/mainMenuMusic.mp3");
 }
 
 function setup() {
