@@ -53,6 +53,17 @@ var enemyDelay = spawnRateToDelay(waveConfig.baseSpawnRate);
 // counts down the remaining frames in the current wave
 var waveTimer = 0;
 
+function updateEnemyStats() {
+    if (waveNum % 10 == 0) {
+        enemyStats.speed += 1;
+        enemyStats.enemyToBase += 5;
+    }
+        enemyStats.damageToTower += 5
+        enemyStats.damageToPlayer += 5
+
+    announcement = new Announcement("Enemy stats have increased.");
+    showAnnouncement = true;
+}
 
 function updateEnemies() {
     if (waveInProg == false) {
@@ -158,6 +169,10 @@ function stopWave() {
     currentPrepTime = max(waveConfig.prepTimeMin,
                           waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
     prepTimeFrames = currentPrepTime;
+
+    if (waveNum % 5 === 0) {
+        updateEnemyStats();
+    }
 }
 
 function spawnEnemy() {

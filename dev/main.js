@@ -13,6 +13,9 @@ var windowHeight = 1920
 var paused = false;
 var controller;
 
+// ----- Fonts -----
+var textFonts;
+
 // ----= Base Object ------
 var base = {
   x: 0,
@@ -49,6 +52,12 @@ function preload() {
 
   // ----- Canvas images -----
   grassBg = loadImage("images/OLDgrassBackgroundOLD.png");
+
+  // ----- Fonts -----
+  textFonts = {
+    nunito: loadFont("/fonts/static/Nunito-Regular.ttf"),
+    openSans: loadFont("/fonts/static/OpenSans-Regular.ttf")
+  } 
 }
 
 function setup() {
@@ -185,7 +194,7 @@ function draw() {
     translate(width / 2 - camera.x, height / 2 - camera.y);
     imageMode(CENTER);
     image(grassBg, 0, 0);
-
+    
     drawEnemies();
     drawTowers();
     drawExplosives();
@@ -193,9 +202,10 @@ function draw() {
     drawTroops();
     drawBase();
     drawPlayer();
-
+    
     pop();
-
+    if (showAnnouncement) announcement.show();
+    
     drawTowerPlaceCoolDownAnimation();
     moneyAnimation();
     drawMoney();
@@ -204,7 +214,7 @@ function draw() {
 
     // quick check if the game is paused
     if (paused) {
-      fill(0, 0, 0, 120);
+      fill(0, 120);
       noStroke();
       rectMode(CORNER);
       rect(0, 0, width, height);
