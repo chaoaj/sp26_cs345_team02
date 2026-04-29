@@ -623,6 +623,12 @@ function placeTower(x, y) {
     playerStats.money -= tower.price;
 }
 
+function drawTowerPreview() {
+    if (!previewTower) return;
+
+    //some code to show a preview of towers while button is held
+}
+
 function drawTowers() {
     // convert screen mouse to world coordinates
     var worldMouseX = mouseX - width / 2 + camera.x;

@@ -5,6 +5,7 @@ var controllerUp;
 var controllerLeft;
 var controllerDown;
 var controllerRight;
+var previewTower;
 
 /**
  *  Moves the player with WASD or controller input if controller is detected.
@@ -94,7 +95,7 @@ function keyPressed() {
   if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") resetGame();
 
   // T - place a tower at the player's current position
-  if (keyCode == 84) placeTower(playerStats.x, playerStats.y);
+  if (keyCode == 84) previewTower = true;
 
   // 1-4 - select tower type
   if (keyCode == 49) {
@@ -154,8 +155,11 @@ function keyPressed() {
     if (currentTower >= inventory.length) currentTower = 0
     updateTower();
   }
+}
 
-
+function keyReleased() {
+  previewTower = false;
+  if (keyCode == 84) placeTower(playerStats.x, playerStats.y);
 }
 
 /**
@@ -224,7 +228,10 @@ function onPress(e) {
 
   if (leftBumperHeld && rightBumperHeld && currentScreen == "game") resetGame(); // pause with "select"
 
-  if (e.name == "buttonBlue") placeTower(playerStats.x, playerStats.y); // place towers with blue button
+  if (e.name == "buttonBlue") {
+    previewTower = true; // place towers with blue button
+
+  }
 }
 
 function onRelease(e) {
@@ -234,4 +241,5 @@ function onRelease(e) {
   if (e.name == "axesRight") controllerRight = false;
   if (e.name == "bumperLeft") leftBumperHeld = false;
   if (e.name == "bumperRight") rightBumperHeld = false;
+  if (e.name == "buttonBlue") placeTower(playerStats.x, playerStats.y);
 }

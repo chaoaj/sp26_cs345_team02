@@ -26,7 +26,7 @@ var base = {
 };
 
 /**
- * This function is called once to load assets before our game runs. 
+ * This function is called once to load assets before our game runs.
  * Any images are to go here.
  */
 function preload() {
@@ -57,7 +57,7 @@ function preload() {
   textFonts = {
     nunito: loadFont("/fonts/static/Nunito-Regular.ttf"),
     openSans: loadFont("/fonts/static/OpenSans-Regular.ttf")
-  } 
+  }
 }
 
 function setup() {
@@ -89,7 +89,7 @@ function setup() {
 }
 
 /**
- * This function draws the main base the player is supposed to defend onto the screen. 
+ * This function draws the main base the player is supposed to defend onto the screen.
  */
 function drawBase() {
 
@@ -109,12 +109,12 @@ function drawBase() {
 /**
  * This functions draws a health bar that is shared
  * between towers, the player, and the main base.
- * 
- * @param {*} x 
- * @param {*} y 
- * @param {*} barWidth 
- * @param {*} health 
- * @param {*} maxHealth 
+ *
+ * @param {*} x
+ * @param {*} y
+ * @param {*} barWidth
+ * @param {*} health
+ * @param {*} maxHealth
  */
 function drawHealthBar(x, y, barWidth, health, maxHealth) {
   var ratio = max(0, health / maxHealth);
@@ -189,12 +189,12 @@ function draw() {
       checkPlayerCollisions();
       CheckHealth();
     }
-    
+
     push();
     translate(width / 2 - camera.x, height / 2 - camera.y);
     imageMode(CENTER);
     image(grassBg, 0, 0);
-    
+    drawTowerPreview();
     drawEnemies();
     drawTowers();
     drawExplosives();
@@ -202,10 +202,10 @@ function draw() {
     drawTroops();
     drawBase();
     drawPlayer();
-    
+
     pop();
     if (showAnnouncement) announcement.show();
-    
+
     drawTowerPlaceCoolDownAnimation();
     moneyAnimation();
     drawMoney();
