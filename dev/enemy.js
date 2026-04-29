@@ -131,8 +131,10 @@ function updateEnemies() {
     }
 }
 
-// returns the nearest tower to the enemy, or the base if no towers exist.
-// enemies will break off and engage any troop spotted within troopDetectionRange.
+/**
+ * Return the nearest tower to the enemy, or the base if no towers exist.
+ * Enemies will break off and engage any troop spotted within troopDetectionRange.
+ */
 function getNearestTarget(enemy) {
     var nearest = base;
     var nearestDist = dist(enemy.x, enemy.y, base.x, base.y);
@@ -278,13 +280,13 @@ function drawWaveNumber() {
     noStroke();
 }
 
-function enemyKilled(enemyIndex, towerIndex) {
+function enemyKilled(enemyIndex, tower = null) {
     // free any troop locked in combat so it can resume
     if (enemies[enemyIndex].engagedTroop !== null) {
         enemies[enemyIndex].engagedTroop.engagedEnemy = null;
     }
-    if (towerIndex != -1) {
-        killedEnemies.push({x: towers[towerIndex].x, y: towers[towerIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
+    if (tower != null) {
+        killedEnemies.push({x: enemies[enemyIndex].x, y: enemies[enemyIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
     } else {
         killedEnemies.push({x: playerStats.x, y: playerStats.y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
     }

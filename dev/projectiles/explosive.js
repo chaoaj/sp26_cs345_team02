@@ -1,7 +1,8 @@
 // Projectile fired by ExplosiveTower. Travels to a fixed target position, then
 // deals AOE damage to all enemies within explosionRadius on arrival.
 class Explosive {
-    constructor(x, y, targetX, targetY, explosionRadius) {
+    constructor(x, y, targetX, targetY, explosionRadius, tower = null) {
+        this.tower = tower;
         this.x = x;
         this.y = y;
 
@@ -49,13 +50,13 @@ class Explosive {
                     enemies[i].engagedTroop.engagedEnemy = null;
                 }
                 
-                killedEnemies.push({
+                /*killedEnemies.push({
                     x: enemies[i].x,
                     y: enemies[i].y,
                     frame: frameCount
-                });
+                }); */
 
-                enemies.splice(i, 1);
+                enemyKilled(i, this.tower); // needs to be fixed
                 playerStats.money += enemyStats.moneyDropped;
             }
         }

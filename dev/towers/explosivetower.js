@@ -34,7 +34,7 @@ class ExplosiveTower extends Tower {
         // fire a projectile at the target's current position and reset the cooldown
         if (closest !== null) {
             explosives.push(
-                new Explosive(this.x, this.y, closest.x, closest.y, this.explosionRadius)
+                new Explosive(this.x, this.y, closest.x, closest.y, this.explosionRadius, this)
             );
             this.lastShotFrame = frameCount;
         }

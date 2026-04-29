@@ -167,6 +167,7 @@ function resetGame() {
   showTitleScreenElements();
   setupPlayer();
   resetInventory();
+  cursor(ARROW);
 }
 
 function draw() {
@@ -235,8 +236,4 @@ function draw() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-}
-
-function mousePressed() {
-  sellTower();
 }

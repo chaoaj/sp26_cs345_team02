@@ -165,6 +165,14 @@ function keyReleased() {
   }
 }
 
+function mousePressed() {
+  sellTower();
+}
+
+function mouseMoved() {
+  lastInput.type = "KEYBOARD";
+}
+
 /**
  * Handles controller button inputs.
  *
@@ -174,6 +182,7 @@ function keyReleased() {
  * @param {Object} e - Controller event that handles controller input
  */
 function onPress(e) {
+  console.log("key:", e.name);
 
   lastInput.type = "CONTROLLER";
 
@@ -235,6 +244,9 @@ function onPress(e) {
 
   if (e.name == "buttonBlue") {
     previewTower = true; // place towers with blue button
+  }
+  if (e.name == "buttonRed") {
+    sellTower();
   }
 }
 

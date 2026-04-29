@@ -20,14 +20,14 @@ class NormalTower extends Tower {
         for (var i = 0; i < enemies.length; i++) {
             var d = dist(this.x, this.y, enemies[i].x, enemies[i].y);
 
-            if (d <= this.attackRange && d < closestDist) {
-                closestDist = d;
+            if (d <= this.attackRange && d < closest) {
+                closest = d;
                 target = enemies[i];
             }
         }
 
         if (target !== null) {
-            arrows.push(new Arrow(this.x, this.y, closest.x, closest.y));
+            arrows.push(new Arrow(this.x, this.y, target.x, target.y, this));
             this.lastShotFrame = frameCount;
         }
     }

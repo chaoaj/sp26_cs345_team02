@@ -87,7 +87,8 @@ function drawSettingsScreen() {
         [">", "Right Axes Right", "Select Next Tower"],
         ["<", "Right Axes Left", "Select Previous Tower"],
         ["P", "Select", "Pause"], // after we add controller functions for each button
-        ["R + L-Shift", "R + L Bumper", "Reset Game"]
+        ["R + L-Shift", "R + L Bumper", "Reset Game"],
+        ["Left Click", "B", "Sell Tower"]
     ];
 
     textSize(16);

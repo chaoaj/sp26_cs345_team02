@@ -2,6 +2,9 @@
 
 var towers = []; // stores all placed towers
 
+// keeps track of which tower is hovered
+var hovered = null;
+
 // stores all projectiles and minions
 var explosives = [];
 var arrows = [];
@@ -32,6 +35,9 @@ var healthConfig = {
     base: 200,
     tower: 100
 };
+
+// controls how many towers can be place at once
+var maxTowers = 16;
 
 var placeableArea = {
     size: 2048,
@@ -78,6 +84,10 @@ function canPlaceTower(tower) {
 
     // returns false if the player has less money than the tower costs
     if (playerStats.money < tower.price) {
+        return false;
+    }
+
+    if (towers.length >= maxTowers) {
         return false;
     }
 
@@ -168,8 +178,8 @@ function drawTowerPreview() {
  * @returns N/A
  */
 function drawTowers() {
-    var worldMouseX = mouseX - width / 2 + camera.x;
-    var worldMouseY = mouseY - height / 2 + camera.y;
+    var worldMouseX;
+    var worldMouseY;
 
     if (lastInput.type == "CONTROLLER") {
         // treat as if the mouse were always position at the player.
@@ -184,7 +194,7 @@ function drawTowers() {
     }
 
     // find hovered tower
-    var hovered = null;
+    hovered = null;
     for (var i = 0; i < towers.length; i++) {
         if (dist(worldMouseX, worldMouseY, towers[i].x, towers[i].y) < towers[i].size / 2) {
             hovered = towers[i];
@@ -306,14 +316,7 @@ function checkTowerCollisions() {
                     if (enemies[i].engagedTroop !== null) {
                         enemies[i].engagedTroop.engagedEnemy = null;
                     }
-
-                    killedEnemies.push({
-                        x: enemies[i].x,
-                        y: enemies[i].y,
-                        frame: frameCount
-                    });
-
-                    enemies.splice(i, 1);
+                    enemyKilled(i, towers[j]);
 
                     playerStats.money += enemyStats.moneyDropped;
                 }
@@ -328,9 +331,18 @@ function checkTowerCollisions() {
  * hovers over a tower. It gives half of the money used to place the tower.
  */
 function sellTower() {
+    var worldMouseX;
+    var worldMouseY;
 
-    var worldMouseX = mouseX - width / 2 + camera.x;
-    var worldMouseY = mouseY - height / 2 + camera.y;
+    if (lastInput.type == "CONTROLLER") {
+        // treat as if the mouse were always position at the player.
+        worldMouseX = playerStats.x;
+        worldMouseY = playerStats.y;
+    } else {
+        // convert screen mouse to world coordinates
+        worldMouseX = mouseX - width / 2 + camera.x;
+        worldMouseY = mouseY - height / 2 + camera.y;
+    }
 
     for (var i = towers.length - 1; i >= 0; i--) {
         

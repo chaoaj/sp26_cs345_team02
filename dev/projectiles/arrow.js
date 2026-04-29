@@ -1,7 +1,8 @@
 // Arrow fired by NormalTower. Travels to the target's position at fire time;
 // deals damage to the first enemy it hits and then removes itself.
 class Arrow {
-    constructor(x, y, targetX, targetY) {
+    constructor(x, y, targetX, targetY, tower = null) {
+        this.tower = tower;
         this.x = x;
         this.y = y;
 
@@ -33,7 +34,7 @@ class Arrow {
                 enemies[i].health -= this.damage;
 
                 if (enemies[i].health <= 0) {
-                    enemies.splice(i, 1);
+                    enemyKilled(i, this.tower);
                     playerStats.money += enemyStats.moneyDropped;
                 }
 
