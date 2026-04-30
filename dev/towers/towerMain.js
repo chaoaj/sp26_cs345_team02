@@ -195,10 +195,12 @@ function drawTowers() {
 
     // find hovered tower
     hovered = null;
+    var min = 9999;
     for (var i = 0; i < towers.length; i++) {
-        if (dist(worldMouseX, worldMouseY, towers[i].x, towers[i].y) < towers[i].size / 2) {
+        var d = dist(worldMouseX, worldMouseY, towers[i].x, towers[i].y);
+        if (d < towers[i].size / 2 && d < min) {
             hovered = towers[i];
-            break;
+            min = d;
         }
     }
 
@@ -331,46 +333,27 @@ function checkTowerCollisions() {
  * hovers over a tower. It gives half of the money used to place the tower.
  */
 function sellTower() {
-    var worldMouseX;
-    var worldMouseY;
-
-    if (lastInput.type == "CONTROLLER") {
-        // treat as if the mouse were always position at the player.
-        worldMouseX = playerStats.x;
-        worldMouseY = playerStats.y;
-    } else {
-        // convert screen mouse to world coordinates
-        worldMouseX = mouseX - width / 2 + camera.x;
-        worldMouseY = mouseY - height / 2 + camera.y;
+    if (hovered === null) {
+        return;
     }
+    var soldTower = hovered;
 
-    for (var i = towers.length - 1; i >= 0; i--) {
-        
-        var d = dist(worldMouseX, worldMouseY, towers[i].x, towers[i].y);
+    var refund = soldTower.price / 2;
+    playerStats.money += refund;
 
-        if (d < towers[i].size) {
-
-            var soldTower = towers[i];
-
-            var refund = soldTower.price / 2;
-            playerStats.money += refund;
-
-            // this whole block is just a special case to delete troopers if the barrack tower is sold
-            for (var j = troops.length - 1; j >= 0; j--) {
-
-                if (troops[j].tower == soldTower) {
-                    for (var k = 0; k < enemies.length; k++) {
-                        if (enemies[k].engagedTroop == troops[j]) {
-                            enemies[k].engagedTroop = null;
-                        }
+    // this whole block is just a special case to delete troopers if the attack tower is sold
+    if (soldTower instanceof AttackTower) {
+        for (var i = troops.length - 1; i >= 0; i--) {
+            if (troops[i].tower == soldTower) {
+                for (var j = 0; j < enemies.length; j++) {
+                    if (enemies[j].engagedTroop == troops[i]) {
+                        enemies[j].engagedTroop = null;
                     }
-                    troops.splice(j, 1);
                 }
+                troops.splice(i, 1); 
             }
-
-            towers.splice(i, 1);
-
-            return;
         }
     }
+    towers.splice(towers.indexOf(soldTower), 1);
+    return;
 }
