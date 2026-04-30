@@ -448,13 +448,6 @@ function upgradeTower() {
 
     var preview = hovered.getUpgradeInfo();
     if (!hovered.upgrade()) return;
-
-    if (preview.statLabel !== null) {
-        var msg = preview.statLabel + " upgraded: " +
-                  formatStat(preview.current) + " → " + formatStat(preview.next);
-        announcement = new Announcement(msg, 24);
-        showAnnouncement = true;
-    }
 }
 
 // Rounds floats to 2 decimals for display; leaves integers alone.
