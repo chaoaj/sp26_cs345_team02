@@ -452,8 +452,6 @@ function upgradeTower() {
     if (preview.statLabel !== null) {
         var msg = preview.statLabel + " upgraded: " +
                   formatStat(preview.current) + " → " + formatStat(preview.next);
-        announcement = new Announcement(msg, 24);
-        showAnnouncement = true;
     }
 }
 
