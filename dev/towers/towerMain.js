@@ -18,6 +18,83 @@ var towerTypes = {
     explosive:  ExplosiveTower
 };
 
+// Per-type upgrade state. All towers of a given class share these stats —
+// upgrading one upgrades the entire type.
+//
+//   level         current upgrade level (1..maxLevel)
+//   maxLevel      hard cap; once reached, upgrade() is a no-op
+//   costBase      cost of the FIRST upgrade (level 1 -> 2)
+//   costMult      cost grows by this factor each level (1.6 -> ~4x by max)
+//   currentStats  live stat values, mutated on upgrade and copied to new instances
+//   schedule      ordered list of {stat, delta, label} entries; index = level - 1
+//
+// SCALING.md documents the math; numbers below should be kept in sync.
+var towerUpgrades = {
+    NormalTower: {
+        level: 1,
+        maxLevel: 5,
+        costBase: 35,
+        costMult: 1.6,
+        currentStats: { damage: 20, attackRange: 350 },
+        schedule: [
+            { stat: "damage",      delta: 10, label: "Arrow Damage" },
+            { stat: "attackRange", delta: 50, label: "Attack Range" },
+            { stat: "damage",      delta: 10, label: "Arrow Damage" },
+            { stat: "attackRange", delta: 50, label: "Attack Range" }
+        ]
+    },
+    ExplosiveTower: {
+        level: 1,
+        maxLevel: 5,
+        costBase: 150,
+        costMult: 1.6,
+        currentStats: { damage: 80, explosionRadius: 150 },
+        schedule: [
+            { stat: "damage",          delta: 20, label: "Blast Damage" },
+            { stat: "explosionRadius", delta: 30, label: "Blast Radius" },
+            { stat: "damage",          delta: 20, label: "Blast Damage" },
+            { stat: "explosionRadius", delta: 30, label: "Blast Radius" }
+        ]
+    },
+    AttackTower: {
+        level: 1,
+        maxLevel: 5,
+        costBase: 125,
+        costMult: 1.6,
+        currentStats: { troopCap: 3, troopLevel: 1 },
+        schedule: [
+            { stat: "troopCap",   delta: 1, label: "Troop Cap" },
+            { stat: "troopLevel", delta: 1, label: "Troop Power" },
+            { stat: "troopCap",   delta: 1, label: "Troop Cap" },
+            { stat: "troopLevel", delta: 1, label: "Troop Power" }
+        ]
+    },
+    HealingTower: {
+        level: 1,
+        maxLevel: 5,
+        costBase: 75,
+        costMult: 1.6,
+        currentStats: { healRange: 200, maxHealth: 100, auraHealRate: 0 },
+        schedule: [
+            { stat: "healRange",    delta: 30,   label: "Heal Range" },
+            { stat: "maxHealth",    delta: 25,   label: "Tower HP" },
+            { stat: "auraHealRate", delta: 0.02, label: "Aura Heal" },
+            { stat: "auraHealRate", delta: 0.02, label: "Aura Heal" }
+        ]
+    }
+};
+
+// Returns the active tower-count cap. Base of 16, +2 for each tower type that
+// has reached max level. All four maxed -> cap is 24.
+function effectiveMaxTowers() {
+    var bonus = 0;
+    for (var key in towerUpgrades) {
+        var cfg = towerUpgrades[key];
+        if (cfg.level >= cfg.maxLevel) bonus += 2;
+    }
+    return maxTowers + bonus;
+}
+
 // controls how long the cool down for placing a tower should be
 var towerPlaceCoolDownFrames = 50;       // Set to 0 for testing.
 
@@ -87,7 +164,7 @@ function canPlaceTower(tower) {
         return false;
     }
 
-    if (towers.length >= maxTowers) {
+    if (towers.length >= effectiveMaxTowers()) {
         return false;
     }
 
@@ -227,6 +304,8 @@ function drawTowers() {
         noStroke();
     }
 
+    drawTowerHoverPanel();
+
     // highlight this tower's troops with a ring and always-visible health bar
     if (hovered instanceof AttackTower) {
         for (var k = 0; k < troops.length; k++) {
@@ -356,4 +435,85 @@ function sellTower() {
     }
     towers.splice(towers.indexOf(soldTower), 1);
     return;
+}
+
+/**
+ * Upgrades the hovered tower, increasing a stat unique to its type.
+ * Costs upgradePrice from playerStats.money; no-op if the player can't afford it.
+ * Fires an on-screen announcement with the stat change on success.
+ */
+function upgradeTower() {
+    if (hovered === null) return;
+    if (typeof hovered.upgrade !== "function") return;
+
+    var preview = hovered.getUpgradeInfo();
+    if (!hovered.upgrade()) return;
+
+    if (preview.statLabel !== null) {
+        var msg = preview.statLabel + " upgraded: " +
+                  formatStat(preview.current) + " → " + formatStat(preview.next);
+        announcement = new Announcement(msg, 24);
+        showAnnouncement = true;
+    }
+}
+
+// Rounds floats to 2 decimals for display; leaves integers alone.
+function formatStat(v) {
+    if (typeof v !== "number") return v;
+    if (Number.isInteger(v)) return v;
+    return Math.round(v * 100) / 100;
+}
+
+/**
+ * Draws a stats panel above the hovered tower showing type, HP, level,
+ * the upgradeable stat preview, and the upgrade cost. Flips below the
+ * tower if the panel would clip the top of the camera view.
+ */
+function drawTowerHoverPanel() {
+    if (hovered === null) return;
+
+    var info = hovered.getUpgradeInfo();
+    var name = hovered.constructor.name.replace(/Tower$/, "") + " Tower";
+    var upgradeable = info.maxLevel > 1;
+
+    var panelW = 240;
+    var panelH = upgradeable ? 110 : 60;
+    var px = hovered.x - panelW / 2;
+    var py = hovered.y - hovered.size / 2 - panelH - 10;
+
+    // flip below the tower if the panel would clip the top of the camera view
+    if (py < camera.y - height / 2 + 10) {
+        py = hovered.y + hovered.size / 2 + 10;
+    }
+
+    push();
+    rectMode(CORNER);
+    noStroke();
+    fill(0, 180);
+    rect(px, py, panelW, panelH, 6);
+
+    fill(255);
+    textAlign(LEFT, TOP);
+    textSize(14);
+    text(name, px + 10, py + 8);
+    text("HP: " + Math.ceil(hovered.health) + " / " + hovered.maxHealth, px + 10, py + 28);
+
+    if (upgradeable) {
+        text("Lv " + info.level + " / " + info.maxLevel, px + 10, py + 48);
+        if (info.maxed) {
+            fill(255, 215, 0);
+            text("MAXED", px + 10, py + 68);
+        } else {
+            text(info.statLabel + ": " + formatStat(info.current) + " -> " + formatStat(info.next),
+                 px + 10, py + 68);
+            if (info.canAfford) {
+                fill(120, 255, 120);
+            } else {
+                fill(255, 120, 120);
+            }
+            text("Press U  (" + info.cost + "g)", px + 10, py + 88);
+        }
+    }
+    pop();
+    noStroke();
 }

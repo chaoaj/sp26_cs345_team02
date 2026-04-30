@@ -12,8 +12,11 @@ class AttackTower extends Tower {
         this.lastSpawnFrame = -999;
 
         this.leashRange = 400;
-        this.troopCap = 3;
-        
+
+        var cs = towerUpgrades.AttackTower.currentStats;
+        this.troopCap = cs.troopCap;
+        this.troopLevel = cs.troopLevel;
+
         this.wallDamage = 2; // damage dealt per frame to enemies touching this tower
     }
 

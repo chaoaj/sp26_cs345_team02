@@ -163,6 +163,7 @@ function resetGame() {
   currentPrepTime = waveConfig.prepTimeStart;
   prepTimeFrames = currentPrepTime;
   paused = false;
+  pauseMenuTab = null;
   currentScreen = "title";
   showTitleScreenElements();
   setupPlayer();
@@ -216,16 +217,9 @@ function draw() {
     drawWaveNumber();
     drawInventory();
 
-    // quick check if the game is paused
+    // pause menu overlay (settings/keybinds/tower-types)
     if (paused) {
-      fill(0, 120);
-      noStroke();
-      rectMode(CORNER);
-      rect(0, 0, width, height);
-      fill(255);
-      textSize(48);
-      textAlign(CENTER, CENTER);
-      text("PAUSED", width / 2, height / 2);
+      drawPauseMenu();
     }
   } else if (currentScreen == "settings") {
     drawSettingsScreen();

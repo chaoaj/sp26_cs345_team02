@@ -10,8 +10,10 @@ class ExplosiveTower extends Tower {
         this.attackCooldown = 120; // frames (2s at 60fps)
         // initialized far in the past so the tower can fire immediately on placement
         this.lastShotFrame = -999;
-        // radius of the explosion when the projectile lands
-        this.explosionRadius = 150;
+
+        var cs = towerUpgrades.ExplosiveTower.currentStats;
+        this.explosionRadius = cs.explosionRadius;
+        this.damage = cs.damage;
     }
 
     update() {
@@ -34,7 +36,8 @@ class ExplosiveTower extends Tower {
         // fire a projectile at the target's current position and reset the cooldown
         if (closest !== null) {
             explosives.push(
-                new Explosive(this.x, this.y, closest.x, closest.y, this.explosionRadius, this)
+                new Explosive(this.x, this.y, closest.x, closest.y,
+                              this.explosionRadius, this.damage, this)
             );
             this.lastShotFrame = frameCount;
         }
