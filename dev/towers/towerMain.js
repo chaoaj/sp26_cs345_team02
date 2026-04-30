@@ -84,6 +84,19 @@ var towerUpgrades = {
     }
 };
 
+// Reverts every tower type back to level 1 with baseline stats by undoing
+// each applied schedule entry. Called from resetGame() so a new run starts fresh.
+function resetTowerUpgrades() {
+    for (var key in towerUpgrades) {
+        var cfg = towerUpgrades[key];
+        for (var i = 0; i < cfg.level - 1; i++) {
+            var entry = cfg.schedule[i];
+            cfg.currentStats[entry.stat] -= entry.delta;
+        }
+        cfg.level = 1;
+    }
+}
+
 // controls how long the cool down for placing a tower should be
 var towerPlaceCoolDownFrames = 50;       // Set to 0 for testing.
 
@@ -438,14 +451,11 @@ function sellTower() {
 /**
  * Upgrades the hovered tower, increasing a stat unique to its type.
  * Costs upgradePrice from playerStats.money; no-op if the player can't afford it.
- * Fires an on-screen announcement with the stat change on success.
  */
 function upgradeTower() {
     if (hovered === null) return;
     if (typeof hovered.upgrade !== "function") return;
-
-    var preview = hovered.getUpgradeInfo();
-    if (!hovered.upgrade()) return;
+    hovered.upgrade();
 }
 
 // Rounds floats to 2 decimals for display; leaves integers alone.

@@ -104,19 +104,6 @@ class HealingTower extends Tower {
     }
 
     draw() {
-        // // soft green glow ring showing the aura zone — only visible when upgraded
-        // if (this.auraHealRate > 0) {
-        //     push();
-        //     noStroke();
-        //     fill(0, 255, 80, 14);
-        //     ellipse(this.x, this.y, this.healRange * 2, this.healRange * 2);
-        //     noFill();
-        //     stroke(0, 255, 80, 90);
-        //     strokeWeight(2);
-        //     ellipse(this.x, this.y, this.healRange * 2, this.healRange * 2);
-        //     pop();
-        // }
-
         super.draw();
         if (this.beamX === null) return;
 

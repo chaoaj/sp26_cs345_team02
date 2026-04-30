@@ -45,6 +45,10 @@ class Tower {
         for (var i = 0; i < towers.length; i++) {
             if (towers[i].constructor.name === this.constructor.name) {
                 towers[i][entry.stat] = newValue;
+                // raising maxHealth without bumping health makes a full-HP tower
+                if (entry.stat === "maxHealth") {
+                    towers[i].health = min(towers[i].health + entry.delta, towers[i].maxHealth);
+                }
             }
         }
         return true;

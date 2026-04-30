@@ -164,10 +164,7 @@ function resetGame() {
   waveInProg = false;
   showAnnouncement = false;
   waveNum = 1;
-  towerUpgrades.AttackTower.level = 1;
-  towerUpgrades.ExplosiveTower.level = 1;
-  towerUpgrades.HealingTower.level = 1;
-  towerUpgrades.NormalTower.level = 1;
+  resetTowerUpgrades();
   currentPrepTime = waveConfig.prepTimeStart;
   prepTimeFrames = currentPrepTime;
   paused = false;
