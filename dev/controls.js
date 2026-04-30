@@ -90,13 +90,22 @@ function keyPressed() {
   }
 
   // ----- GAME CONTROLS ------
-  if (keyCode == 80 && currentScreen == "game") paused = !paused;
+  if (keyCode == 80 && currentScreen == "game") {
+    paused = !paused;
+    pauseMenuTab = null;
+  }
 
   // Shift + R: Reset
   if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") resetGame();
 
   // T - place a tower at the player's current position
   if (keyCode == 84) previewTower = true;
+
+  // U - upgrade the hovered tower
+  if (keyCode == 85) upgradeTower();
+
+  // Q - sell the hovered tower (moved off mouse click to avoid OS-level conflicts)
+  if (keyCode == 81) sellTower();
 
   // 1-4 - select tower type
   if (keyCode == 49) {
@@ -166,7 +175,11 @@ function keyReleased() {
 }
 
 function mousePressed() {
-  sellTower();
+  // Mouse clicks are reserved for the pause menu only — gameplay sell/upgrade
+  // run on keys (Q / U) so casual clicks don't collide with game actions.
+  if (paused && currentScreen == "game") {
+    handlePauseMenuClick(mouseX, mouseY);
+  }
 }
 
 function mouseMoved() {
@@ -238,7 +251,10 @@ function onPress(e) {
 
   if (e.name == "bumperRight") rightBumperHeld = true; // right bumper
 
-  if (e.name == "select" && currentScreen == "game") paused = !paused; // pause with "select"
+  if (e.name == "select" && currentScreen == "game") {
+    paused = !paused;
+    pauseMenuTab = null;
+  }
 
   if (leftBumperHeld && rightBumperHeld && currentScreen == "game") resetGame(); // pause with "select"
 
@@ -247,6 +263,9 @@ function onPress(e) {
   }
   if (e.name == "buttonRed") {
     sellTower();
+  }
+  if (e.name == "buttonYellow") {
+    upgradeTower();
   }
 }
 

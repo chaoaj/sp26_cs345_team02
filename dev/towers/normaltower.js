@@ -6,7 +6,9 @@ class NormalTower extends Tower {
         this.img = towerImages.normal;
         this.price = 50;
 
-        this.attackRange = 350;
+        var cs = towerUpgrades.NormalTower.currentStats;
+        this.attackRange = cs.attackRange;
+        this.damage = cs.damage;
         this.attackCooldown = 60; // frames (1 shot/sec)
         this.lastShotFrame = -999;
     }

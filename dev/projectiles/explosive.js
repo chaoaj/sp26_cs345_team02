@@ -1,7 +1,7 @@
 // Projectile fired by ExplosiveTower. Travels to a fixed target position, then
 // deals AOE damage to all enemies within explosionRadius on arrival.
 class Explosive {
-    constructor(x, y, targetX, targetY, explosionRadius, tower = null) {
+    constructor(x, y, targetX, targetY, explosionRadius, damage, tower = null) {
         this.tower = tower;
         this.x = x;
         this.y = y;
@@ -11,6 +11,7 @@ class Explosive {
         this.targetY = targetY;
 
         this.explosionRadius = explosionRadius;
+        this.damage = damage;
 
         this.speed = 8; // pixels per frame
         this.exploded = false;
@@ -45,19 +46,16 @@ class Explosive {
             var d = dist(this.x, this.y, enemies[i].x, enemies[i].y);
 
             if (d <= this.explosionRadius) {
-                // free any troop locked in combat so it isn't left with a stale reference
-                if (enemies[i].engagedTroop !== null) {
-                    enemies[i].engagedTroop.engagedEnemy = null;
-                }
-                
-                /*killedEnemies.push({
-                    x: enemies[i].x,
-                    y: enemies[i].y,
-                    frame: frameCount
-                }); */
+                enemies[i].health -= this.damage;
 
-                enemyKilled(i, this.tower); // needs to be fixed
-                playerStats.money += enemyStats.moneyDropped;
+                if (enemies[i].health <= 0) {
+                    // free any troop locked in combat so it isn't left with a stale reference
+                    if (enemies[i].engagedTroop !== null) {
+                        enemies[i].engagedTroop.engagedEnemy = null;
+                    }
+                    enemyKilled(i, this.tower);
+                    playerStats.money += enemyStats.moneyDropped;
+                }
             }
         }
     }

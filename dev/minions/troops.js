@@ -16,7 +16,9 @@ class Troop {
         this.size = 20;
         this.speed = 3.5;
 
-        this.level = 1;
+        // troops inherit their power level from the tower that spawned them
+        // upgrading the AttackTower's "Troop Power" raises tower.troopLevel
+        this.level = (tower && tower.troopLevel) ? tower.troopLevel : 1;
 
         this.health = 60 * this.level;
         this.maxHealth = this.health;

@@ -12,7 +12,8 @@ class Arrow {
         this.angle = atan2(targetY - y, targetX - x);
 
         this.speed = 12;
-        this.damage = 20;
+        // damage scales with the firing tower's current upgrade level
+        this.damage = (tower && tower.damage !== undefined) ? tower.damage : 20;
         this.size = 6;
 
         this.done = false;

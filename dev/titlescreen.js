@@ -74,23 +74,6 @@ function drawSettingsScreen() {
     textSize(28);
     text("Settings", width / 2, 80);
 
-    var keybinds = [
-        ["W", "Axes Up", "Move Up"],
-        ["A", "Axes Left", "Move Left"],
-        ["S", "Axes Down", "Move Down"],
-        ["D", "Axes Right", "Move Right"],
-        ["T", "X", "Place Tower"],
-        ["1", "DPad Up", "Select Tower 1"], // This task can be marked as complete,
-        ["2", "DPad Right", "Select Tower 2"],
-        ["3", "DPad Down", "Select Tower 3"],
-        ["4", "DPad Left", "Select Tower 4"],
-        [">", "Right Axes Right", "Select Next Tower"],
-        ["<", "Right Axes Left", "Select Previous Tower"],
-        ["P", "Select", "Pause"], // after we add controller functions for each button
-        ["R + L-Shift", "R + L Bumper", "Reset Game"],
-        ["Left Click", "B", "Sell Tower"]
-    ];
-
     textSize(16);
     textAlign(LEFT, CENTER);
     var startY = 260;
@@ -105,11 +88,11 @@ function drawSettingsScreen() {
     text("Action", actionX, 160);
 
     fill(255);
-    for (var i = 0; i < keybinds.length; i++) {
+    for (var i = 0; i < keybindsList.length; i++) {
         var y = startY + i * rowHeight;
-        text("[" + keybinds[i][0] + "]", keyX, y);
-        text("[" + keybinds[i][1] + "]", controlX, y);
-        text(keybinds[i][2], actionX, y);
+        text("[" + keybindsList[i][0] + "]", keyX, y);
+        text("[" + keybindsList[i][1] + "]", controlX, y);
+        text(keybindsList[i][2], actionX, y);
     }
 }
 
@@ -120,13 +103,6 @@ function drawEncyclopediaScreen() {
     textAlign(CENTER, CENTER);
     text("Encyclopedia", width / 2, height / 4);
 
-    var encyclist = [
-        [towerImages.normal,    "Normal Tower",    "Fires arrows at approaching enemies from a distance."],
-        [towerImages.healing,   "Healing Tower",   "Restores health to nearby allies. Prioritizes the player, then the base, then combat towers."],
-        [towerImages.attack,    "Attack Tower",    "Deploys troops that chase and engage enemies in melee combat."],
-        [towerImages.explosive, "Explosive Tower", "Launches explosive projectiles that deal area damage on impact."]
-    ];
-
     var startY = height / 3;
     var rowHeight = 90;
     var towerImageX = width / 8;
@@ -135,11 +111,12 @@ function drawEncyclopediaScreen() {
 
     textAlign(LEFT);
 
-    for (var i = 0; i < encyclist.length; i++) {
+    for (var i = 0; i < towerInfoList.length; i++) {
+        var entry = towerInfoList[i];
         var y = startY + i * rowHeight;
-        image(encyclist[i][0], towerImageX, y);
-        text(encyclist[i][1], towerX, y);
-        text(encyclist[i][2], textX, y);
+        image(towerImages[entry[0]], towerImageX, y);
+        text(entry[1], towerX, y);
+        text(entry[2], textX, y);
     }
 }
 

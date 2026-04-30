@@ -6,8 +6,13 @@ class HealingTower extends Tower {
         this.img = towerImages.healing;
         this.price = 100;
 
-        this.healRange = 200;
-        this.healRate = 0.1; // 6 HP/sec
+        var cs = towerUpgrades.HealingTower.currentStats;
+        this.healRange = cs.healRange;
+        this.maxHealth = cs.maxHealth;
+        this.health = cs.maxHealth;
+        // healRate (the targeted beam) is fixed; only the aura scales with upgrades
+        this.healRate = 0.1;
+        this.auraHealRate = cs.auraHealRate;
 
         this.target = null;
 
@@ -78,15 +83,40 @@ class HealingTower extends Tower {
         }
 
         if (this.target !== null) {
-            
+
             this.target.health = min(this.target.health + this.healRate, this.target.maxHealth);
 
             this.beamX = this.target.x;
             this.beamY = this.target.y;
         }
+
+        // passive aura — small heal to ALL towers in range when upgraded past Lv2
+        if (this.auraHealRate > 0) {
+            for (var i = 0; i < towers.length; i++) {
+                var t = towers[i];
+                if (t === this) continue;
+                if (t.health < t.maxHealth &&
+                    dist(this.x, this.y, t.x, t.y) <= this.healRange) {
+                    t.health = min(t.health + this.auraHealRate, t.maxHealth);
+                }
+            }
+        }
     }
 
     draw() {
+        // // soft green glow ring showing the aura zone — only visible when upgraded
+        // if (this.auraHealRate > 0) {
+        //     push();
+        //     noStroke();
+        //     fill(0, 255, 80, 14);
+        //     ellipse(this.x, this.y, this.healRange * 2, this.healRange * 2);
+        //     noFill();
+        //     stroke(0, 255, 80, 90);
+        //     strokeWeight(2);
+        //     ellipse(this.x, this.y, this.healRange * 2, this.healRange * 2);
+        //     pop();
+        // }
+
         super.draw();
         if (this.beamX === null) return;
 
