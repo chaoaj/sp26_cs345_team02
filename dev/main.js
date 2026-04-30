@@ -158,7 +158,10 @@ function resetGame() {
   arrows = [];
   troops = [];
   base.health = base.maxHealth;
+  enemyStats.moneyDropped = 8;
+  enemyStats.speed = 2;
   waveInProg = false;
+  showAnnouncement = false;
   waveNum = 1;
   currentPrepTime = waveConfig.prepTimeStart;
   prepTimeFrames = currentPrepTime;
