@@ -215,6 +215,7 @@ function draw() {
     drawBase();
     drawPlayer();
     drawTowerPreview();
+    drawTowerHoverPanel();
 
     pop();
     if (showAnnouncement) announcement.show();

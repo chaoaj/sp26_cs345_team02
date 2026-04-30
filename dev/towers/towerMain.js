@@ -84,17 +84,6 @@ var towerUpgrades = {
     }
 };
 
-// Returns the active tower-count cap. Base of 16, +2 for each tower type that
-// has reached max level. All four maxed -> cap is 24.
-function effectiveMaxTowers() {
-    var bonus = 0;
-    for (var key in towerUpgrades) {
-        var cfg = towerUpgrades[key];
-        if (cfg.level >= cfg.maxLevel) bonus += 2;
-    }
-    return maxTowers + bonus;
-}
-
 // controls how long the cool down for placing a tower should be
 var towerPlaceCoolDownFrames = 50;       // Set to 0 for testing.
 
@@ -121,6 +110,17 @@ var placeableArea = {
     x: -1024,
     y: -1024
 };
+
+// Returns the active tower-count cap. Base of 16, +2 for each tower type that
+// has reached max level. All four maxed -> cap is 24.
+function effectiveMaxTowers() {
+    var bonus = 0;
+    for (var key in towerUpgrades) {
+        var cfg = towerUpgrades[key];
+        if (cfg.level >= cfg.maxLevel) bonus += 2;
+    }
+    return maxTowers + bonus;
+}
 
 /**
  * Controls tower placing cool down animation
@@ -303,8 +303,6 @@ function drawTowers() {
         ellipse(hovered.x, hovered.y, range * 2, range * 2);
         noStroke();
     }
-
-    drawTowerHoverPanel();
 
     // highlight this tower's troops with a ring and always-visible health bar
     if (hovered instanceof AttackTower) {
