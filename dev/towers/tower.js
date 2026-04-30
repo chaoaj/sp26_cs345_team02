@@ -13,7 +13,7 @@ class Tower {
     }
 
     // Returns the shared upgrade config for this tower's type, or null
-    // if the type isn't upgradeable (e.g. the base Tower used for collision checks).
+    // if the type isn't upgradeable (the base Tower used for collision checks).
     getUpgradeConfig() {
         return towerUpgrades[this.constructor.name] || null;
     }

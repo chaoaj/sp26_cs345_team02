@@ -18,17 +18,17 @@ var towerTypes = {
     explosive:  ExplosiveTower
 };
 
-// Per-type upgrade state. All towers of a given class share these stats —
-// upgrading one upgrades the entire type.
+// Per-type upgrade state. All towers of a given class share these stats,
+// upgrading one upgrades the entire type. <<<<<
 //
 //   level         current upgrade level (1..maxLevel)
-//   maxLevel      hard cap; once reached, upgrade() is a no-op
+//   maxLevel      hard cap: once reached, upgrade() is a no-op
 //   costBase      cost of the FIRST upgrade (level 1 -> 2)
 //   costMult      cost grows by this factor each level (1.6 -> ~4x by max)
 //   currentStats  live stat values, mutated on upgrade and copied to new instances
 //   schedule      ordered list of {stat, delta, label} entries; index = level - 1
 //
-// SCALING.md documents the math; numbers below should be kept in sync.
+// Working on a doc for the math, don't touch the numbers for now.
 var towerUpgrades = {
     NormalTower: {
         level: 1,
