@@ -4,11 +4,11 @@ let encycButton;
 let titleText;
 let titleBg;
 let backButton;
-//let muteButton;
 
 let currentScreen = "title";
 
-//let musicIsMuted = false;
+let muteButton;
+let isMuted = false;
 
 function setupTitleScreen() {
     playButton = createButton("Play");
@@ -31,12 +31,10 @@ function setupTitleScreen() {
     backButton.mousePressed(goToTitle);
     backButton.hide();
 
-    /*
     muteButton = createButton("Mute Music");
     muteButton.id("muteButton");
     muteButton.position(20, height - 60);
-    muteButton.mousePressed(musicToggle);
-    */
+    muteButton.mousePressed(toggleMute);
 }
 
 function drawTitleScreen() {
@@ -45,8 +43,6 @@ function drawTitleScreen() {
     image(titlePlayButton, width / 2 + 50, height / 2 + 90, 602/3.7, 235/3.7);
     image(titleSettingsButton, width / 2 + 50, height / 2 + 140, 602/4, 235/4);
     image(titleEncyclopediaButton, width / 2 + 50, height / 2 + 190, 602/4, 235/4);
-
-    menuMusic.play();
     //fill(0);
     //textSize(24);
     //textAlign(CENTER, CENTER);
@@ -56,6 +52,7 @@ function startGame() {
     hideTitleScreenElements();
     //titleBg.remove();
     currentScreen = "game";
+    menuMusic.volume = 0;
 }
 
 function openSettings() {
@@ -135,25 +132,25 @@ function hideTitleScreenElements() {
     playButton.hide();
     settingsButton.hide();
     encycButton.hide();
-    //muteButton.hide();
-    menuMusic.pause();
+    muteButton.hide();
 }
 
 function showTitleScreenElements() {
     playButton.show();
     settingsButton.show();
     encycButton.show();
-    //muteButton.show();
+    muteButton.show();
 }
 
-/*
-function musicToggle() {
-    if (menuMusic.isPlaying()) {
-        menuMusic.pause();
-        muteButton.html("Play Music");
+function toggleMute() {
+
+    isMuted = !isMuted;
+
+    if (isMuted) {
+        menuMusic.volume = 0;
+        muteButton.html("Unmute Music");
     } else {
-        menuMusic.play();
-        muteButton.html("Pause Music");
+        menuMusic.volume = 1;
+        muteButton.html("Mute Music");
     }
 }
-*/

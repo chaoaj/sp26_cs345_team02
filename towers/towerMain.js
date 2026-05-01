@@ -226,6 +226,9 @@ function placeTower(x, y) {
 
     towers.push(tower);
 
+    towerPlacementSound.volume = 0.4
+    towerPlacementSound.play();
+
     lastTowerPlacedFrame = frameCount;
 
     playerStats.money -= tower.price;

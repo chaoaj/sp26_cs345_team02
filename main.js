@@ -1,7 +1,7 @@
 /**
  * main.js is the main file of the game. This is where images and draw() functions should go.
  * Images go into the preload() function.
- */
+*/
 
 // test
 const WORLD_SIZE = 2048 // image size of the bg
@@ -25,10 +25,19 @@ var base = {
   maxHealth: healthConfig.base
 };
 
+// ----- Sound -----
+let menuMusic = new Audio("audio/mainMenuMusic.mp3");
+menuMusic.loop = true;
+menuMusic.volume = 1;
+
+let musicStarted = false;
+
+let towerPlacementSound = new Audio("audio/PlaceTowerStructure01.wav");
+
 /**
  * This function is called once to load assets before our game runs.
  * Any images are to go here.
- */
+*/
 function preload() {
   // ----- Main Menu Images -----
   titleBg = loadImage("images/titleBackground.png");
@@ -60,7 +69,6 @@ function preload() {
   textFonts.nunito = loadFont("/fonts/static/Nunito-Regular.ttf");
   textFonts.openSans = loadFont("/fonts/static/OpenSans-Regular.ttf");
   // ----- Sound -----
-  menuMusic = new Audio("audio/mainMenuMusic.mp3");
 }
 
 function setup() {
