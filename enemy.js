@@ -163,7 +163,7 @@ function getNearestTarget(enemy) {
 
 // converts enemies-per-second to a frame delay
 function spawnRateToDelay(enemiesPerSecond) {
-    return round(60 / enemiesPerSecond);
+    return Math.round(60 / enemiesPerSecond);
 }
 
 function beginWave() {
