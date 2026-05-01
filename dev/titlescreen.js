@@ -54,6 +54,7 @@ function startGame() {
     hideTitleScreenElements();
     //titleBg.remove();
     currentScreen = "game";
+    menuMusic.volume = 0;
 }
 
 function openSettings() {

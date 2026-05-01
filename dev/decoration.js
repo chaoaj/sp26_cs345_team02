@@ -4,8 +4,8 @@
 var decorations = [];
 
 // minimum and maximum amount of decorations that will be spawned on the screen
-var minDecorations = 100;
-var maxDecorations = 150;
+var minDecorations = 30;
+var maxDecorations = 60;
 
 var decorationCollisionDist = 40; //px
 
