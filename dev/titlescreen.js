@@ -5,8 +5,6 @@ let titleText;
 let titleBg;
 let backButton;
 
-
-
 let currentScreen = "title";
 
 let muteButton;

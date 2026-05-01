@@ -25,11 +25,14 @@ var base = {
   maxHealth: healthConfig.base
 };
 
+// ----- Sound -----
 let menuMusic = new Audio("audio/mainMenuMusic.mp3");
 menuMusic.loop = true;
 menuMusic.volume = 1;
 
 let musicStarted = false;
+
+let towerPlacementSound = new Audio("audio/PlaceTowerStructure01.wav");
 
 /**
  * This function is called once to load assets before our game runs.
