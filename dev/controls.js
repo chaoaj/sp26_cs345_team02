@@ -177,6 +177,15 @@ function keyReleased() {
 function mousePressed() {
   // Mouse clicks are reserved for the pause menu only — gameplay sell/upgrade
   // run on keys (Q / U) so casual clicks don't collide with game actions.
+
+  // ^^^^^
+  // why? what is the reason for mouse clicks to be reserved for the pause menu?
+  
+  if (!musicStarted) {
+    menuMusic.play();
+    musicStarted = true;
+  }
+
   if (paused && currentScreen == "game") {
     handlePauseMenuClick(mouseX, mouseY);
   }
