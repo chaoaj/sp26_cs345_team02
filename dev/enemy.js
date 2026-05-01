@@ -275,6 +275,7 @@ function drawWaveNumber() {
     strokeWeight(2);
     textSize(textHeight);
     textAlign(LEFT);
+    textFont("Trebuchet MS");
     text("Wave: " + waveNum, width - textOffset, height - textHeight);
     drawWaveAnimation(textOffset);
     noStroke();
