@@ -71,6 +71,7 @@ function setup() {
 
   setupTitleScreen();
   setupPlayer();
+  spawnDecorations();
 
   base.x = 0;
   base.y = 0;
@@ -175,6 +176,7 @@ function resetGame() {
   currentScreen = "title";
   showTitleScreenElements();
   setupPlayer();
+  spawnDecorations();
   resetInventory();
   cursor(ARROW);
 }
@@ -207,6 +209,7 @@ function draw() {
     translate(width / 2 - camera.x, height / 2 - camera.y);
     imageMode(CENTER);
     image(grassBg, 0, 0);
+    drawDecorations();
     drawEnemies();
     drawTowers();
     drawExplosives();
