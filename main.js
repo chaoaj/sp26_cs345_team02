@@ -13,6 +13,9 @@ var windowHeight = 1920
 var paused = false;
 var controller;
 
+// ----- Fonts -----
+var textFonts = {};
+
 // ----= Base Object ------
 var base = {
   x: 0,
@@ -23,7 +26,7 @@ var base = {
 };
 
 /**
- * This function is called once to load assets before our game runs. 
+ * This function is called once to load assets before our game runs.
  * Any images are to go here.
  */
 function preload() {
@@ -37,6 +40,9 @@ function preload() {
   // ----- Player Images -----
   playerSprite = loadImage("images/PlayerWalkNew.png");
 
+  // ----- Enemy Image -----
+  enemySprite = loadImage("images/enemyNormal.png");
+  
   // ----- Tower images -----
   towerImages.normal = loadImage("images/normalTower.png");
   towerImages.attack = loadImage("images/towerAttack.png");
@@ -49,6 +55,12 @@ function preload() {
 
   // ----- Canvas images -----
   grassBg = loadImage("images/OLDgrassBackgroundOLD.png");
+
+  // ----- Fonts -----
+  textFonts.nunito = loadFont("/fonts/static/Nunito-Regular.ttf");
+  textFonts.openSans = loadFont("/fonts/static/OpenSans-Regular.ttf");
+  // ----- Sound -----
+  menuMusic = new Audio("audio/mainMenuMusic.mp3");
 }
 
 function setup() {
@@ -80,7 +92,7 @@ function setup() {
 }
 
 /**
- * This function draws the main base the player is supposed to defend onto the screen. 
+ * This function draws the main base the player is supposed to defend onto the screen.
  */
 function drawBase() {
 
@@ -100,12 +112,12 @@ function drawBase() {
 /**
  * This functions draws a health bar that is shared
  * between towers, the player, and the main base.
- * 
- * @param {*} x 
- * @param {*} y 
- * @param {*} barWidth 
- * @param {*} health 
- * @param {*} maxHealth 
+ *
+ * @param {*} x
+ * @param {*} y
+ * @param {*} barWidth
+ * @param {*} health
+ * @param {*} maxHealth
  */
 function drawHealthBar(x, y, barWidth, health, maxHealth) {
   var ratio = max(0, health / maxHealth);
@@ -146,15 +158,22 @@ function resetGame() {
   arrows = [];
   troops = [];
   base.health = base.maxHealth;
+  mainBase.sheet = baseImage;
+  enemyStats.moneyDropped = 8;
+  enemyStats.speed = 2;
   waveInProg = false;
+  showAnnouncement = false;
   waveNum = 1;
+  resetTowerUpgrades();
   currentPrepTime = waveConfig.prepTimeStart;
   prepTimeFrames = currentPrepTime;
   paused = false;
+  pauseMenuTab = null;
   currentScreen = "title";
   showTitleScreenElements();
   setupPlayer();
   resetInventory();
+  cursor(ARROW);
 }
 
 function draw() {
@@ -180,21 +199,23 @@ function draw() {
       checkPlayerCollisions();
       CheckHealth();
     }
-    
+
     push();
     translate(width / 2 - camera.x, height / 2 - camera.y);
     imageMode(CENTER);
     image(grassBg, 0, 0);
-
     drawEnemies();
-    drawBase();
     drawTowers();
     drawExplosives();
     drawArrows();
     drawTroops();
+    drawBase();
     drawPlayer();
+    drawTowerPreview();
+    drawTowerHoverPanel();
 
     pop();
+    if (showAnnouncement) announcement.show();
 
     drawTowerPlaceCoolDownAnimation();
     moneyAnimation();
@@ -202,16 +223,9 @@ function draw() {
     drawWaveNumber();
     drawInventory();
 
-    // quick check if the game is paused
+    // pause menu overlay (settings/keybinds/tower-types)
     if (paused) {
-      fill(0, 0, 0, 120);
-      noStroke();
-      rectMode(CORNER);
-      rect(0, 0, width, height);
-      fill(255);
-      textSize(48);
-      textAlign(CENTER, CENTER);
-      text("PAUSED", width / 2, height / 2);
+      drawPauseMenu();
     }
   } else if (currentScreen == "settings") {
     drawSettingsScreen();

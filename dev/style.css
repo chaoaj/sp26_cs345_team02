@@ -35,3 +35,12 @@ button:hover {
   cursor: pointer;
   border: 0; /*change to 2 to see where the actual buttons are*/
 }
+
+/*
+#muteButton {
+  background-color: (255, 255, 255, 0);
+  color: rgba(255, 217, 0);
+  width: 80px;
+  height: 40px;
+}
+*/

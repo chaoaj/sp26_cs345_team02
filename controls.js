@@ -1,10 +1,11 @@
-var lastInput = null;
+var lastInput = {};
 var leftBumperHeld;
 var rightBumperHeld;
 var controllerUp;
 var controllerLeft;
 var controllerDown;
 var controllerRight;
+var previewTower;
 
 /**
  *  Moves the player with WASD or controller input if controller is detected.
@@ -29,8 +30,8 @@ function movePlayer() {
   }
 
   if (up && down) {
-    if (lastInput == "UP") playerStats.y -= playerStats.speed * dy;
-    if (lastInput == "DOWN") playerStats.y += playerStats.speed * dy;
+    if (lastInput.direction == "UP") playerStats.y -= playerStats.speed * dy;
+    if (lastInput.direction == "DOWN") playerStats.y += playerStats.speed * dy;
   } else if (up) {
       playerStats.y -= playerStats.speed * dy;
   } else if (down) {
@@ -39,11 +40,11 @@ function movePlayer() {
   playerStats.y = constrain(playerStats.y, -WORLD_SIZE / 2, WORLD_SIZE / 2);
 
   if (right && left) {
-    if (lastInput == "RIGHT") {
+    if (lastInput.direction == "RIGHT") {
       playerStats.x += playerStats.speed * dx;
       playerStats.facing = "RIGHT";
     }
-    if (lastInput == "LEFT") {
+    if (lastInput.direction == "LEFT") {
       playerStats.x -= playerStats.speed * dx;
       playerStats.facing = "LEFT";
     }
@@ -68,6 +69,7 @@ function movePlayer() {
  * - Cycling inventory (1-4, ",", and ".")
  */
 function keyPressed() {
+  lastInput.type = "KEYBOARD";
   console.log(keyCode);
 
   // ----- MOVEMENT -----
@@ -84,17 +86,26 @@ function keyPressed() {
   };
 
   if (MOVEMENT_KEYS[keyCode]) {
-    lastInput = MOVEMENT_KEYS[keyCode];
+    lastInput.direction = MOVEMENT_KEYS[keyCode];
   }
 
   // ----- GAME CONTROLS ------
-  if (keyCode == 80 && currentScreen == "game") paused = !paused;
+  if (keyCode == 80 && currentScreen == "game") {
+    paused = !paused;
+    pauseMenuTab = null;
+  }
 
   // Shift + R: Reset
   if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") resetGame();
 
   // T - place a tower at the player's current position
-  if (keyCode == 84) placeTower(playerStats.x, playerStats.y);
+  if (keyCode == 84) previewTower = true;
+
+  // U - upgrade the hovered tower
+  if (keyCode == 85) upgradeTower();
+
+  // Q - sell the hovered tower (moved off mouse click to avoid OS-level conflicts)
+  if (keyCode == 81) sellTower();
 
   // 1-4 - select tower type
   if (keyCode == 49) {
@@ -154,8 +165,25 @@ function keyPressed() {
     if (currentTower >= inventory.length) currentTower = 0
     updateTower();
   }
+}
 
+function keyReleased() {
+  if (keyCode == 84) {
+    previewTower = false;
+    placeTower(playerStats.x, playerStats.y);
+  }
+}
 
+function mousePressed() {
+  // Mouse clicks are reserved for the pause menu only — gameplay sell/upgrade
+  // run on keys (Q / U) so casual clicks don't collide with game actions.
+  if (paused && currentScreen == "game") {
+    handlePauseMenuClick(mouseX, mouseY);
+  }
+}
+
+function mouseMoved() {
+  lastInput.type = "KEYBOARD";
 }
 
 /**
@@ -167,6 +195,9 @@ function keyPressed() {
  * @param {Object} e - Controller event that handles controller input
  */
 function onPress(e) {
+  console.log("key:", e.name);
+
+  lastInput.type = "CONTROLLER";
 
   const CONTROLLER_MAP = {
     axesUp: "UP",
@@ -175,7 +206,7 @@ function onPress(e) {
     axesRight: "RIGHT"
   };
 
-  if (CONTROLLER_MAP[e.name]) lastInput = CONTROLLER_MAP[e.name];
+  if (CONTROLLER_MAP[e.name]) lastInput.direction = CONTROLLER_MAP[e.name];
 
   if (e.name == "axesUp") controllerUp = true;
   if (e.name == "axesDown") controllerDown = true;
@@ -220,11 +251,22 @@ function onPress(e) {
 
   if (e.name == "bumperRight") rightBumperHeld = true; // right bumper
 
-  if (e.name == "select" && currentScreen == "game") paused = !paused; // pause with "select"
+  if (e.name == "select" && currentScreen == "game") {
+    paused = !paused;
+    pauseMenuTab = null;
+  }
 
   if (leftBumperHeld && rightBumperHeld && currentScreen == "game") resetGame(); // pause with "select"
 
-  if (e.name == "buttonBlue") placeTower(playerStats.x, playerStats.y); // place towers with blue button
+  if (e.name == "buttonBlue") {
+    previewTower = true; // place towers with blue button
+  }
+  if (e.name == "buttonRed") {
+    sellTower();
+  }
+  if (e.name == "buttonYellow") {
+    upgradeTower();
+  }
 }
 
 function onRelease(e) {
@@ -234,4 +276,8 @@ function onRelease(e) {
   if (e.name == "axesRight") controllerRight = false;
   if (e.name == "bumperLeft") leftBumperHeld = false;
   if (e.name == "bumperRight") rightBumperHeld = false;
+  if (e.name == "buttonBlue") {
+    previewTower = false;
+    placeTower(playerStats.x, playerStats.y);
+  }
 }
