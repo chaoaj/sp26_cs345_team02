@@ -34,7 +34,11 @@ class Announcement {
         }
         textAlign(CENTER);
         textSize(this.size);
-        textFont("Trebuchet MS");
+        textFont(textFonts.nunito);
+
+        if (!this.bbox) {
+            this.bbox = textFonts.nunito.textBounds(this.text, width / 2, height - 100, this.size);
+        }
         fill(0, 120 * this.opacity);
         rect(this.bbox.x - 10, this.bbox.y - 10, this.bbox.w + 20, this.bbox.h + 20);
         fill(255, 255 * this.opacity);
