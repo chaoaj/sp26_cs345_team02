@@ -164,7 +164,8 @@ function drawTowerPlaceCoolDownAnimation() {
 /**
  * returns false if (x, y) would overlap an existing tower or the main base
  * @param {*} tower 
- * @returns false if (x, y) overlap an existing tower
+ * @returns false if (x, y) overlap an existing tower, a tower has been placed too recently, the
+ * player does not have enough money, or too many towers are currently placed.
  */
 function canPlaceTower(tower) {
     // returns false if a tower was placed within towerPlaceCoolDownFrames frames
