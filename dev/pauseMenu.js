@@ -44,12 +44,12 @@ var towerInfoList = [
 
 // Layout constants — tweak these to redesign without touching state logic.
 var pauseMenuLayout = {
-    panelW: 800,
-    panelH: 1100,
+    panelW: 600,
+    panelH: 800,
     panelRadius: 12,
-    titleSize: 48,
+    titleSize: 32,
     titleY: 110,
-    btnW: 320,
+    btnW: 240,
     btnH: 90,
     btnGap: 30,
     backW: 110,
