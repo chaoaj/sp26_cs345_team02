@@ -83,17 +83,22 @@ function drawSettingsScreen() {
     text("Settings", width / 2, 80);
 
     textSize(16);
-    textAlign(LEFT, CENTER);
-    var startY = 260;
+    textAlign(CENTER, CENTER);
+    var startY = 150;
     var rowHeight = 36;
-    var keyX = width / 2 - 150;
-    var controlX = width / 2;
-    var actionX = width / 2 + 150;
+    var keyX = width * 0.25
+    var controlX = width * 0.5;
+    var actionX = width * 0.75;
 
     fill(180);
-    text("Keyboard", keyX, 160);
-    text("Controller", controlX, 160);
-    text("Action", actionX, 160);
+    textAlign(CENTER, CENTER);
+    text("Keyboard", keyX, 120);
+
+    textAlign(CENTER, CENTER);
+    text("Controller", controlX, 120);
+    
+    textAlign(CENTER, CENTER);
+    text("Action", actionX, 120);
 
     fill(255);
     for (var i = 0; i < keybindsList.length; i++) {
