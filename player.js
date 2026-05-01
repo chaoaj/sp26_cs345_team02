@@ -51,7 +51,17 @@ function Sprite(sheet, x, y, n) {
     if (paused) {
       this.frame = 0;
     }
+  }
 
+  this.drawEnemy = function() {
+    this.frames = 4;
+    this.w = sheet.width / this.frames;
+    image(this.sheet, this.x, this.y, this.w, this.h, this.w*floor(this.frame), 0, this.w, this.h);
+
+    this.frame += 0.01;
+    if (this.frame > this.frames) {
+      this.frame = 0;
+    }
   }
 }
 
@@ -80,7 +90,7 @@ function checkPlayerCollisions() {
       var collisionDist = enemy.size / 2 + playerWidth / 2;
       if (d1 < collisionDist || d2 < collisionDist || d3 < collisionDist) {
           playerStats.health -= damageConfig.enemyToPlayer;
-          enemyKilled(i, -1);
+          enemyKilled(i, null);
       }
   }
 }

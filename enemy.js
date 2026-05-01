@@ -31,7 +31,11 @@ var enemyStats = {
     // bigger num = farther
     spawnRadius: 1500,
     // decides how much money is given to the player when this enemy is killed
-    moneyDropped: 15
+    moneyDropped: 8,
+    // decides the max money a player can receive from a killed enemy
+    maxMoneyDropped: 30,
+    // decides how much to increase moneyDropped by
+    moneyIncrement: 3
 };
 
 var waveNum = 1;
@@ -53,6 +57,23 @@ var enemyDelay = spawnRateToDelay(waveConfig.baseSpawnRate);
 // counts down the remaining frames in the current wave
 var waveTimer = 0;
 
+function updateEnemyStats() {
+    if (waveNum % 10 == 0) {
+        enemyStats.speed += 1;
+        enemyStats.enemyToBase += 3;
+    }
+
+    if (enemyStats.moneyDropped + enemyStats.moneyIncrement > enemyStats.maxMoneyDropped) {
+        enemyStats.moneyDropped = enemyStats.maxMoneyDropped;
+    } else {
+        enemyStats.moneyDropped += enemyStats.moneyIncrement;
+    }
+    enemyStats.damageToTower += 5
+    enemyStats.damageToPlayer += 5
+
+    announcement = new Announcement("Enemy stats have increased.");
+    showAnnouncement = true;
+}
 
 function updateEnemies() {
     if (waveInProg == false) {
@@ -110,8 +131,10 @@ function updateEnemies() {
     }
 }
 
-// returns the nearest tower to the enemy, or the base if no towers exist.
-// enemies will break off and engage any troop spotted within troopDetectionRange.
+/**
+ * Return the nearest tower to the enemy, or the base if no towers exist.
+ * Enemies will break off and engage any troop spotted within troopDetectionRange.
+ */
 function getNearestTarget(enemy) {
     var nearest = base;
     var nearestDist = dist(enemy.x, enemy.y, base.x, base.y);
@@ -158,6 +181,10 @@ function stopWave() {
     currentPrepTime = max(waveConfig.prepTimeMin,
                           waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
     prepTimeFrames = currentPrepTime;
+
+    if (waveNum % 5 == 0) {
+        updateEnemyStats();
+    }
 }
 
 function spawnEnemy() {
@@ -191,6 +218,8 @@ function spawnEnemy() {
     enemy.xSpeed = distanceX / totalDistance * enemyStats.speed;
     enemy.ySpeed = distanceY / totalDistance * enemyStats.speed;
 
+    enemyToDraw = new Sprite(enemySprite, enemy.x, enemy.y, 4);
+
     enemies.push(enemy);
 }
 
@@ -200,7 +229,10 @@ function drawEnemies() {
         var oy = enemies[i].engagedTroop !== null ? random(-2, 2) : 0;
         fill(255, 0, 0);
         noStroke();
-        circle(enemies[i].x + ox, enemies[i].y + oy, enemies[i].size);
+        // circle(enemies[i].x + ox, enemies[i].y + oy, enemies[i].size);
+        enemyToDraw.x = enemies[i].x + ox;
+        enemyToDraw.y = enemies[i].y + oy;
+        enemyToDraw.drawEnemy();
         if (enemies[i].health < enemies[i].maxHealth) {
             drawHealthBar(enemies[i].x, enemies[i].y, enemies[i].size, enemies[i].health, enemies[i].maxHealth);
         }
@@ -248,13 +280,13 @@ function drawWaveNumber() {
     noStroke();
 }
 
-function enemyKilled(enemyIndex, towerIndex) {
+function enemyKilled(enemyIndex, tower = null) {
     // free any troop locked in combat so it can resume
     if (enemies[enemyIndex].engagedTroop !== null) {
         enemies[enemyIndex].engagedTroop.engagedEnemy = null;
     }
-    if (towerIndex != -1) {
-        killedEnemies.push({x: towers[towerIndex].x, y: towers[towerIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
+    if (tower != null) {
+        killedEnemies.push({x: enemies[enemyIndex].x, y: enemies[enemyIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
     } else {
         killedEnemies.push({x: playerStats.x, y: playerStats.y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
     }

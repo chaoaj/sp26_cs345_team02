@@ -4,37 +4,49 @@ let encycButton;
 let titleText;
 let titleBg;
 let backButton;
+//let muteButton;
 
 let currentScreen = "title";
+
+//let musicIsMuted = false;
 
 function setupTitleScreen() {
     playButton = createButton("Play");
     playButton.id("mainMenuButton");
-    playButton.position(width / 2 - 10, height / 2 + 30);
+    playButton.position(width / 2 - 10, height / 2 + 70);
     playButton.mousePressed(startGame);
 
     settingsButton = createButton("Settings");
     settingsButton.id("mainMenuButton");
-    settingsButton.position(width / 2 - 20, height / 2 + 80);
+    settingsButton.position(width / 2 - 10, height / 2 + 120);
     settingsButton.mousePressed(openSettings);
 
     encycButton = createButton("Encyclopedia");
     encycButton.id("mainMenuButton");
-    encycButton.position(width / 2 - 30, height / 2 + 130);
+    encycButton.position(width / 2 - 10, height / 2 + 170);
     encycButton.mousePressed(openEncyclopedia);
 
     backButton = createButton("Back");
     backButton.position(20, 20);
     backButton.mousePressed(goToTitle);
     backButton.hide();
+
+    /*
+    muteButton = createButton("Mute Music");
+    muteButton.id("muteButton");
+    muteButton.position(20, height - 60);
+    muteButton.mousePressed(musicToggle);
+    */
 }
 
 function drawTitleScreen() {
     image(titleBg, width / 2, height / 2, width, height);
-    image(titleLogo, width / 2, 280, 160 * 5, 120 * 5);
-    image(titlePlayButton, width / 2 + 70, height / 2 + 47, 602/3.7, 235/3.7);
-    image(titleSettingsButton, width / 2 + 50, height / 2 + 100, 602/4, 235/4);
-    image(titleEncyclopediaButton, width / 2 + 40, height / 2 + 150, 602/4, 235/4);
+    image(titleLogo, width / 2, 280, 160 * 4.2, 120 * 4.2);
+    image(titlePlayButton, width / 2 + 50, height / 2 + 90, 602/3.7, 235/3.7);
+    image(titleSettingsButton, width / 2 + 50, height / 2 + 140, 602/4, 235/4);
+    image(titleEncyclopediaButton, width / 2 + 50, height / 2 + 190, 602/4, 235/4);
+
+    menuMusic.play();
     //fill(0);
     //textSize(24);
     //textAlign(CENTER, CENTER);
@@ -73,22 +85,6 @@ function drawSettingsScreen() {
     textSize(28);
     text("Settings", width / 2, 80);
 
-    var keybinds = [
-        ["W", "Axes Up", "Move Up"],
-        ["A", "Axes Left", "Move Left"],
-        ["S", "Axes Down", "Move Down"],
-        ["D", "Axes Right", "Move Right"],
-        ["T", "X", "Place Tower"],
-        ["1", "DPad Up", "Select Tower 1"], // This task can be marked as complete,
-        ["2", "DPad Right", "Select Tower 2"],
-        ["3", "DPad Down", "Select Tower 3"],
-        ["4", "DPad Left", "Select Tower 4"],
-        [">", "Right Axes Right", "Select Next Tower"],
-        ["<", "Right Axes Left", "Select Previous Tower"],
-        ["P", "Select", "Pause"], // after we add controller functions for each button
-        ["R + L-Shift", "R + L Bumper", "Reset Game"]
-    ];
-
     textSize(16);
     textAlign(LEFT, CENTER);
     var startY = 260;
@@ -103,11 +99,11 @@ function drawSettingsScreen() {
     text("Action", actionX, 160);
 
     fill(255);
-    for (var i = 0; i < keybinds.length; i++) {
+    for (var i = 0; i < keybindsList.length; i++) {
         var y = startY + i * rowHeight;
-        text("[" + keybinds[i][0] + "]", keyX, y);
-        text("[" + keybinds[i][1] + "]", controlX, y);
-        text(keybinds[i][2], actionX, y);
+        text("[" + keybindsList[i][0] + "]", keyX, y);
+        text("[" + keybindsList[i][1] + "]", controlX, y);
+        text(keybindsList[i][2], actionX, y);
     }
 }
 
@@ -118,13 +114,6 @@ function drawEncyclopediaScreen() {
     textAlign(CENTER, CENTER);
     text("Encyclopedia", width / 2, height / 4);
 
-    var encyclist = [
-        [towerImages.normal,    "Normal Tower",    "Fires arrows at approaching enemies from a distance."],
-        [towerImages.healing,   "Healing Tower",   "Restores health to nearby allies. Prioritizes the player, then the base, then combat towers."],
-        [towerImages.attack,    "Attack Tower",    "Deploys troops that chase and engage enemies in melee combat."],
-        [towerImages.explosive, "Explosive Tower", "Launches explosive projectiles that deal area damage on impact."]
-    ];
-
     var startY = height / 3;
     var rowHeight = 90;
     var towerImageX = width / 8;
@@ -133,11 +122,12 @@ function drawEncyclopediaScreen() {
 
     textAlign(LEFT);
 
-    for (var i = 0; i < encyclist.length; i++) {
+    for (var i = 0; i < towerInfoList.length; i++) {
+        var entry = towerInfoList[i];
         var y = startY + i * rowHeight;
-        image(encyclist[i][0], towerImageX, y);
-        text(encyclist[i][1], towerX, y);
-        text(encyclist[i][2], textX, y);
+        image(towerImages[entry[0]], towerImageX, y);
+        text(entry[1], towerX, y);
+        text(entry[2], textX, y);
     }
 }
 
@@ -145,10 +135,25 @@ function hideTitleScreenElements() {
     playButton.hide();
     settingsButton.hide();
     encycButton.hide();
+    //muteButton.hide();
+    menuMusic.pause();
 }
 
 function showTitleScreenElements() {
     playButton.show();
     settingsButton.show();
     encycButton.show();
+    //muteButton.show();
 }
+
+/*
+function musicToggle() {
+    if (menuMusic.isPlaying()) {
+        menuMusic.pause();
+        muteButton.html("Play Music");
+    } else {
+        menuMusic.play();
+        muteButton.html("Pause Music");
+    }
+}
+*/
