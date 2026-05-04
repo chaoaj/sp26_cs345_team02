@@ -126,6 +126,15 @@ function drawSettingsScreen() {
     }
 }
 
+function drawStoryScreen() {
+    background(50);
+    fill(255);
+    textSize(21);
+    textAlign(CENTER, CENTER);
+    text("Story of FrontGuard", width / 2, height / 4);
+    text("1/3", width - 60, height - 30);
+}
+
 function drawEncyclopediaScreen() {
     background(50);
     fill(255);
@@ -148,14 +157,7 @@ function drawEncyclopediaScreen() {
         text(entry[1], towerX, y);
         text(entry[2], textX, y);
     }
-}
-
-function drawStoryScreen() {
-    background(50);
-    fill(255);
-    textSize(21);
-    textAlign(CENTER, CENTER);
-    text("Story of FrontGuard", width / 2, height / 4);
+    text("2/3", width - 75, height - 30);
 }
 
 function drawEnemyScreen() {
@@ -164,6 +166,7 @@ function drawEnemyScreen() {
     textSize(21);
     textAlign(CENTER, CENTER);
     text("Enemy Types", width / 2, height / 4);
+    text("3/3", width - 60, height - 30);
 }
 
 function hideTitleScreenElements() {
