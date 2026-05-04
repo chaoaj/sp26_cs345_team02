@@ -26,7 +26,12 @@ function setupTitleScreen() {
     encycButton.position(width / 2 - 10, height / 2 + 170);
     encycButton.mousePressed(openEncyclopedia);
 
-    backButton = createButton("Back");
+    nextButton = createButton("Next");
+    nextButton.position(width - 20 - nextButton.width, 20);
+    nextButton.mousePressed(encyclopediaNext);
+    nextButton.hide();
+
+    backButton = createButton("Back to Menu");
     backButton.position(20, 20);
     backButton.mousePressed(goToTitle);
     backButton.hide();
@@ -63,12 +68,24 @@ function openSettings() {
 
 function openEncyclopedia() {
     hideTitleScreenElements();
-    currentScreen = "encyclopedia";
+    currentScreen = "story";
     backButton.show();
+    nextButton.show();
+}
+
+function encyclopediaNext() {
+    if (currentScreen == "story") {
+        currentScreen = "encyclopedia";
+    } else if (currentScreen == "encyclopedia") {
+        currentScreen = "enemies";
+    } else if (currentScreen == "enemies") {
+        currentScreen = "story";
+    }
 }
 
 function goToTitle() {
     backButton.hide();
+    nextButton.hide();
     currentScreen = "title";
     showTitleScreenElements();
 }
@@ -131,6 +148,22 @@ function drawEncyclopediaScreen() {
         text(entry[1], towerX, y);
         text(entry[2], textX, y);
     }
+}
+
+function drawStoryScreen() {
+    background(50);
+    fill(255);
+    textSize(21);
+    textAlign(CENTER, CENTER);
+    text("Story of FrontGuard", width / 2, height / 4);
+}
+
+function drawEnemyScreen() {
+    background(50);
+    fill(255);
+    textSize(21);
+    textAlign(CENTER, CENTER);
+    text("Enemy Types", width / 2, height / 4);
 }
 
 function hideTitleScreenElements() {

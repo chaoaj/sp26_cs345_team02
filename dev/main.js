@@ -242,6 +242,10 @@ function draw() {
     drawSettingsScreen();
   } else if (currentScreen == "encyclopedia") {
     drawEncyclopediaScreen();
+  } else if (currentScreen == "story") {
+    drawStoryScreen();
+  } else if (currentScreen == "enemies") {
+    drawEnemyScreen();
   }
 }
 
