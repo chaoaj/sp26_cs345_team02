@@ -2,8 +2,9 @@
 var totalEnemiesKilled = 0;
 var totalMoneyCollected = 0;
 var gameStartFrame = 0;
+var pausedFrames = 0;
 var frozenTimeSurvived = "";
-var highScore = 0;
+var highScoreSeconds = 0;
 var hasWonGame = false;
 
 // After this wave completes with the player alive, the win screen is shown
@@ -19,6 +20,7 @@ function setupGameStats() {
     totalEnemiesKilled = 0;
     totalMoneyCollected = 0;
     gameStartFrame = frameCount;
+    pausedFrames = 0;
     frozenTimeSurvived = "";
     hasWonGame = false;
 }
@@ -28,32 +30,55 @@ function trackEnemyKill() {
     totalMoneyCollected += enemyStats.moneyDropped;
 }
 
-function freezeTimeSurvived() {
-    var totalSeconds = Math.floor((frameCount - gameStartFrame) / 60);
-    var minutes = Math.floor(totalSeconds / 60);
+function formatTime(totalSeconds) {
+    var hours = Math.floor(totalSeconds / 3600);
+    var minutes = Math.floor((totalSeconds % 3600) / 60);
     var seconds = totalSeconds % 60;
-    frozenTimeSurvived = minutes + "m " + (seconds < 10 ? "0" : "") + seconds + "s";
+    var hh = (hours < 10 ? "0" : "") + hours;
+    var mm = (minutes < 10 ? "0" : "") + minutes;
+    var ss = (seconds < 10 ? "0" : "") + seconds;
+    return hh + ":" + mm + ":" + ss;
+}
+
+function getLiveSeconds() {
+    return Math.floor((frameCount - gameStartFrame - pausedFrames) / 60);
+}
+
+function trackPausedFrame() {
+    if (paused) pausedFrames++;
+}
+
+function freezeTimeSurvived() {
+    frozenSeconds = getLiveSeconds();
+    frozenTimeSurvived = formatTime(frozenSeconds);
+    if (frozenSeconds > highScoreSeconds) {
+        highScoreSeconds = frozenSeconds;
+    }
 }
 
 function getTimeSurvived() {
     return frozenTimeSurvived;
 }
 
-function getLiveTime() {
-    var totalSeconds = Math.floor((frameCount - gameStartFrame) / 60);
-    var minutes = Math.floor(totalSeconds / 60);
-    var seconds = totalSeconds % 60;
-    return minutes + "m " + (seconds < 10 ? "0" : "") + seconds + "s";
-}
-
 function drawLiveTimer() {
-    var size = 35;
-    fill(255);
     stroke(0);
     strokeWeight(2);
-    textSize(size);
     textAlign(RIGHT);
-    text(getLiveTime(), width - 20, size + 10);
+
+    // high score line — keep in sync if current run is the best
+    var displayBest = max(highScoreSeconds, getLiveSeconds());
+    fill(255, 200, 50);
+    textSize(20);
+    text("Best: " + formatTime(displayBest), width - 20, 30);
+
+    // live timer
+    fill(255);
+    textSize(28);
+    text(formatTime(getLiveSeconds()), width - 20, 60);
+
+    // kills
+    textSize(20);
+    text("Kills: " + totalEnemiesKilled, width - 20, 88);
     noStroke();
 }
 
@@ -85,7 +110,6 @@ function setupEndScreens() {
 function showGameOver() {
     if (paused) return;
     if (currentScreen === "fading") return;
-    if (totalEnemiesKilled > highScore) highScore = totalEnemiesKilled;
     freezeTimeSurvived();
     fadeAlpha = 0;
     endScreenContentAlpha = 0;
@@ -96,7 +120,6 @@ function showGameOver() {
 function showWinScreen() {
     if (paused) return;
     if (currentScreen === "fading") return;
-    if (totalEnemiesKilled > highScore) highScore = totalEnemiesKilled;
     freezeTimeSurvived();
     fadeAlpha = 0;
     endScreenContentAlpha = 0;
@@ -104,16 +127,12 @@ function showWinScreen() {
     currentScreen = "fading";
 }
 
+var frozenSeconds = 0;
+
 function keepPlaying() {
     hideEndScreenButtons();
-    gameStartFrame = frameCount - Math.round(parseFrozenTime() * 60);
+    gameStartFrame = frameCount - frozenSeconds * 60;
     currentScreen = "game";
-}
-
-function parseFrozenTime() {
-    var parts = frozenTimeSurvived.match(/(\d+)m\s*(\d+)s/);
-    if (parts) return parseInt(parts[1]) * 60 + parseInt(parts[2]);
-    return 0;
 }
 
 function hideEndScreenButtons() {
@@ -220,9 +239,9 @@ function drawGameOverScreen() {
 
     fill(255, 200, 50, a);
     textAlign(LEFT, CENTER);
-    text("High Score", labelX, sy + lh * 5);
+    text("Best Time", labelX, sy + lh * 5);
     textAlign(RIGHT, CENTER);
-    text(highScore + " kills", valueX, sy + lh * 5);
+    text(formatTime(highScoreSeconds), valueX, sy + lh * 5);
 
     textAlign(CENTER, CENTER);
 }
@@ -290,9 +309,9 @@ function drawWinScreen() {
 
     fill(255, 220, 50, a);
     textAlign(LEFT, CENTER);
-    text("High Score", labelX, sy + lh * 5);
+    text("Best Time", labelX, sy + lh * 5);
     textAlign(RIGHT, CENTER);
-    text(highScore + " kills", valueX, sy + lh * 5);
+    text(formatTime(highScoreSeconds), valueX, sy + lh * 5);
 
     textAlign(CENTER, CENTER);
 }

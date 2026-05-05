@@ -198,6 +198,7 @@ function draw() {
     return
   } else if (currentScreen == "game") {
 
+    trackPausedFrame();
     if (!paused) {
       movePlayer();
       updateCamera();
