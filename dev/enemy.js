@@ -23,19 +23,15 @@ var damageConfig = {
 
 // just an object that holds the stats of the enemy
 var enemyStats = {
-    // size of the enemy (circle);
     size: 30,
-    // movement speed
     speed: 2,
-    // how far from the center enemies spawn on the canvas
-    // bigger num = farther
+    maxSpeed: 5,
     spawnRadius: 1500,
-    // decides how much money is given to the player when this enemy is killed
     moneyDropped: 8,
-    // decides the max money a player can receive from a killed enemy
     maxMoneyDropped: 30,
-    // decides how much to increase moneyDropped by
-    moneyIncrement: 3
+    moneyIncrement: 3,
+    maxHealthLevel: 5,
+    maxAttackLevel: 5
 };
 
 var waveNum = 1;
@@ -59,8 +55,12 @@ var waveTimer = 0;
 
 function updateEnemyStats() {
     if (waveNum % 10 == 0) {
-        enemyStats.speed += 1;
-        enemyStats.enemyToBase += 3;
+        if (enemyStats.speed < enemyStats.maxSpeed) {
+            enemyStats.speed = min(enemyStats.speed + 1, enemyStats.maxSpeed);
+        }
+        damageConfig.enemyToBase = min(damageConfig.enemyToBase + 2, 20);
+        damageConfig.enemyToTower = min(damageConfig.enemyToTower + 2, 35);
+        damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 2, 20);
     }
 
     if (enemyStats.moneyDropped + enemyStats.moneyIncrement > enemyStats.maxMoneyDropped) {
@@ -68,8 +68,6 @@ function updateEnemyStats() {
     } else {
         enemyStats.moneyDropped += enemyStats.moneyIncrement;
     }
-    enemyStats.damageToTower += 5
-    enemyStats.damageToPlayer += 5
 
     announcement = new Announcement("Enemy stats have increased.");
     showAnnouncement = true;
@@ -185,16 +183,21 @@ function stopWave() {
     if (waveNum % 5 == 0) {
         updateEnemyStats();
     }
+
+    if (waveNum > finalBossWave && !hasWonGame) {
+        hasWonGame = true;
+        showWinScreen();
+    }
 }
 
 function spawnEnemy() {
     var enemy = {};
 
     enemy.size = enemyStats.size;
-    enemy.level = Math.ceil(waveNum / 3);
+    enemy.level = min(Math.ceil(waveNum / 3), enemyStats.maxHealthLevel);
     enemy.health = 60 * enemy.level;
     enemy.maxHealth = enemy.health;
-    enemy.attackRate = 0.5 * enemy.level; // damage dealt per frame during combat
+    enemy.attackRate = 0.5 * min(Math.ceil(waveNum / 3), enemyStats.maxAttackLevel);
     enemy.engagedTroop = null;
 
     // this is the center of the map (or the base)
@@ -293,4 +296,5 @@ function enemyKilled(enemyIndex, tower = null) {
     }
     enemies.splice(enemyIndex, 1);
     playerStats.money += enemyStats.moneyDropped;
+    trackEnemyKill();
 }

@@ -71,15 +71,16 @@ var towerUpgrades = {
     },
     HealingTower: {
         level: 1,
-        maxLevel: 5,
+        maxLevel: 6,
         costBase: 75,
-        costMult: 1.6,
+        costMult: 1.8,
         currentStats: { healRange: 200, maxHealth: 100, auraHealRate: 0 },
         schedule: [
             { stat: "healRange",    delta: 30,   label: "Heal Range" },
             { stat: "maxHealth",    delta: 25,   label: "Tower HP" },
             { stat: "auraHealRate", delta: 0.02, label: "Aura Heal" },
-            { stat: "auraHealRate", delta: 0.02, label: "Aura Heal" }
+            { stat: "auraHealRate", delta: 0.02, label: "Aura Heal" },
+            { stat: "healRange",    delta: 40,   label: "Mass Heal" }
         ]
     }
 };

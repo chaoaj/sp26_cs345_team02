@@ -55,9 +55,9 @@ function drawTitleScreen() {
 
 function startGame() {
     hideTitleScreenElements();
-    //titleBg.remove();
     currentScreen = "game";
     menuMusic.volume = 0;
+    setupGameStats();
 }
 
 function openSettings() {

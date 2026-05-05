@@ -134,7 +134,7 @@ function drawMoney() {
 // checks the health and restarts the game if it ever hits 0.
 function CheckHealth() {
   if (playerStats.health <= 0) {
-    resetGame();
+    showGameOver();
   }
 }
 

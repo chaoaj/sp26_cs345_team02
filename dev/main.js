@@ -78,6 +78,7 @@ function setup() {
   textAlign(CENTER, CENTER);
 
   setupTitleScreen();
+  setupEndScreens();
   setupPlayer();
   spawnDecorations();
 
@@ -152,7 +153,7 @@ function checkBaseCollisions() {
       enemies.splice(i, 1);
 
       if (base.health <= 0) {
-        resetGame();
+        showGameOver();
         return;
       }
     }
@@ -178,6 +179,7 @@ function resetGame() {
   prepTimeFrames = currentPrepTime;
   paused = false;
   pauseMenuTab = null;
+  hideEndScreenButtons();
   currentScreen = "title";
   showTitleScreenElements();
   setupPlayer();
@@ -233,11 +235,18 @@ function draw() {
     drawMoney();
     drawWaveNumber();
     drawInventory();
+    drawLiveTimer();
 
     // pause menu overlay (settings/keybinds/tower-types)
     if (paused) {
       drawPauseMenu();
     }
+  } else if (currentScreen == "fading") {
+    drawFadeTransition();
+  } else if (currentScreen == "gameover") {
+    drawGameOverScreen();
+  } else if (currentScreen == "win") {
+    drawWinScreen();
   } else if (currentScreen == "settings") {
     drawSettingsScreen();
   } else if (currentScreen == "encyclopedia") {
