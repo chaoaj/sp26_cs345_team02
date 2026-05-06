@@ -113,7 +113,7 @@ function drawSettingsScreen() {
 
     textAlign(CENTER, CENTER);
     text("Controller", controlX, 120);
-    
+
     textAlign(CENTER, CENTER);
     text("Action", actionX, 120);
 
@@ -127,12 +127,29 @@ function drawSettingsScreen() {
 }
 
 function drawStoryScreen() {
+    push();
     background(50);
     fill(255);
-    textSize(21);
-    textAlign(CENTER, CENTER);
+    textSize(25);
+    textAlign(CENTER, TOP);
     text("Story of FrontGuard", width / 2, height / 4);
+    textSize(22);
+    textWrap(WORD);
+    textAlign(CENTER,)
+    textLeading(30);
+    text("You never wanted to be a knight. Growing up, while other children played in grass-filled fields with imaginary swords fashioned "
+        + "from the biggest sticks they could find, you immersed yourself in your studies and created slingshots from twigs and wool scraps.\n\nAs "
+        + "you got older, you continued to study, developing an interest in engineering complex contraptions to help the people around you. After "
+        + "years of hard work and refining your ideas, King Jamesworth Madisyn took notice of your dedication. After some convincing, he decided "
+        + "to give you the opportunity to redesign the kingdom's defenses from the ground up.\n\nYou were granted oversight over a small team to "
+        + "help you carry out manual labor. With your new group of subordinates, the "
+        + "old defenses are torn down, and you can almost see your new designs standing amongst the piles of rubble. However, before you could "
+        + "start constructing the defenses, the king notified you that one of his generals orchestrated a failed surprise attack on "
+        + "a neighboring kingdom. The neighboring kingdom is sure to respond, and soon. There is no longer time to spare.\n\n"
+        + "Can you protect the kingdom?",
+        width / 8, height / 3, 3 * width / 4);
     text("1/3", width - 60, height - 30);
+    pop();
 }
 
 function drawEncyclopediaScreen() {
