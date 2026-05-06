@@ -11,12 +11,22 @@ class Arrow {
 
         this.angle = atan2(targetY - y, targetX - x);
 
-        this.speed = 12;
+        this.speed = 18;
         // damage scales with the firing tower's current upgrade level
         this.damage = (tower && tower.damage !== undefined) ? tower.damage : 20;
         this.size = 6;
 
         this.done = false;
+
+        if (frameCount - lastArrowSoundFrame > 15) {
+
+        let arrowSound = new Audio(arrowProjectileSound.src);
+
+        arrowSound.volume = 0.1;
+        arrowSound.play();
+
+        lastArrowSoundFrame = frameCount;
+}
     }
 
     update() {
@@ -34,9 +44,13 @@ class Arrow {
 
                 enemies[i].health -= this.damage;
 
+                let hitSound = new Audio(enemyHitSound.src);
+
+                hitSound.volume = 0.2;
+                hitSound.play();
+
                 if (enemies[i].health <= 0) {
                     enemyKilled(i, this.tower);
-                    playerStats.money += enemyStats.moneyDropped;
                 }
 
                 this.done = true;

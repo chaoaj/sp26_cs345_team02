@@ -227,8 +227,10 @@ function placeTower(x, y) {
 
     towers.push(tower);
 
-    towerPlacementSound.volume = 0.4
-    towerPlacementSound.play();
+    let placementSound = new Audio(towerPlacementSound.src);
+
+    placementSound.volume = 0.2;
+    placementSound.play();
 
     lastTowerPlacedFrame = frameCount;
 
@@ -400,7 +402,11 @@ function checkTowerCollisions() {
 
             if (d < collisionDist) {
 
-                towers[j].health -= 0.4;
+                if (frameCount - enemies[i].lastAttackFrame > 30) {
+                    towers[j].health -= damageConfig.enemyToTower;
+                    enemies[i].lastAttackFrame = frameCount;
+                }
+
                 enemies[i].health -= (towers[j].wallDamage || 1);
 
                 if (towers[j].health <= 0) {
@@ -414,8 +420,6 @@ function checkTowerCollisions() {
                         enemies[i].engagedTroop.engagedEnemy = null;
                     }
                     enemyKilled(i, towers[j]);
-
-                    playerStats.money += enemyStats.moneyDropped;
                 }
                 break;
             }

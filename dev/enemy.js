@@ -27,7 +27,7 @@ var enemyStats = {
     speed: 2,
     maxSpeed: 5,
     spawnRadius: 1500,
-    moneyDropped: 8,
+    moneyDropped: 15,
     maxMoneyDropped: 30,
     moneyIncrement: 3,
     maxHealthLevel: 5,
@@ -199,6 +199,7 @@ function spawnEnemy() {
     enemy.maxHealth = enemy.health;
     enemy.attackRate = 0.5 * min(Math.ceil(waveNum / 3), enemyStats.maxAttackLevel);
     enemy.engagedTroop = null;
+    enemy.lastAttackFrame = 0;
 
     // this is the center of the map (or the base)
     var baseCenterX = base.x;
@@ -289,12 +290,36 @@ function enemyKilled(enemyIndex, tower = null) {
     if (enemies[enemyIndex].engagedTroop !== null) {
         enemies[enemyIndex].engagedTroop.engagedEnemy = null;
     }
+
+
+    if (frameCount - lastKillSoundFrame > 5) {
+        
+        let killAudio = new Audio(enemyKilledSound.src);
+    
+        killAudio.volume = 0.1;
+        killAudio.play();
+
+        lastKillSoundFrame = frameCount;
+    }
+
     if (tower != null) {
         killedEnemies.push({x: enemies[enemyIndex].x, y: enemies[enemyIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
     } else {
         killedEnemies.push({x: playerStats.x, y: playerStats.y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
     }
+
     enemies.splice(enemyIndex, 1);
+
     playerStats.money += enemyStats.moneyDropped;
+
+    if (frameCount - lastCoinSoundFrame > 5) {
+        
+        let moneyAudio = new Audio(coinSound.src);
+    
+        moneyAudio.volume = 0.2;
+        moneyAudio.play();
+
+        lastCoinSoundFrame = frameCount;
+    }
     trackEnemyKill();
 }

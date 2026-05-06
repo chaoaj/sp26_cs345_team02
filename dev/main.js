@@ -27,12 +27,50 @@ var base = {
 
 // ----- Sound -----
 let menuMusic = new Audio("audio/mainMenuMusic.mp3");
+
 menuMusic.loop = true;
-menuMusic.volume = 1;
+menuMusic.volume = 0.7;
 
 let musicStarted = false;
 
 let towerPlacementSound = new Audio("audio/PlaceTowerStructure01.wav");
+
+let arrowProjectileSound = new Audio("audio/arrow_projectile_sound.wav");
+
+let coinSound = new Audio("audio/Coins.wav");
+
+coinSound.volume = 0.2;
+
+let enemyAnnouncementSound = new Audio("audio/enemy_announcement.mp3");
+
+let enemyHitSound = new Audio("audio/enemy_hit.wav");
+
+let enemyKilledSound = new Audio("audio/enemy_killed.wav");
+
+let explosionSound = new Audio("audio/explosion_sound_effect.wav");
+
+let gameBackgroundMusic = new Audio("audio/game_background_audio.wav");
+
+gameBackgroundMusic.loop = true;
+gameBackgroundMusic.volume = 0.7;
+
+let menuClickSound = new Audio("audio/menu_click.wav");
+
+let playerHitSound = new Audio("audio/player_hit.wav");
+
+let playerLevelUpSound = new Audio("audio/player_level_up.ogg");
+
+let towerHealingSound = new Audio("audio/tower_healing.wav");
+
+let towerUpgradeSound = new Audio("audio/tower_upgrade_sound.mp3");
+
+let lastEnemyHitSoundFrame = 0;
+
+let lastArrowSoundFrame = 0;
+
+let lastCoinSoundFrame = 0;
+
+let lastKillSoundFrame = 0;
 
 /**
  * This function is called once to load assets before our game runs.
@@ -169,7 +207,7 @@ function resetGame() {
   troops = [];
   base.health = base.maxHealth;
   mainBase.sheet = baseImage;
-  enemyStats.moneyDropped = 8;
+  enemyStats.moneyDropped = 15;
   enemyStats.speed = 2;
   waveInProg = false;
   showAnnouncement = false;
