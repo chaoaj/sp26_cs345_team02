@@ -66,14 +66,14 @@ var enemyDelay = spawnRateToDelay(waveConfig.baseSpawnRate);
 var waveTimer = 0;
 
 function updateEnemyStats() {
-    if (waveNum % 10 == 0) {
-        if (enemyStats.speed < enemyStats.maxSpeed) {
-            enemyStats.speed = min(enemyStats.speed + 1, enemyStats.maxSpeed);
-        }
-        damageConfig.enemyToBase = min(damageConfig.enemyToBase + 2, 20);
-        damageConfig.enemyToTower = min(damageConfig.enemyToTower + 2, 35);
-        damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 2, 20);
+
+    if (enemyStats.speed < enemyStats.maxSpeed) {
+        enemyStats.speed = min(enemyStats.speed + 1, enemyStats.maxSpeed);
     }
+
+    damageConfig.enemyToBase = min(damageConfig.enemyToBase + 2, 20);
+    damageConfig.enemyToTower = min(damageConfig.enemyToTower + 2, 35);
+    damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 2, 20);
 
     if (enemyStats.moneyDropped + enemyStats.moneyIncrement > enemyStats.maxMoneyDropped) {
         enemyStats.moneyDropped = enemyStats.maxMoneyDropped;
@@ -204,7 +204,7 @@ function stopWave() {
                           waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
     prepTimeFrames = currentPrepTime;
 
-    if (waveNum % 5 == 0) {
+    if (waveNum % 3 == 0) {
         updateEnemyStats();
     }
 
