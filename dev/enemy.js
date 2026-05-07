@@ -71,6 +71,8 @@ function updateEnemyStats() {
 
     announcement = new Announcement("Enemy stats have increased.");
     showAnnouncement = true;
+    enemyAnnouncementSound.play();
+    
 }
 
 function updateEnemies() {
@@ -180,7 +182,7 @@ function stopWave() {
                           waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
     prepTimeFrames = currentPrepTime;
 
-    if (waveNum % 5 == 0) {
+    if (waveNum % 2 == 0) {
         updateEnemyStats();
     }
 

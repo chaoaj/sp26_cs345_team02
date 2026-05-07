@@ -29,48 +29,37 @@ var base = {
 let menuMusic = new Audio("audio/mainMenuMusic.mp3");
 
 menuMusic.loop = true;
-menuMusic.volume = 0.7;
+menuMusic.volume = 0.5;
 
 let musicStarted = false;
 
 let towerPlacementSound = new Audio("audio/PlaceTowerStructure01.wav");
-
 let arrowProjectileSound = new Audio("audio/arrow_projectile_sound.wav");
-
 let coinSound = new Audio("audio/Coins.wav");
-
-coinSound.volume = 0.2;
-
 let enemyAnnouncementSound = new Audio("audio/enemy_announcement.mp3");
-
+enemyAnnouncementSound.volume = 0.07;
 let enemyHitSound = new Audio("audio/enemy_hit.wav");
-
 let enemyKilledSound = new Audio("audio/enemy_killed.wav");
-
 let explosionSound = new Audio("audio/explosion_sound_effect.wav");
-
 let gameBackgroundMusic = new Audio("audio/game_background_audio.wav");
 
 gameBackgroundMusic.loop = true;
-gameBackgroundMusic.volume = 0.7;
+gameBackgroundMusic.volume = 0.2;
 
 let menuClickSound = new Audio("audio/menu_click.wav");
 
+menuClickSound.volume = 1;
+
 let playerHitSound = new Audio("audio/player_hit.wav");
-
 let playerLevelUpSound = new Audio("audio/player_level_up.ogg");
-
 let towerHealingSound = new Audio("audio/tower_healing.wav");
-
-let towerUpgradeSound = new Audio("audio/tower_upgrade_sound.mp3");
+let towerUpgradeSound = new Audio("audio/tower_upgrade_sound.wav");
 
 let lastEnemyHitSoundFrame = 0;
-
 let lastArrowSoundFrame = 0;
-
 let lastCoinSoundFrame = 0;
-
 let lastKillSoundFrame = 0;
+let lastPlayerHitSoundFrame = 0;
 
 /**
  * This function is called once to load assets before our game runs.
@@ -205,24 +194,45 @@ function resetGame() {
   explosives = [];
   arrows = [];
   troops = [];
+
   base.health = base.maxHealth;
   mainBase.sheet = baseImage;
+
   enemyStats.moneyDropped = 15;
+
   enemyStats.speed = 2;
+
   waveInProg = false;
   showAnnouncement = false;
   waveNum = 1;
+  
   resetTowerUpgrades();
+
   currentPrepTime = waveConfig.prepTimeStart;
   prepTimeFrames = currentPrepTime;
+
   paused = false;
   pauseMenuTab = null;
+
   hideEndScreenButtons();
+
+  gameBackgroundMusic.pause();
+  gameBackgroundMusic.currentTime = 0
+
+  menuMusic.pause();
+  menuMusic.currentTime = 0;
+
+  if (!isMuted) {
+    menuMusic.volume = 0.5;
+    menuMusic.play();
+  }
+
   currentScreen = "title";
   showTitleScreenElements();
   setupPlayer();
   spawnDecorations();
   resetInventory();
+
   cursor(ARROW);
 }
 

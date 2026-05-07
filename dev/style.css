@@ -29,8 +29,8 @@ button:hover {
   text-decoration: dotted;
   font-style: oblique;
   color:rgba(255, 217, 0, 0);
-  width:130px;
-  height: 40px;
+  width: 170px;
+  height: 55px;
   position: absolute;
   cursor: pointer;
   border: 0; /*change to 2 to see where the actual buttons are*/

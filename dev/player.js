@@ -90,6 +90,15 @@ function checkPlayerCollisions() {
       var collisionDist = enemy.size / 2 + playerWidth / 2;
       if (d1 < collisionDist || d2 < collisionDist || d3 < collisionDist) {
           playerStats.health -= damageConfig.enemyToPlayer;
+
+          if (frameCount - lastPlayerHitSoundFrame > 10) {
+            let playerHit = new Audio(playerHitSound.src);
+
+            playerHit.volume = 0.4;
+            playerHit.play();
+
+            lastPlayerHitSoundFrame = frameCount;
+          }
           enemyKilled(i, null);
       }
   }

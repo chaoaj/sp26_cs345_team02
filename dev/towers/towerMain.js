@@ -464,7 +464,15 @@ function sellTower() {
 function upgradeTower() {
     if (hovered === null) return;
     if (typeof hovered.upgrade !== "function") return;
-    hovered.upgrade();
+    var up = hovered.upgrade();
+
+    if (!up) return;
+
+    let asdf = new Audio(towerUpgradeSound.src);
+    asdf.volume = 0.2;
+    
+    asdf.play();
+
 }
 
 // Rounds floats to 2 decimals for display; leaves integers alone.

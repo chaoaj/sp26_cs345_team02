@@ -13,17 +13,17 @@ let isMuted = false;
 function setupTitleScreen() {
     playButton = createButton("Play");
     playButton.id("mainMenuButton");
-    playButton.position(width / 2 - 10, height / 2 + 70);
+    playButton.position(width / 2 - 35, height / 2 + 95);
     playButton.mousePressed(startGame);
 
     settingsButton = createButton("Settings");
     settingsButton.id("mainMenuButton");
-    settingsButton.position(width / 2 - 10, height / 2 + 120);
+    settingsButton.position(width / 2 - 35, height / 2 + 155);
     settingsButton.mousePressed(openSettings);
 
     encycButton = createButton("Encyclopedia");
     encycButton.id("mainMenuButton");
-    encycButton.position(width / 2 - 10, height / 2 + 170);
+    encycButton.position(width / 2 - 35, height / 2 + 215);
     encycButton.mousePressed(openEncyclopedia);
 
     nextButton = createButton("Next");
@@ -44,10 +44,10 @@ function setupTitleScreen() {
 
 function drawTitleScreen() {
     image(titleBg, width / 2, height / 2, width, height);
-    image(titleLogo, width / 2, 280, 160 * 4.2, 120 * 4.2);
-    image(titlePlayButton, width / 2 + 50, height / 2 + 90, 602/3.7, 235/3.7);
-    image(titleSettingsButton, width / 2 + 50, height / 2 + 140, 602/4, 235/4);
-    image(titleEncyclopediaButton, width / 2 + 50, height / 2 + 190, 602/4, 235/4);
+    image(titleLogo, width / 2, 220, 160 * 4.2, 120 * 4.2);
+    image(titlePlayButton, width / 2 + 50, height / 2 + 120, 602/3.7, 235/3.7);
+    image(titleSettingsButton, width / 2 + 50, height / 2 + 180, 602/4, 235/4);
+    image(titleEncyclopediaButton, width / 2 + 50, height / 2 + 240, 602/4, 235/4);
     //fill(0);
     //textSize(24);
     //textAlign(CENTER, CENTER);
@@ -55,18 +55,28 @@ function drawTitleScreen() {
 
 function startGame() {
     hideTitleScreenElements();
+    menuMusic.pause();
+    menuMusic.currentTime = 0;
+    
+    if (gameBackgroundMusic.paused) {
+        gameBackgroundMusic.currentTime = 0;
+        gameBackgroundMusic.play();
+    }
+    
     currentScreen = "game";
     menuMusic.volume = 0;
     setupGameStats();
 }
 
 function openSettings() {
+    playMenuClickSound();
     hideTitleScreenElements();
     currentScreen = "settings";
     backButton.show();
 }
 
 function openEncyclopedia() {
+    playMenuClickSound();
     hideTitleScreenElements();
     currentScreen = "story";
     backButton.show();
@@ -74,6 +84,7 @@ function openEncyclopedia() {
 }
 
 function encyclopediaNext() {
+    playMenuClickSound();
     if (currentScreen == "story") {
         currentScreen = "encyclopedia";
     } else if (currentScreen == "encyclopedia") {
@@ -84,6 +95,15 @@ function encyclopediaNext() {
 }
 
 function goToTitle() {
+    playMenuClickSound();
+
+    gameBackgroundMusic.pause();
+    gameBackgroundMusic.currentTime = 0;
+
+    if (menuMusic.paused && !isMuted) {
+        menuMusic.play();
+    }
+
     backButton.hide();
     nextButton.hide();
     currentScreen = "title";
@@ -201,14 +221,34 @@ function showTitleScreenElements() {
 }
 
 function toggleMute() {
+    playMenuClickSound();
 
     isMuted = !isMuted;
 
     if (isMuted) {
         menuMusic.volume = 0;
+        gameBackgroundMusic.volume = 0;
+
         muteButton.html("Unmute Music");
     } else {
-        menuMusic.volume = 1;
+        menuMusic.volume = 0.5;
+        gameBackgroundMusic.volume = 0.5;
+
+        if (currentScreen == "title") {
+            if (menuMusic.paused) menuMusic.play();
+        } else if (currentScreen == "game") {
+            if (gameBackgroundMusic.paused) {
+                gameBackgroundMusic.play();
+            }
+        }
         muteButton.html("Mute Music");
     }
+}
+
+function playMenuClickSound() {
+    let click = new Audio("audio/menu_click.wav");
+
+    click.volume = 1;
+
+    click.play()
 }

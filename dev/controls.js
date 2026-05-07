@@ -181,9 +181,14 @@ function mousePressed() {
   // ^^^^^
   // why? what is the reason for mouse clicks to be reserved for the pause menu?
   
+  userStartAudio();
   if (!musicStarted) {
-    menuMusic.play();
     musicStarted = true;
+    menuMusic.play();
+  }
+
+  if (isMuted) {
+    menuMusic.volume = 0;
   }
 
   if (paused && currentScreen == "game") {
