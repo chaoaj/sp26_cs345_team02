@@ -55,6 +55,7 @@ function drawTitleScreen() {
 
 function startGame() {
     hideTitleScreenElements();
+    playMenuClickSound();
     menuMusic.pause();
     menuMusic.currentTime = 0;
     
