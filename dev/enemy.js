@@ -34,6 +34,18 @@ var enemyStats = {
     maxAttackLevel: 5
 };
 
+var specialEnemyStats = {
+    size: 50,
+    speed: 1.7,
+    maxSpeed: 6,
+    spawnRadius: 1500,
+    moneyDropped: 60,
+    maxMoneyDropped: 100,
+    moneyIncrement: 10,
+    maxHealthLevel: 10,
+    maxAttackLevel: 10
+};
+
 var waveNum = 1;
 
 var waveInProg = false;
@@ -67,6 +79,16 @@ function updateEnemyStats() {
         enemyStats.moneyDropped = enemyStats.maxMoneyDropped;
     } else {
         enemyStats.moneyDropped += enemyStats.moneyIncrement;
+    }
+
+    if (specialEnemyStats.speed < specialEnemyStats.maxSpeed) {
+        specialEnemyStats.speed = min(specialEnemyStats.speed + 0.2, specialEnemyStats.maxSpeed);
+    }
+
+    if (specialEnemyStats.moneyDropped + specialEnemyStats.moneyIncrement > specialEnemyStats.maxMoneyDropped) {
+        specialEnemyStats.moneyDropped =specialEnemyStats.maxMoneyDropped;
+    } else {
+        specialEnemyStats.moneyDropped += specialEnemyStats.moneyIncrement;
     }
 
     announcement = new Announcement("Enemy stats have increased.");
@@ -106,8 +128,8 @@ function updateEnemies() {
         var dy = target.y - enemies[i].y;
         var d = dist(enemies[i].x, enemies[i].y, target.x, target.y);
         if (d > 0) {
-            enemies[i].xSpeed = (dx / d) * enemyStats.speed;
-            enemies[i].ySpeed = (dy / d) * enemyStats.speed;
+            enemies[i].xSpeed = (dx / d) * enemies[i].speed;
+            enemies[i].ySpeed = (dy / d) * enemies[i].speed;
         }
 
         enemies[i].x += enemies[i].xSpeed;
@@ -182,7 +204,7 @@ function stopWave() {
                           waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
     prepTimeFrames = currentPrepTime;
 
-    if (waveNum % 2 == 0) {
+    if (waveNum % 5 == 0) {
         updateEnemyStats();
     }
 
@@ -195,13 +217,35 @@ function stopWave() {
 function spawnEnemy() {
     var enemy = {};
 
+    // ----- Regular Enemy Stats -----
+    enemy.isSpecial = false;
+
     enemy.size = enemyStats.size;
+    enemy.speed = enemyStats.speed;
     enemy.level = min(Math.ceil(waveNum / 3), enemyStats.maxHealthLevel);
     enemy.health = 60 * enemy.level;
     enemy.maxHealth = enemy.health;
     enemy.attackRate = 0.5 * min(Math.ceil(waveNum / 3), enemyStats.maxAttackLevel);
+    enemy.moneyDropped = enemyStats.moneyDropped;
     enemy.engagedTroop = null;
     enemy.lastAttackFrame = 0;
+    enemy.spriteSheet = enemySprite;
+
+    // ----- Special Enemy Stuff  -----
+
+    var specialEnemyChance = min(0.01 + waveNum * 0.005, 0.40); // u can change to 1 for testing
+
+    if (random() < specialEnemyChance) {
+        enemy.isSpecial = true;
+        enemy.size = specialEnemyStats.size;
+        enemy.speed = specialEnemyStats.speed;
+        enemy.health *= 5;
+        enemy.attackRate *= 2;
+        enemy.maxHealth = enemy.health;
+        enemy.moneyDropped = specialEnemyStats.moneyDropped;
+        enemy.spriteSheet = enemySpecialSprite;
+    }
+
 
     // this is the center of the map (or the base)
     var baseCenterX = base.x;
@@ -224,7 +268,7 @@ function spawnEnemy() {
     enemy.xSpeed = distanceX / totalDistance * enemyStats.speed;
     enemy.ySpeed = distanceY / totalDistance * enemyStats.speed;
 
-    enemyToDraw = new Sprite(enemySprite, enemy.x, enemy.y, 4);
+    enemy.spriteObj = new Sprite(enemy.spriteSheet, enemy.x, enemy.y, 4);
 
     enemies.push(enemy);
 }
@@ -233,16 +277,19 @@ function drawEnemies() {
     for (var i = 0; i < enemies.length; i++) {
         var ox = enemies[i].engagedTroop !== null ? random(-2, 2) : 0;
         var oy = enemies[i].engagedTroop !== null ? random(-2, 2) : 0;
-        fill(255, 0, 0);
-        noStroke();
-        // circle(enemies[i].x + ox, enemies[i].y + oy, enemies[i].size);
-        enemyToDraw.x = enemies[i].x + ox;
-        enemyToDraw.y = enemies[i].y + oy;
-        enemyToDraw.drawEnemy();
+
+        enemies[i].spriteObj.x = enemies[i].x + ox;
+        enemies[i].spriteObj.y = enemies[i].y + oy;
+
+        if (enemies[i].isSpecial){
+            enemies[i].spriteObj.drawEnemy(1.2)
+        } else {
+            enemies[i].spriteObj.drawEnemy();
+        }
         if (enemies[i].health < enemies[i].maxHealth) {
             drawHealthBar(enemies[i].x, enemies[i].y, enemies[i].size, enemies[i].health, enemies[i].maxHealth);
         }
-    }
+    }   
 }
 
 function drawWaveAnimation(barWidthPixels) {
@@ -305,14 +352,16 @@ function enemyKilled(enemyIndex, tower = null) {
     }
 
     if (tower != null) {
-        killedEnemies.push({x: enemies[enemyIndex].x, y: enemies[enemyIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
+        killedEnemies.push({x: enemies[enemyIndex].x, y: enemies[enemyIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20), money: enemies[enemyIndex].moneyDropped});
     } else {
         killedEnemies.push({x: playerStats.x, y: playerStats.y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
     }
 
+    var moneyEarned = enemies[enemyIndex].moneyDropped;
+
     enemies.splice(enemyIndex, 1);
 
-    playerStats.money += enemyStats.moneyDropped;
+    playerStats.money += moneyEarned;
 
     if (frameCount - lastCoinSoundFrame > 5) {
         
