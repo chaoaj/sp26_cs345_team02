@@ -80,8 +80,7 @@ function preload() {
   // ----- Enemy Image -----
   enemySprite = loadImage("images/enemyNormal.png");
   enemySpecialSprite = loadImage("images/enemySpecial.png");
-
-  
+  enemyFinalBossSprite = loadImage("images/FinalBoss.png");
   
   // ----- Tower images -----
   towerImages.normal = loadImage("images/normalTower.png");

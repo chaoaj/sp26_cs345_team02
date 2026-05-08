@@ -10,6 +10,10 @@ let currentScreen = "title";
 let muteButton;
 let isMuted = false;
 
+let encycEnemySprite;
+let encycSpecialEnemySprite;
+let encycFinalBossSprite;
+
 function setupTitleScreen() {
     playButton = createButton("Play");
     playButton.id("mainMenuButton");
@@ -40,6 +44,10 @@ function setupTitleScreen() {
     muteButton.id("muteButton");
     muteButton.position(20, height - 60);
     muteButton.mousePressed(toggleMute);
+
+    encycEnemySprite = new Sprite(enemySprite, width / 2, 0, 4);
+    encycSpecialEnemySprite = new Sprite(enemySpecialSprite, width / 2, 0, 4);
+    encycFinalBossSprite = new Sprite (enemyFinalBossSprite, width / 2, 0, 4);
 }
 
 function drawTitleScreen() {
@@ -204,47 +212,58 @@ function drawEnemyScreen() {
     textAlign(CENTER, CENTER);
 
     let y = 80;   // starting Y position
+    let spriteY = 250; // sprite y position
     let gap = 18; // spacing control
+
+    let normalX = width * 0.25;
+    let specialX = width * 0.5;
+    let bossX = width * 0.75;
 
     // TITLE
     textSize(26);
     text("Enemy Encyclopedia", width / 2, y);
-    textSize(14);
-    text("3 / 3 Pages", width - 80, 30);
+
+    textSize(21);
+    text("3/3", width - 75, height - 30);
 
     // ================= NORMAL ENEMY =================
-    y += 90;
     textSize(18);
-    text("Normal Enemy", width / 2, y);
+    text("Normal Enemy", normalX, 170);
 
-    image(enemySprite, width / 2, y + 60, 70, 70);
+    encycEnemySprite.x = normalX;
+    encycEnemySprite.y = spriteY;
+    encycEnemySprite.drawEnemy();
 
     textSize(14);
-    text("HP: 60 × wave level", width / 2, y + 130);
-    text("Speed: 2", width / 2, y + 130 + gap);
-    text("Reward: scales from $15+", width / 2, y + 130 + gap * 2);
+    text("HP: 60 × wave level", normalX, spriteY + 85);
+    text("Speed: 2", normalX, spriteY + 85 + gap);
+    text("Reward: scales from $15+", normalX, spriteY + 85 + gap * 2);
 
     // ================= SPECIAL ENEMY =================
-    y += 220;
     textSize(18);
-    text("Special Enemy", width / 2, y);
+    text("Special Enemy", specialX, 170);
 
-    image(enemySpecialSprite, width / 2, y + 60, 70, 70);
+    encycSpecialEnemySprite.x = specialX;
+    encycSpecialEnemySprite.y = spriteY;
+    encycSpecialEnemySprite.drawEnemy();
 
     textSize(14);
-    text("HP: Higher than normal", width / 2, y + 130);
-    text("Speed: 3", width / 2, y + 130 + gap);
-    text("Reward: scales from $70+", width / 2, y + 130 + gap * 2);
+    text("HP: Higher than normal", specialX, spriteY + 85);
+    text("Speed: 3", specialX, spriteY + 85 + gap);
+    text("Reward: scales from $70+", specialX, spriteY + 85 + gap * 2);
 
     // ================= FINAL BOSS =================
-    y += 220;
     textSize(18);
-    text("FINAL BOSS", width / 2, y);
+    text("FINAL BOSS", bossX, 170);
+
+    encycFinalBossSprite.x = bossX
+    encycFinalBossSprite.y = spriteY;
+    encycFinalBossSprite.drawEnemy();
 
     textSize(14);
-    text("HP: Very High", width / 2, y + 60);
-    text("Speed: Slow", width / 2, y + 60 + gap);
-    text("Reward: Highest in game", width / 2, y + 60 + gap * 2);
+    text("HP: Very High", bossX, spriteY + 85);
+    text("Speed: Slow", bossX, spriteY + 85 + gap);
+    text("Reward: Highest in game", bossX, spriteY + 85 + gap * 2);
 }
 
 function hideTitleScreenElements() {
@@ -293,3 +312,4 @@ function playMenuClickSound() {
 
     click.play()
 }
+
