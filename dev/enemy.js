@@ -71,9 +71,9 @@ function updateEnemyStats() {
         enemyStats.speed = min(enemyStats.speed + 0.2, enemyStats.maxSpeed);
     }
 
-    damageConfig.enemyToBase = min(damageConfig.enemyToBase + 0.5, maxAttackLevel);
-    damageConfig.enemyToTower = min(damageConfig.enemyToTower + 0.5, maxAttackLevel);
-    damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 0.5, maxAttackLevel);
+    damageConfig.enemyToBase = min(damageConfig.enemyToBase + 0.5, 20);
+    damageConfig.enemyToTower = min(damageConfig.enemyToTower + 0.5, 20);
+    damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 0.5, 20);
 
     if (enemyStats.moneyDropped + enemyStats.moneyIncrement > enemyStats.maxMoneyDropped) {
         enemyStats.moneyDropped = enemyStats.maxMoneyDropped;

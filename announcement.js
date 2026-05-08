@@ -114,5 +114,9 @@ function updateMaxTowers(newMax) {
         maxTowers = newMax;
         announcement = new Announcement(`Tower limit increased to ${maxTowers}!`, 32);
         showAnnouncement = true;
+        let levelUp = new Audio(playerLevelUpSound.src);
+        
+        levelUp.volume = 0.5;
+        levelUp.play();
     }
 }
