@@ -59,3 +59,56 @@ class Announcement {
         }
     }
 }
+
+class TowerHUD {
+    constructor() {
+        this.padding = 10;
+        this.size = 24;
+    }
+
+    show() {
+        push();
+        textFont(textFonts.nunito);
+        textSize(this.size);
+        textAlign(LEFT);
+
+        let label = "Towers: " + placedTowers + " / " + maxTowers;
+        let bbox = textFonts.nunito.textBounds(label, 20, 40, this.size);
+
+        fill(0, 120);
+        rect(
+            bbox.x - this.padding,
+            bbox.y - this.padding,
+            bbox.w + this.padding * 2,
+            bbox.h + this.padding * 2
+        );
+
+        fill(255);
+        text(label, 20, 40);
+        pop();
+    }
+}
+
+var towerHUD = new TowerHUD();
+
+
+function onTowerPlaced() {
+    placedTowers++;
+}
+
+function onTowerRemoved() {
+    placedTowers--;
+}
+
+/**
+ * Call at the start of each wave with the new tower cap.
+ *
+ * @param {number} newMax
+ */
+function updateMaxTowers(newMax) {
+    if (newMax > maxTowers) {
+        maxTowers = newMax;
+        announcement = new Announcement(`Tower limit increased to ${maxTowers}!`, 32);
+        showAnnouncement = true;
+    }
+}
