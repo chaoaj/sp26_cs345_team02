@@ -40,6 +40,45 @@ function setupTitleScreen() {
     muteButton.id("muteButton");
     muteButton.position(20, height - 60);
     muteButton.mousePressed(toggleMute);
+
+    setMenuButtons("title");
+}
+
+function setMenuButtons(screen) {
+    selectedIndex = 0;
+    switch(screen) {
+        case "title":
+            menuButtons = [playButton, settingsButton, encycButton, muteButton];
+            break;
+        case "encyclopedia":
+        case "story":
+        case "enemies":
+            menuButtons = [nextButton, backButton];
+            break;
+        case "settings":
+            menuButtons = [backButton];
+            break;
+        case "gameover":
+            menuButtons = [gameOverPlayAgainButton];
+            break;
+        case "win":
+            menuButtons = [winKeepPlayingButton, winPlayAgainButton];
+            break;
+            }
+    updateButtonHighlight();
+}
+
+/**
+ * Keep track of which button is hovered by adding it to the "hovered" css class
+ */
+function updateButtonHighlight() {
+    menuButtons.forEach((btn, i) => {
+        if (i === selectedIndex) {
+            btn.addClass("hovered");
+        } else {
+            btn.removeClass("hovered");
+        }
+    });
 }
 
 function drawTitleScreen() {
@@ -62,23 +101,28 @@ function startGame() {
 
 function openSettings() {
     hideTitleScreenElements();
-    currentScreen = "settings";
     backButton.show();
+    setMenuButtons("settings");
+    currentScreen = "settings";
 }
 
 function openEncyclopedia() {
     hideTitleScreenElements();
-    currentScreen = "story";
     backButton.show();
     nextButton.show();
+    setMenuButtons("story");
+    currentScreen = "story";
 }
 
 function encyclopediaNext() {
     if (currentScreen == "story") {
+        setMenuButtons("encyclopedia");
         currentScreen = "encyclopedia";
     } else if (currentScreen == "encyclopedia") {
+        setMenuButtons("enemies");
         currentScreen = "enemies";
     } else if (currentScreen == "enemies") {
+        setMenuButtons("encyclopedia");
         currentScreen = "story";
     }
 }
@@ -86,6 +130,7 @@ function encyclopediaNext() {
 function goToTitle() {
     backButton.hide();
     nextButton.hide();
+    setMenuButtons("title");
     currentScreen = "title";
     showTitleScreenElements();
 }

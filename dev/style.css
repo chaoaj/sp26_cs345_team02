@@ -59,3 +59,9 @@ button:hover {
   background-color: #555;
   border-color: gold;
 }
+
+.hovered {
+  /*background-color: yellow;*/
+  outline: 3px solid rgba(255, 217, 10);
+  outline-offset: 2px;
+}

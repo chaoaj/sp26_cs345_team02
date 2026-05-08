@@ -51,7 +51,7 @@ function preload() {
 
   // ----- Enemy Image -----
   enemySprite = loadImage("images/enemyNormal.png");
-  
+
   // ----- Tower images -----
   towerImages.normal = loadImage("images/normalTower.png");
   towerImages.attack = loadImage("images/towerAttack.png");
@@ -180,7 +180,9 @@ function resetGame() {
   paused = false;
   pauseMenuTab = null;
   hideEndScreenButtons();
+  setMenuButtons("title");
   currentScreen = "title";
+  updateButtonHighlight();
   showTitleScreenElements();
   setupPlayer();
   spawnDecorations();
@@ -191,11 +193,11 @@ function resetGame() {
 function draw() {
   controller.draw(width/2, height/2);
 
-  if (currentScreen == "title") {
-    drawTitleScreen();
-  } else if (controller.controllersNotCalibrated().length > 0) {
+  if (controller.controllersNotCalibrated().length > 0) {
     controller.calibrate(true);
-    return
+    return;
+  } if (currentScreen == "title") {
+    drawTitleScreen();
   } else if (currentScreen == "game") {
 
     trackPausedFrame();

@@ -6,6 +6,8 @@ var controllerLeft;
 var controllerDown;
 var controllerRight;
 var previewTower;
+var selectedIndex = 0; // in title screen, tracks is currently hovered
+let buttons = []; // stores button objects
 
 /**
  *  Moves the player with WASD or controller input if controller is detected.
@@ -180,7 +182,7 @@ function mousePressed() {
 
   // ^^^^^
   // why? what is the reason for mouse clicks to be reserved for the pause menu?
-  
+
   if (!musicStarted) {
     menuMusic.play();
     musicStarted = true;
@@ -204,6 +206,7 @@ function mouseMoved() {
  * @param {Object} e - Controller event that handles controller input
  */
 function onPress(e) {
+  if (currentScreen != "game" && currentScreen != "fading") processControllerSelections(e);
   console.log("key:", e.name);
 
   lastInput.type = "CONTROLLER";
@@ -288,5 +291,59 @@ function onRelease(e) {
   if (e.name == "buttonBlue") {
     previewTower = false;
     placeTower(playerStats.x, playerStats.y);
+  }
+}
+
+function processControllerSelections(e) {
+  if (e.name == "axesDown") {
+      selectedIndex = (selectedIndex + 1) % menuButtons.length;
+      updateButtonHighlight();
+  }
+  if (e.name == "axesUp") {
+      selectedIndex = (selectedIndex - 1 + menuButtons.length) % menuButtons.length;
+      updateButtonHighlight();
+  }
+  if (e.name == "buttonBlue") {
+    switch(currentScreen) {
+        case "title":
+            switch(selectedIndex) {
+                case 0: startGame();
+                break;
+                case 1: openSettings();
+                break;
+                case 2: openEncyclopedia();
+                break;
+                case 3: toggleMute();
+                break;
+            }
+            break;
+        case "encyclopedia":
+        case "story":
+        case "enemies":
+              switch(selectedIndex) {
+                  case 0: encyclopediaNext();
+                  break;
+                  case 1: goToTitle();
+                  break;
+              }
+              break;
+        case "settings":
+            switch(selectedIndex) {
+                case 0: goToTitle()
+                 break;
+            }
+            break;
+        case "gameover":
+          switch(selectedIndex) {
+              case 0: resetGame(); break;
+          }
+          break;
+      case "win":
+          switch(selectedIndex) {
+              case 0: keepPlaying(); break;
+              case 1: resetGame(); break;
+          }
+          break;
+    }
   }
 }

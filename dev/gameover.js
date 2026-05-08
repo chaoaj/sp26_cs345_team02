@@ -169,13 +169,15 @@ function drawFadeTransition() {
 
     fadeAlpha = min(fadeAlpha + fadeSpeed, 255);
 
-    if (fadeAlpha >= 255) {
+    if (fadeAlpha >= 255 && currentScreen === "fading") {
         currentScreen = fadeTarget;
         if (fadeTarget === "gameover") {
             gameOverPlayAgainButton.show();
+            setMenuButtons("gameover");
         } else {
             winPlayAgainButton.show();
             winKeepPlayingButton.show();
+            setMenuButtons("win");
         }
     }
 }
