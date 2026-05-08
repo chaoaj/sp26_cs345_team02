@@ -94,7 +94,7 @@ function updateEnemyStats() {
     announcement = new Announcement("Enemy stats have increased.");
     showAnnouncement = true;
     enemyAnnouncementSound.play();
-    
+
 }
 
 function updateEnemies() {
@@ -204,7 +204,9 @@ function stopWave() {
                           waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
     prepTimeFrames = currentPrepTime;
 
+
     updateMaxTowers(maxTowers + 2);
+
 
     if (waveNum % 3 == 0) {
         updateEnemyStats();
@@ -291,7 +293,7 @@ function drawEnemies() {
         if (enemies[i].health < enemies[i].maxHealth) {
             drawHealthBar(enemies[i].x, enemies[i].y, enemies[i].size, enemies[i].health, enemies[i].maxHealth);
         }
-    }   
+    }
 }
 
 function drawWaveAnimation(barWidthPixels) {
@@ -347,9 +349,9 @@ function enemyKilled(enemyIndex, tower = null) {
 
 
     if (frameCount - lastKillSoundFrame > 5) {
-        
+
         let killAudio = new Audio(enemyKilledSound.src);
-    
+
         killAudio.volume = 0.1;
         killAudio.play();
 
@@ -366,10 +368,10 @@ function enemyKilled(enemyIndex, tower = null) {
             money: moneyEarned});
     } else {
         killedEnemies.push({
-            x: playerStats.x, 
-            y: playerStats.y, 
-            frame: frameCount, 
-            ox: random(-20, 20), 
+            x: playerStats.x,
+            y: playerStats.y,
+            frame: frameCount,
+            ox: random(-20, 20),
             oy: random(-20, 20),
             money: moneyEarned});
     }
@@ -380,9 +382,9 @@ function enemyKilled(enemyIndex, tower = null) {
     playerStats.money += moneyEarned;
 
     if (frameCount - lastCoinSoundFrame > 5) {
-        
+
         let moneyAudio = new Audio(coinSound.src);
-    
+
         moneyAudio.volume = 0.2;
         moneyAudio.play();
 

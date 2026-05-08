@@ -1,9 +1,6 @@
 var announcement;
 var showAnnouncement = false;
 
-var placedTowers = 0;
-var maxTowers = 16;
-
 /** Display text to the user on the bottom center of the screen.
  *
  * - Text should exist within a semi-translucent text box with a pre-defined width and max/min height.
