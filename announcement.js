@@ -2,7 +2,7 @@ var announcement;
 var showAnnouncement = false;
 
 var placedTowers = 0;
-var maxTowers = 16;
+var maxTowers = 5;
 
 /** Display text to the user on the bottom center of the screen.
  *

@@ -455,7 +455,6 @@ function sellTower() {
         }
     }
     towers.splice(towers.indexOf(soldTower), 1);
-    onTowerRemoved();
     return;
 }
 
