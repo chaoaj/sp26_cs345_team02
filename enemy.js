@@ -182,6 +182,8 @@ function stopWave() {
                           waveConfig.prepTimeStart - (waveNum - 1) * waveConfig.prepTimeDecay);
     prepTimeFrames = currentPrepTime;
 
+    updateMaxTowers(maxTowers + 2); // every wave
+
     if (waveNum % 5 == 0) {
         updateEnemyStats();
     }

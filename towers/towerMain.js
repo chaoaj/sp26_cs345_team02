@@ -222,6 +222,12 @@ function placeTower(x, y) {
 
     var tower = new TowerClass(x, y);
 
+    if (towers.length >= effectiveMaxTowers()) {
+        announcement = new Announcement(`Tower limit reached! (${effectiveMaxTowers()} max this wave)`, 28);
+        showAnnouncement = true;
+        return;
+    }
+
     if (!canPlaceTower(tower)) return;
 
     towers.push(tower);
@@ -405,6 +411,7 @@ function checkTowerCollisions() {
 
                 if (towers[j].health <= 0) {
                     towers.splice(j, 1);
+                    onTowerRemoved();
                     break;
                 }
 
@@ -450,6 +457,7 @@ function sellTower() {
         }
     }
     towers.splice(towers.indexOf(soldTower), 1);
+    onTowerRemoved();
     return;
 }
 

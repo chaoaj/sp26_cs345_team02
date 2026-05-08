@@ -112,7 +112,7 @@ function onTowerRemoved() {
 function updateMaxTowers(newMax) {
     if (newMax > maxTowers) {
         maxTowers = newMax;
-        announcement = new Announcement(`Tower limit increased to ${maxTowers}!`, 32);
+        announcement = new Announcement(`You can now place up to ${maxTowers} towers!`, 32);
         showAnnouncement = true;
         let levelUp = new Audio(playerLevelUpSound.src);
 
