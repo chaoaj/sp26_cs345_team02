@@ -83,4 +83,3 @@ function getFinalBossEnemy() {
 
     return null;
 }
-
