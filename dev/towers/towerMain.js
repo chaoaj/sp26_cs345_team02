@@ -40,9 +40,9 @@ var towerUpgrades = {
         costMult: 1.6,
         currentStats: { damage: 20, attackRange: 350 },
         schedule: [
-            { stat: "damage",      delta: 10, label: "Arrow Damage" },
+            { stat: "damage",      delta: 15, label: "Arrow Damage" },
             { stat: "attackRange", delta: 50, label: "Attack Range" },
-            { stat: "damage",      delta: 10, label: "Arrow Damage" },
+            { stat: "damage",      delta: 15, label: "Arrow Damage" },
             { stat: "attackRange", delta: 50, label: "Attack Range" }
         ]
     },
@@ -116,7 +116,7 @@ var activeTowerType = "normal";
 // max health values for each entity type
 var healthConfig = {
     base: 200,
-    tower: 100
+    tower: 150
 };
 
 var placeableArea = {
