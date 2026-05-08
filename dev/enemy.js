@@ -68,12 +68,12 @@ var waveTimer = 0;
 function updateEnemyStats() {
 
     if (enemyStats.speed < enemyStats.maxSpeed) {
-        enemyStats.speed = min(enemyStats.speed + 0.2, enemyStats.maxSpeed);
+        enemyStats.speed = min(enemyStats.speed + 0.02, enemyStats.maxSpeed);
     }
 
-    damageConfig.enemyToBase = min(damageConfig.enemyToBase + 0.5, 20);
-    damageConfig.enemyToTower = min(damageConfig.enemyToTower + 0.5, 20);
-    damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 0.5, 20);
+    damageConfig.enemyToBase = min(damageConfig.enemyToBase + 0.05, 20);
+    damageConfig.enemyToTower = min(damageConfig.enemyToTower + 0.05, 20);
+    damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 0.05, 20);
 
     if (enemyStats.moneyDropped + enemyStats.moneyIncrement > enemyStats.maxMoneyDropped) {
         enemyStats.moneyDropped = enemyStats.maxMoneyDropped;
