@@ -184,6 +184,7 @@ function stopWave() {
 
 
 
+
     if (waveNum % 5 == 0) {
         updateEnemyStats();
     }

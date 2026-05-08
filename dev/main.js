@@ -210,6 +210,9 @@ function resetGame() {
   waveNum = 1;
 
   resetTowerUpgrades();
+  maxTowers = 16;
+  previousMaxTowers = 16;
+
 
   currentPrepTime = waveConfig.prepTimeStart;
   prepTimeFrames = currentPrepTime;
