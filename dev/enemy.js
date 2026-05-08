@@ -24,7 +24,7 @@ var damageConfig = {
 // just an object that holds the stats of the enemy
 var enemyStats = {
     size: 30,
-    speed: 2,
+    speed: 1.6,
     maxSpeed: 5,
     spawnRadius: 1500,
     moneyDropped: 15,
@@ -36,7 +36,7 @@ var enemyStats = {
 
 var specialEnemyStats = {
     size: 50,
-    speed: 1.7,
+    speed: 1.6,
     maxSpeed: 6,
     spawnRadius: 1500,
     moneyDropped: 60,
@@ -68,12 +68,12 @@ var waveTimer = 0;
 function updateEnemyStats() {
 
     if (enemyStats.speed < enemyStats.maxSpeed) {
-        enemyStats.speed = min(enemyStats.speed + 1, enemyStats.maxSpeed);
+        enemyStats.speed = min(enemyStats.speed + 0.2, enemyStats.maxSpeed);
     }
 
-    damageConfig.enemyToBase = min(damageConfig.enemyToBase + 2, 20);
-    damageConfig.enemyToTower = min(damageConfig.enemyToTower + 2, 35);
-    damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 2, 20);
+    damageConfig.enemyToBase = min(damageConfig.enemyToBase + 0.5, maxAttackLevel);
+    damageConfig.enemyToTower = min(damageConfig.enemyToTower + 0.5, maxAttackLevel);
+    damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 0.5, maxAttackLevel);
 
     if (enemyStats.moneyDropped + enemyStats.moneyIncrement > enemyStats.maxMoneyDropped) {
         enemyStats.moneyDropped = enemyStats.maxMoneyDropped;
