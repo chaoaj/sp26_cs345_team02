@@ -14,6 +14,9 @@ let encycEnemySprite;
 let encycSpecialEnemySprite;
 let encycFinalBossSprite;
 
+let menuButtons = [];
+let selectedIndex = 0;
+
 function setupTitleScreen() {
     playButton = createButton("Play");
     playButton.id("mainMenuButton");
@@ -55,6 +58,7 @@ function setupTitleScreen() {
 
 function setMenuButtons(screen) {
     selectedIndex = 0;
+
     switch(screen) {
         case "title":
             menuButtons = [playButton, settingsButton, encycButton, muteButton];
@@ -81,13 +85,17 @@ function setMenuButtons(screen) {
  * Keep track of which button is hovered by adding it to the "hovered" css class
  */
 function updateButtonHighlight() {
-    menuButtons.forEach((btn, i) => {
+    if (!menuButtons || menuButtons.length === 0) {
+        return;
+    }
+
+    for (var i = 0; i < menuButtons.length; i++) {
         if (i === selectedIndex && lastInput.type === "CONTROLLER") {
-            btn.addClass("hovered");
+            menuButtons[i].addClass("hovered");
         } else {
-            btn.removeClass("hovered");
+            menuButtons[i].removeClass("hovered");
         }
-    });
+    }
 }
 
 function drawTitleScreen() {
@@ -143,7 +151,7 @@ function encyclopediaNext() {
         setMenuButtons("enemies");
         currentScreen = "enemies";
     } else if (currentScreen == "enemies") {
-        setMenuButtons("encyclopedia");
+        setMenuButtons("story");
         currentScreen = "story";
     }
 }

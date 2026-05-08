@@ -105,21 +105,29 @@ function updateEnemies() {
             beginWave();
         }
     } else {
-        waveTimer--;
-        enemyTimer--;
 
-        if (enemyTimer <= 0){
-            spawnEnemy();
-            enemyTimer = enemyDelay;
-        }
+        if(!bossPhaseActive) {
+            waveTimer--;
+            enemyTimer--;
 
-        if (waveTimer <= 0) {
-            stopWave();
+            if (enemyTimer <= 0){
+                spawnEnemy();
+                enemyTimer = enemyDelay;
+            }
+
+            if (waveTimer <= 0) {
+                stopWave();
+            }
         }
     }
 
     for (var i = enemies.length - 1; i >= 0; i--) {
         // halted while locked in melee combat with a troop
+
+        if (enemies[i].isFinalBoss) {
+            enemies[i].engagedTroop == null
+        }
+        
         if (enemies[i].engagedTroop !== null) continue;
 
         // recalculate direction toward nearest tower or base each frame
@@ -134,6 +142,15 @@ function updateEnemies() {
 
         enemies[i].x += enemies[i].xSpeed;
         enemies[i].y += enemies[i].ySpeed;
+
+        if (enemies[i].isFinalBoss) {
+        var bossBaseDist = dist(enemies[i].x, enemies[i].y, base.x, base.y);
+
+        if (bossBaseDist < enemies[i].size / 2 + base.size / 2) {
+            finalBossReachedBase();
+            return;
+    }
+}
 
         // if the target is a troop and we've reached it, engage (multiple enemies can pile on)
         if (troops.includes(target) && !target.isDead) {
@@ -158,6 +175,11 @@ function updateEnemies() {
  * Enemies will break off and engage any troop spotted within troopDetectionRange.
  */
 function getNearestTarget(enemy) {
+
+    if (enemy.isFinalBoss) {
+        return base;
+    }
+
     var nearest = base;
     var nearestDist = dist(enemy.x, enemy.y, base.x, base.y);
 
@@ -189,9 +211,39 @@ function spawnRateToDelay(enemiesPerSecond) {
 }
 
 function beginWave() {
+
+    console.log("BEGIN WAVE:", waveNum);
+    console.log("FINAL BOSS WAVE:", finalBossWave);
+
     waveInProg = true;
     waveTimer = waveConfig.waveLength;
     enemyTimer = 0;
+
+    if (waveNum == finalBossWave) {
+        console.log("FINAL BOSS WAVE STARTED");
+        bossPhaseActive = true;
+        
+        enemies = [];
+        enemyTimer = 1000000
+        waveTimer = 1000000
+
+        // ^^ to stop them from spawning cause its on a timer
+
+        if (!finalBossSpawned) {
+            spawnFinalBoss();
+
+            announcement = new Announcement("The Final Boss has Spawned!", 40);
+            showAnnouncement = true;
+            enemyAnnouncementSound.play();
+        }
+        return;
+    }
+    bossPhaseActive = false;
+
+    if (waveNum > 1) {
+        updateMaxTowers(maxTowers + 2);
+    }
+
     var rate = min(waveConfig.maxSpawnRate,
                    waveConfig.baseSpawnRate + waveNum * waveConfig.spawnIncreasePerWave);
     enemyDelay = spawnRateToDelay(rate);
@@ -205,24 +257,25 @@ function stopWave() {
     prepTimeFrames = currentPrepTime;
 
 
-    updateMaxTowers(maxTowers + 2);
+    //updateMaxTowers(maxTowers + 2);
 
 
     if (waveNum % 3 == 0) {
         updateEnemyStats();
     }
-
-    if (waveNum > finalBossWave && !hasWonGame) {
-        hasWonGame = true;
-        showWinScreen();
-    }
 }
 
 function spawnEnemy() {
+
+    if (bossPhaseActive || waveNum == finalBossWave) {
+        return;
+    }
+
     var enemy = {};
 
     // ----- Regular Enemy Stats -----
     enemy.isSpecial = false;
+    enemy.isFinalBoss = false;
 
     enemy.size = enemyStats.size;
     enemy.speed = enemyStats.speed;
@@ -285,11 +338,14 @@ function drawEnemies() {
         enemies[i].spriteObj.x = enemies[i].x + ox;
         enemies[i].spriteObj.y = enemies[i].y + oy;
 
-        if (enemies[i].isSpecial){
-            enemies[i].spriteObj.drawEnemy(1.2)
+        if (enemies[i].isFinalBoss) {
+            enemies[i].spriteObj.drawEnemy(3);
+        } else if (enemies[i].isSpecial){
+            enemies[i].spriteObj.drawEnemy(1.2);
         } else {
             enemies[i].spriteObj.drawEnemy();
         }
+
         if (enemies[i].health < enemies[i].maxHealth) {
             drawHealthBar(enemies[i].x, enemies[i].y, enemies[i].size, enemies[i].health, enemies[i].maxHealth);
         }
@@ -376,7 +432,6 @@ function enemyKilled(enemyIndex, tower = null) {
             money: moneyEarned});
     }
 
-
     enemies.splice(enemyIndex, 1);
 
     playerStats.money += moneyEarned;
@@ -390,5 +445,14 @@ function enemyKilled(enemyIndex, tower = null) {
 
         lastCoinSoundFrame = frameCount;
     }
-    trackEnemyKill();
+    trackEnemyKill(moneyEarned);
+
+    if (enemy.isFinalBoss && !finalBossDefeated) {
+        finalBossDefeated = true;
+        bossPhaseActive = false;
+        waveInProg = false;
+        hasWonGame = true;
+
+        showWinScreen();
+    }
 }

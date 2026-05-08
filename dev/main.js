@@ -6,8 +6,8 @@
 // test
 const WORLD_SIZE = 2048 // image size of the bg
 // ----- Resolution Size -----
-var windowWidth = 1080
-var windowHeight = 1920
+//var windowWidth = 1080
+//var windowHeight = 1920
 
 // ----- Game Variables -----
 var paused = false;
@@ -103,7 +103,7 @@ function preload() {
 
 function setup() {
   // ----- Main Game Setup -----
-  createCanvas(windowWidth, windowHeight); // makes the game fit into the window
+  createCanvas(window.innerWidth, window.innerHeight); // makes the game fit into the window
   imageMode(CENTER);
   textAlign(CENTER, CENTER);
 
@@ -328,5 +328,5 @@ function draw() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(window.innerWidth, window.innerHeight);
 }

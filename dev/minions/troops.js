@@ -35,6 +35,27 @@ class Troop {
     update() {
         if (this.isDead) return;
 
+        for (var i = 0; i < enemies.length; i++) {
+            if (!enemies[i].isFinalBoss) continue;
+
+            var distanceToBoss = dist(this.x, this.y, enemies[i].x, enemies[i].y);
+            var collisionDist = this.size / 2 + enemies[i].size / 2;
+
+            if (distanceToBoss < collisionDist) {
+                if (enemies[i].engagedTroop === this) {
+                    enemies[i].engagedTroop = null;
+                }
+
+                this.engagedEnemy = null;
+                this.inCombat = false;
+                this.health = 0;
+                this.isDead = true;
+
+                return;
+            }
+        }
+
+
         //  ----- attackers stuff ------
         var attackers = [];
 
@@ -61,7 +82,7 @@ class Troop {
                 }
 
                 if (!foundEnemy) {
-                    this.engagedEnemy == null;
+                    this.engagedEnemy = null;
                 }
             }
 
@@ -134,7 +155,6 @@ class Troop {
         var closest = Infinity;
 
         for (var i = 0; i < enemies.length; i++) {
-
             var distanceToTower = dist(enemies[i].x, enemies[i].y, this.towerX, this.towerY)
 
             if (distanceToTower > this.leashRange) continue;

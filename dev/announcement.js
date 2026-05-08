@@ -1,10 +1,6 @@
 var announcement;
 var showAnnouncement = false;
 
-
-var placedTowers = 0;
-var maxTowers = 16;
-
 /** Display text to the user on the bottom center of the screen.
  *
  * - Text should exist within a semi-translucent text box with a pre-defined width and max/min height.
@@ -57,7 +53,7 @@ class Announcement {
     hide() {
         if (this.opacity <= 0) {
             this.opacity = 0;
-            showAnnouncement = !showAnnouncement;
+            showAnnouncement = false;
         } else {
             this.opacity -= this.increment;
         }
@@ -76,7 +72,7 @@ class TowerHUD {
         textSize(this.size);
         textAlign(LEFT);
 
-        let label = "Towers: " + towers.length + " / " + effectiveMaxTowers();
+        let label = "Towers: " + towers.length + " / " + maxTowers;
         let bbox = textFonts.nunito.textBounds(label, 40, 130, this.size);
 
         fill(0, 120);
@@ -104,12 +100,12 @@ function updateMaxTowers(newMax) {
     if (newMax > maxTowers) {
         maxTowers = newMax;
         announcement = new Announcement(`Tower limit increased to ${maxTowers}!`, 32);
+        showAnnouncement = true;
 
         let levelUp = new Audio(playerLevelUpSound.src);
 
-        levelUp.volume = 0.6;
+        levelUp.volume = 0.2;
         levelUp.play();
         
-        showAnnouncement = true;
     }
 }

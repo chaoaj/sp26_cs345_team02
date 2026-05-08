@@ -76,7 +76,7 @@ function setupPlayer() {
     health: 100,
     maxHealth: 100,
     facing: "LEFT",
-    money: 200
+    money: 100000 // starting number is 200 
   };
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
@@ -89,6 +89,24 @@ function checkPlayerCollisions() {
       var d3 = dist(enemy.x, enemy.y, playerStats.x, playerStats.y);
       var collisionDist = enemy.size / 2 + playerWidth / 2;
       if (d1 < collisionDist || d2 < collisionDist || d3 < collisionDist) {
+
+        if (enemy.isFinalBoss) {
+          if (frameCount - enemy.lastAttackFrame > 30) {
+            playerStats.health -= damageConfig.enemyToPlayer;
+
+            if (frameCount - lastPlayerHitSoundFrame > 10) {
+              let playerHit = new Audio(playerHitSound.src);
+
+              playerHit.volume = 0.4;
+              playerHit.play();
+
+              lastPlayerHitSoundFrame = frameCount;
+            }
+            enemy.lastAttackFrame = frameCount;
+          }
+
+          continue;
+        }
           playerStats.health -= damageConfig.enemyToPlayer;
 
           if (frameCount - lastPlayerHitSoundFrame > 10) {

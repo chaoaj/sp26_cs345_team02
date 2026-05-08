@@ -6,7 +6,7 @@ var controllerLeft;
 var controllerDown;
 var controllerRight;
 var previewTower;
-var selectedIndex = 0; // in title screen, tracks is currently hovered
+//var selectedIndex = 0; // in title screen, tracks is currently hovered
 let buttons = []; // stores button objects
 
 /**
@@ -76,7 +76,7 @@ function keyPressed() {
     updateButtonHighlight();
     pauseSelectedIndex = -1;
   }
-  console.log(keyCode);
+  //console.log(keyCode);
 
   // ----- MOVEMENT -----
   const MOVEMENT_KEYS = {
@@ -133,7 +133,7 @@ function keyPressed() {
     updateTower();
   }
 
-  console.log("key:", key, "keyCode:", keyCode);
+  //console.log("key:", key, "keyCode:", keyCode);
 
   // ----- NUMPAD (1-4) -----
 
@@ -223,7 +223,10 @@ function mouseMoved() {
 function onPress(e) {
   lastInput.type = "CONTROLLER";
 
-  if (paused || (currentScreen != "game" && currentScreen != "fading")) processControllerSelections(e);
+  if (paused || (currentScreen != "game" && currentScreen != "fading")) {
+    processControllerSelections(e);
+    return;
+  }
   console.log("key:", e.name);
 
   const CONTROLLER_MAP = {
@@ -310,6 +313,11 @@ function onRelease(e) {
 }
 
 function processControllerSelections(e) {
+
+  if(!menuButtons || menuButtons.length == 0) {
+    return;
+  }
+
   if (e.name == "axesDown") {
       selectedIndex = (selectedIndex + 1) % menuButtons.length;
       updateButtonHighlight();

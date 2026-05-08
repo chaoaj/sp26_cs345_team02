@@ -2,6 +2,8 @@
 
 var towers = []; // stores all placed towers
 var placedTowers = 0;
+// controls how many towers can be place at once
+var maxTowers = 16;
 
 // keeps track of which tower is hovered
 var hovered = null;
@@ -117,24 +119,14 @@ var healthConfig = {
     tower: 100
 };
 
-// controls how many towers can be place at once
-var maxTowers = 16;
-
 var placeableArea = {
     size: 2048,
     x: -1024,
     y: -1024
 };
 
-// Returns the active tower-count cap. Base of 16, +2 for each tower type that
-// has reached max level. All four maxed -> cap is 24.
 function effectiveMaxTowers() {
-    var bonus = 0;
-    for (var key in towerUpgrades) {
-        var cfg = towerUpgrades[key];
-        if (cfg.level >= cfg.maxLevel) bonus += 2;
-    }
-    return maxTowers + bonus;
+    return maxTowers;
 }
 
 /**
@@ -180,7 +172,7 @@ function canPlaceTower(tower) {
         return false;
     }
 
-    if (towers.length >= effectiveMaxTowers()) {
+    if (towers.length >= maxTowers) {
         return false;
     }
 

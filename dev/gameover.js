@@ -8,7 +8,7 @@ var highScoreSeconds = 0;
 var hasWonGame = false;
 
 // After this wave completes with the player alive, the win screen is shown
-var finalBossWave = 10;
+//var finalBossWave = 10;
 
 // ---- Fade Transition ----
 var fadeAlpha = 0;
@@ -23,11 +23,15 @@ function setupGameStats() {
     pausedFrames = 0;
     frozenTimeSurvived = "";
     hasWonGame = false;
+
+    finalBossSpawned = false;
+    finalBossDefeated = false;
+    bossPhaseActive = false;
 }
 
-function trackEnemyKill() {
+function trackEnemyKill(moneyEarned) {
     totalEnemiesKilled++;
-    totalMoneyCollected += enemyStats.moneyDropped;
+    totalMoneyCollected += moneyEarned;
 }
 
 function formatTime(totalSeconds) {
@@ -110,6 +114,9 @@ function setupEndScreens() {
 function showGameOver() {
     if (paused) return;
     if (currentScreen === "fading") return;
+
+    stopAllHealingSound();
+
     freezeTimeSurvived();
     fadeAlpha = 0;
     endScreenContentAlpha = 0;
@@ -120,6 +127,7 @@ function showGameOver() {
 function showWinScreen() {
     if (paused) return;
     if (currentScreen === "fading") return;
+    stopAllHealingSound();
     freezeTimeSurvived();
     fadeAlpha = 0;
     endScreenContentAlpha = 0;
@@ -172,9 +180,11 @@ function drawFadeTransition() {
     if (fadeAlpha >= 255 && currentScreen === "fading") {
         currentScreen = fadeTarget;
         if (fadeTarget === "gameover") {
+            stopAllHealingSound();
             gameOverPlayAgainButton.show();
             setMenuButtons("gameover");
         } else {
+            stopAllHealingSound()
             winPlayAgainButton.show();
             winKeepPlayingButton.show();
             setMenuButtons("win");
@@ -317,3 +327,12 @@ function drawWinScreen() {
 
     textAlign(CENTER, CENTER);
 }
+
+function stopAllHealingSound() {
+    for (var i = 0; i < towers.length; i++) {
+        if (towers[i] instanceof HealingTower && towers[i].healSound) {
+            towers[i].updateHealingSound(false);
+        }
+    }
+}
+

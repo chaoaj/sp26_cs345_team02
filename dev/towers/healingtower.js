@@ -28,7 +28,28 @@ class HealingTower extends Tower {
         return towerUpgrades.HealingTower.level >= towerUpgrades.HealingTower.maxLevel;
     }
 
+    stopHealingSound() {
+        this.healSound.pause();
+        this.healSound.currentTime = 0;
+    }
+
+    updateHealingSound(healing) {
+        if (healing) {
+            if (this.healSound.paused) {
+                this.healSound.currentTime = 0;
+                this.healSound.play();
+            }
+        } else {
+            this.stopHealingSound();
+        }
+    }
+
     update() {
+        if (currentScreen !== "game" || paused) {
+            this.updateHealingSound(false);
+            return;
+        }
+
         this.beamTargets = [];
         var healing = false;
 
@@ -42,6 +63,7 @@ class HealingTower extends Tower {
 
             if (!this.isMassHeal()) {
                 this.target = null;
+                this.updateHealingSound(healing);
                 return;
             }
         }
@@ -56,6 +78,7 @@ class HealingTower extends Tower {
 
             if (!this.isMassHeal()) {
                 this.target = null;
+                this.updateHealingSound(healing);
                 return;
             }
         }
@@ -131,15 +154,7 @@ class HealingTower extends Tower {
             }
         }
 
-        if (healing) {
-            if (this.healSound.paused) {
-                this.healSound.currentTime = 0;
-                this.healSound.play();
-            }
-        } else {
-            this.healSound.pause();
-            this.healSound.currentTime = 0;
-        }
+        this.updateHealingSound(healing);
     }
 
     draw() {
