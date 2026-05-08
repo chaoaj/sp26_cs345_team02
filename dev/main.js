@@ -201,13 +201,21 @@ function resetGame() {
   base.health = base.maxHealth;
   mainBase.sheet = baseImage;
 
-  enemyStats.moneyDropped = 15;
+  // restore mutable enemy/runtime stats to their initial values so a new run
+  // starts clean (these get bumped by updateEnemyStats during play)
+  enemyStats.speed = 1.6;
+  enemyStats.moneyDropped = 8;
+  specialEnemyStats.speed = 1.6;
+  specialEnemyStats.moneyDropped = 30;
 
-  enemyStats.speed = 2;
+  damageConfig.enemyToTower = 20;
+  damageConfig.enemyToBase = 8;
+  damageConfig.enemyToPlayer = 10;
 
   waveInProg = false;
   showAnnouncement = false;
   waveNum = 1;
+  enemiesSpawnedThisWave = 0;
 
   resetTowerUpgrades();
   maxTowers = 16;
@@ -216,6 +224,9 @@ function resetGame() {
 
   currentPrepTime = waveConfig.prepTimeStart;
   prepTimeFrames = currentPrepTime;
+
+  // reset run stats (kills, money collected, hasWonGame, timer baseline)
+  setupGameStats();
 
   paused = false;
   pauseMenuTab = null;

@@ -20,12 +20,13 @@ class Troop {
         // upgrading the AttackTower's "Troop Power" raises tower.troopLevel
         this.level = (tower && tower.troopLevel) ? tower.troopLevel : 1;
 
-        this.health = 60 * this.level;
+        // troops scale with waveNum so they stay relevant alongside enemy scaling
+        this.health = 60 * this.level + 5 * waveNum;
         this.maxHealth = this.health;
 
-        this.attackRate = 1.0 * this.level; // damage dealt per frame during combat
+        this.attackRate = 6.0 * this.level + 0.4 * waveNum; // damage dealt per attack cycle (every attackCooldown frames)
         this.lastAttackFrame = 0;
-        this.attackCooldown = 20;
+        this.attackCooldown = 15;
 
         this.engagedEnemy = null;
         this.inCombat = false;
@@ -61,7 +62,7 @@ class Troop {
                 }
 
                 if (!foundEnemy) {
-                    this.engagedEnemy == null;
+                    this.engagedEnemy = null;
                 }
             }
 
@@ -75,10 +76,11 @@ class Troop {
                 
                 if (frameCount - this.lastAttackFrame >= this.attackCooldown) {
 
+                    // damage applies every attack cycle regardless of sound throttle
+                    this.engagedEnemy.health -= this.attackRate;
+
+                    // sound is throttled separately so we don't spam audio
                     if (frameCount - lastEnemyHitSoundFrame > 15) {
-
-                        this.engagedEnemy.health -= this.attackRate;
-
                         let hitSound = new Audio(enemyHitSound.src);
                         hitSound.volume = 0.2;
                         hitSound.play();
@@ -87,7 +89,7 @@ class Troop {
                     }
 
                     this.lastAttackFrame = frameCount;
-                }  
+                }
 
                 if (this.engagedEnemy.health <= 0) {
 

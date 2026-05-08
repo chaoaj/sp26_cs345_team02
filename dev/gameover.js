@@ -25,9 +25,9 @@ function setupGameStats() {
     hasWonGame = false;
 }
 
-function trackEnemyKill() {
+function trackEnemyKill(moneyEarned) {
     totalEnemiesKilled++;
-    totalMoneyCollected += enemyStats.moneyDropped;
+    totalMoneyCollected += (moneyEarned || 0); // dont worry about for now
 }
 
 function formatTime(totalSeconds) {
@@ -111,6 +111,7 @@ function showGameOver() {
     if (paused) return;
     if (currentScreen === "fading") return;
     freezeTimeSurvived();
+    stopGameAudio();
     fadeAlpha = 0;
     endScreenContentAlpha = 0;
     fadeTarget = "gameover";
@@ -121,10 +122,18 @@ function showWinScreen() {
     if (paused) return;
     if (currentScreen === "fading") return;
     freezeTimeSurvived();
+    stopGameAudio();
     fadeAlpha = 0;
     endScreenContentAlpha = 0;
     fadeTarget = "win";
     currentScreen = "fading";
+}
+
+// Halts in-game music when the run ends so it doesn't keep looping under the
+// game over / win screens (and so a fresh run starts the track from the top).
+function stopGameAudio() {
+    gameBackgroundMusic.pause();
+    gameBackgroundMusic.currentTime = 0;
 }
 
 var frozenSeconds = 0;

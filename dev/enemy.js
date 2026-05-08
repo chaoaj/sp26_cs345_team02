@@ -10,14 +10,14 @@ var waveConfig = {
     prepTimeMin: 300,       // cooldown floor (5s at 60fps)
     prepTimeDecay: 30,      // frames shaved off per wave (0.5s)
     baseSpawnRate: 1,       // enemies/sec on wave 1
-    spawnIncreasePerWave: 0.5,
+    spawnIncreasePerWave: 0.3,
     maxSpawnRate: 8
 };
 
 // damage dealt per enemy contact — edit these to tune difficulty
 var damageConfig = {
-    enemyToTower: 25,   // flat hit; enemy is removed on contact
-    enemyToBase: 10,    // flat hit; enemy is removed on contact
+    enemyToTower: 20,   // flat hit; enemy is removed on contact
+    enemyToBase: 8,     // flat hit; enemy is removed on contact
     enemyToPlayer: 10   // flat hit; enemy is removed on contact
 };
 
@@ -27,11 +27,11 @@ var enemyStats = {
     speed: 1.6,
     maxSpeed: 5,
     spawnRadius: 1500,
-    moneyDropped: 15,
+    moneyDropped: 8,
     maxMoneyDropped: 30,
-    moneyIncrement: 3,
-    maxHealthLevel: 5,
-    maxAttackLevel: 5
+    moneyIncrement: 1,
+    maxHealthLevel: 8,
+    maxAttackLevel: 8
 };
 
 var specialEnemyStats = {
@@ -39,9 +39,9 @@ var specialEnemyStats = {
     speed: 1.6,
     maxSpeed: 6,
     spawnRadius: 1500,
-    moneyDropped: 60,
-    maxMoneyDropped: 100,
-    moneyIncrement: 10,
+    moneyDropped: 30,
+    maxMoneyDropped: 90,
+    moneyIncrement: 3,
     maxHealthLevel: 10,
     maxAttackLevel: 10
 };
@@ -64,6 +64,14 @@ var enemyDelay = spawnRateToDelay(waveConfig.baseSpawnRate);
 
 // counts down the remaining frames in the current wave
 var waveTimer = 0;
+
+// how many enemies were spawned during the most recent wave; used to gate the
+// next wave's prep countdown until enough of them are cleared
+var enemiesSpawnedThisWave = 0;
+
+// fraction of last wave's spawn count that must remain before the next wave's
+// prep countdown can begin (1/3 = countdown starts once 2/3 are cleared)
+var nextWaveThreshold = 1 / 2;
 
 function updateEnemyStats() {
 
@@ -99,10 +107,16 @@ function updateEnemyStats() {
 
 function updateEnemies() {
     if (waveInProg == false) {
-        prepTimeFrames--;
+        // start the next wave's prep countdown once the remaining enemies are
+        // below `nextWaveThreshold` of what last wave spawned (so waves can
+        // overlap a bit, but the next one only triggers after most are cleared)
+        var clearTarget = Math.ceil(enemiesSpawnedThisWave * nextWaveThreshold);
+        if (enemies.length <= clearTarget) {
+            prepTimeFrames--;
 
-        if (prepTimeFrames <= 0) {
-            beginWave();
+            if (prepTimeFrames <= 0) {
+                beginWave();
+            }
         }
     } else {
         waveTimer--;
@@ -110,6 +124,7 @@ function updateEnemies() {
 
         if (enemyTimer <= 0){
             spawnEnemy();
+            enemiesSpawnedThisWave++;
             enemyTimer = enemyDelay;
         }
 
@@ -192,6 +207,7 @@ function beginWave() {
     waveInProg = true;
     waveTimer = waveConfig.waveLength;
     enemyTimer = 0;
+    enemiesSpawnedThisWave = 0;
     var rate = min(waveConfig.maxSpawnRate,
                    waveConfig.baseSpawnRate + waveNum * waveConfig.spawnIncreasePerWave);
     enemyDelay = spawnRateToDelay(rate);
@@ -243,8 +259,11 @@ function spawnEnemy() {
         enemy.isSpecial = true;
         enemy.size = specialEnemyStats.size;
         enemy.speed = specialEnemyStats.speed;
-        enemy.health *= 5;
-        enemy.attackRate *= 2;
+        // recompute level using special's own cap so specials keep scaling
+        // past the regular-enemy cap
+        enemy.level = min(Math.ceil(waveNum / 3), specialEnemyStats.maxHealthLevel);
+        enemy.health = 60 * enemy.level * 2.5;
+        enemy.attackRate = 0.5 * min(Math.ceil(waveNum / 3), specialEnemyStats.maxAttackLevel) * 2;
         enemy.maxHealth = enemy.health;
         enemy.moneyDropped = specialEnemyStats.moneyDropped;
         enemy.spriteSheet = enemySpecialSprite;
@@ -390,5 +409,5 @@ function enemyKilled(enemyIndex, tower = null) {
 
         lastCoinSoundFrame = frameCount;
     }
-    trackEnemyKill();
+    trackEnemyKill(moneyEarned);
 }

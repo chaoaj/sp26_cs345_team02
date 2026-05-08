@@ -9,7 +9,7 @@ class NormalTower extends Tower {
         var cs = towerUpgrades.NormalTower.currentStats;
         this.attackRange = cs.attackRange;
         this.damage = cs.damage;
-        this.attackCooldown = 60; // frames (1 shot/sec)
+        this.attackCooldown = 50; // frames (1.2 shots/sec)
         this.lastShotFrame = -999;
     }
 

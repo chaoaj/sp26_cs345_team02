@@ -102,8 +102,11 @@ function keyPressed() {
     pauseSelectedIndex = lastInput.type === "CONTROLLER" ? 0 : -1;
   }
 
-  // Shift + R: Reset
-  if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") resetGame();
+  // Shift + R: Reset by killing the player so the normal game-over flow handles
+  // restart. Avoids needing to keep a separate state-reset list in sync.
+  if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") {
+    playerStats.health = 0;
+  }
 
   // T - place a tower at the player's current position
   if (keyCode == 84) previewTower = true;
