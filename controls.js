@@ -6,6 +6,8 @@ var controllerLeft;
 var controllerDown;
 var controllerRight;
 var previewTower;
+//var selectedIndex = 0; // in title screen, tracks is currently hovered
+let buttons = []; // stores button objects
 
 /**
  *  Moves the player with WASD or controller input if controller is detected.
@@ -69,8 +71,12 @@ function movePlayer() {
  * - Cycling inventory (1-4, ",", and ".")
  */
 function keyPressed() {
-  lastInput.type = "KEYBOARD";
-  console.log(keyCode);
+  if (lastInput.type != "KEYBOARD") {
+    lastInput.type = "KEYBOARD";
+    updateButtonHighlight();
+    pauseSelectedIndex = -1;
+  }
+  //console.log(keyCode);
 
   // ----- MOVEMENT -----
   const MOVEMENT_KEYS = {
@@ -93,10 +99,14 @@ function keyPressed() {
   if (keyCode == 80 && currentScreen == "game") {
     paused = !paused;
     pauseMenuTab = null;
+    pauseSelectedIndex = lastInput.type === "CONTROLLER" ? 0 : -1;
   }
 
-  // Shift + R: Reset
-  if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") resetGame();
+  // Shift + R: Reset by killing the player so the normal game-over flow handles
+  // restart. Avoids needing to keep a separate state-reset list in sync.
+  if (keyIsDown(82) && keyIsDown(16) && currentScreen == "game") {
+    playerStats.health = 0;
+  }
 
   // T - place a tower at the player's current position
   if (keyCode == 84) previewTower = true;
@@ -126,7 +136,7 @@ function keyPressed() {
     updateTower();
   }
 
-  console.log("key:", key, "keyCode:", keyCode);
+  //console.log("key:", key, "keyCode:", keyCode);
 
   // ----- NUMPAD (1-4) -----
 
@@ -180,10 +190,16 @@ function mousePressed() {
 
   // ^^^^^
   // why? what is the reason for mouse clicks to be reserved for the pause menu?
-  
+
+
+  userStartAudio();
   if (!musicStarted) {
-    menuMusic.play();
     musicStarted = true;
+    menuMusic.play();
+  }
+
+  if (isMuted) {
+    menuMusic.volume = 0;
   }
 
   if (paused && currentScreen == "game") {
@@ -192,7 +208,11 @@ function mousePressed() {
 }
 
 function mouseMoved() {
-  lastInput.type = "KEYBOARD";
+  if (lastInput.type != "KEYBOARD") {
+    lastInput.type = "KEYBOARD";
+    updateButtonHighlight();
+    pauseSelectedIndex = -1;
+  }
 }
 
 /**
@@ -204,9 +224,13 @@ function mouseMoved() {
  * @param {Object} e - Controller event that handles controller input
  */
 function onPress(e) {
-  console.log("key:", e.name);
-
   lastInput.type = "CONTROLLER";
+
+  if (paused || (currentScreen != "game" && currentScreen != "fading")) {
+    processControllerSelections(e);
+    return;
+  }
+  console.log("key:", e.name);
 
   const CONTROLLER_MAP = {
     axesUp: "UP",
@@ -288,5 +312,107 @@ function onRelease(e) {
   if (e.name == "buttonBlue") {
     previewTower = false;
     placeTower(playerStats.x, playerStats.y);
+  }
+}
+
+function processControllerSelections(e) {
+
+  if(!menuButtons || menuButtons.length == 0) {
+    return;
+  }
+
+  if (e.name == "axesDown") {
+      selectedIndex = (selectedIndex + 1) % menuButtons.length;
+      updateButtonHighlight();
+  }
+  if (e.name == "axesUp") {
+      selectedIndex = (selectedIndex - 1 + menuButtons.length) % menuButtons.length;
+      updateButtonHighlight();
+  }
+  if (paused && currentScreen == "game") {
+    if (pauseSelectedIndex === null) {
+      pauseSelectedIndex = 0;
+    }
+    var rects = pauseMenuButtonRects();
+    var keys = Object.keys(rects);
+    if (e.name == "axesDown") pauseSelectedIndex = (pauseSelectedIndex + 1) % keys.length;
+    if (e.name == "axesUp") pauseSelectedIndex = (pauseSelectedIndex - 1 + keys.length) % keys.length;
+    if (e.name == "buttonRed") {
+      if (pauseMenuTab === "keybinds" || pauseMenuTab === "towers") {
+        pauseMenuTab = null;
+        pauseSelectedIndex = 0;
+      } else if (pauseMenuTab === null){
+        paused = !paused;
+      }
+    }
+    if (e.name == "buttonGreen") {
+        var selected = keys[pauseSelectedIndex];
+        if (selected === "keybinds") {
+          pauseMenuTab = "keybinds";
+          pauseSelectedIndex = 0;
+        }
+        else if (selected === "towers") {
+          pauseMenuTab = "towers";
+          pauseSelectedIndex = 0;
+        }
+        else if (selected === "back") {
+          pauseMenuTab = null;
+          pauseSelectedIndex = 0;
+        }
+    }
+    return;
+  }
+  if (e.name == "buttonRed") {
+    switch (currentScreen) {
+      case "title": break;
+      case "encyclopedia":
+      case "story":
+      case "settings": goToTitle();
+      break;
+      default: break;
+    }
+  }
+  if (e.name == "buttonGreen") {
+    switch(currentScreen) {
+        case "title":
+            switch(selectedIndex) {
+                case 0: startGame();
+                break;
+                case 1: openSettings();
+                break;
+                case 2: openEncyclopedia();
+                break;
+                case 3: toggleMute();
+                break;
+            }
+            break;
+        case "encyclopedia":
+        case "story":
+        case "enemies":
+              switch(selectedIndex) {
+                  case 0: encyclopediaNext();
+                  break;
+                  case 1: goToTitle();
+                  break;
+              }
+              break;
+        case "settings":
+            switch(selectedIndex) {
+                case 0: goToTitle()
+                 break;
+            }
+            break;
+        case "gameover":
+          switch(selectedIndex) {
+              case 0: resetGame(); break;
+          }
+          break;
+      case "win":
+          switch(selectedIndex) {
+              case 0: keepPlaying(); break;
+              case 1: resetGame(); break;
+          }
+          break;
+    }
   }
 }

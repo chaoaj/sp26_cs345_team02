@@ -1,6 +1,9 @@
 // -------- Vars --------
 
 var towers = []; // stores all placed towers
+var placedTowers = 0;
+// controls how many towers can be place at once
+var maxTowers = 16;
 
 // keeps track of which tower is hovered
 var hovered = null;
@@ -37,9 +40,9 @@ var towerUpgrades = {
         costMult: 1.6,
         currentStats: { damage: 20, attackRange: 350 },
         schedule: [
-            { stat: "damage",      delta: 10, label: "Arrow Damage" },
+            { stat: "damage",      delta: 15, label: "Arrow Damage" },
             { stat: "attackRange", delta: 50, label: "Attack Range" },
-            { stat: "damage",      delta: 10, label: "Arrow Damage" },
+            { stat: "damage",      delta: 15, label: "Arrow Damage" },
             { stat: "attackRange", delta: 50, label: "Attack Range" }
         ]
     },
@@ -71,15 +74,16 @@ var towerUpgrades = {
     },
     HealingTower: {
         level: 1,
-        maxLevel: 5,
+        maxLevel: 6,
         costBase: 75,
-        costMult: 1.6,
+        costMult: 1.8,
         currentStats: { healRange: 200, maxHealth: 100, auraHealRate: 0 },
         schedule: [
             { stat: "healRange",    delta: 30,   label: "Heal Range" },
             { stat: "maxHealth",    delta: 25,   label: "Tower HP" },
             { stat: "auraHealRate", delta: 0.02, label: "Aura Heal" },
-            { stat: "auraHealRate", delta: 0.02, label: "Aura Heal" }
+            { stat: "auraHealRate", delta: 0.02, label: "Aura Heal" },
+            { stat: "healRange",    delta: 40,   label: "Mass Heal" }
         ]
     }
 };
@@ -112,11 +116,8 @@ var activeTowerType = "normal";
 // max health values for each entity type
 var healthConfig = {
     base: 200,
-    tower: 100
+    tower: 150
 };
-
-// controls how many towers can be place at once
-var maxTowers = 16;
 
 var placeableArea = {
     size: 2048,
@@ -124,15 +125,8 @@ var placeableArea = {
     y: -1024
 };
 
-// Returns the active tower-count cap. Base of 16, +2 for each tower type that
-// has reached max level. All four maxed -> cap is 24.
 function effectiveMaxTowers() {
-    var bonus = 0;
-    for (var key in towerUpgrades) {
-        var cfg = towerUpgrades[key];
-        if (cfg.level >= cfg.maxLevel) bonus += 2;
-    }
-    return maxTowers + bonus;
+    return maxTowers;
 }
 
 /**
@@ -178,7 +172,7 @@ function canPlaceTower(tower) {
         return false;
     }
 
-    if (towers.length >= effectiveMaxTowers()) {
+    if (towers.length >= maxTowers) {
         return false;
     }
 
@@ -227,12 +221,22 @@ function placeTower(x, y) {
     towers.push(tower);
     onTowerPlaced();
 
-    towerPlacementSound.volume = 0.4
-    towerPlacementSound.play();
+    let placementSound = new Audio(towerPlacementSound.src);
+
+    placementSound.volume = 0.2;
+    placementSound.play();
 
     lastTowerPlacedFrame = frameCount;
 
     playerStats.money -= tower.price;
+}
+
+function onTowerPlaced() {
+    placedTowers++;
+}
+
+function onTowerRemoved() {
+    placedTowers--;
 }
 
 /**
@@ -400,7 +404,11 @@ function checkTowerCollisions() {
 
             if (d < collisionDist) {
 
-                towers[j].health -= 0.4;
+                if (frameCount - enemies[i].lastAttackFrame > 30) {
+                    towers[j].health -= damageConfig.enemyToTower;
+                    enemies[i].lastAttackFrame = frameCount;
+                }
+
                 enemies[i].health -= (towers[j].wallDamage || 1);
 
                 if (towers[j].health <= 0) {
@@ -414,8 +422,6 @@ function checkTowerCollisions() {
                         enemies[i].engagedTroop.engagedEnemy = null;
                     }
                     enemyKilled(i, towers[j]);
-
-                    playerStats.money += enemyStats.moneyDropped;
                 }
                 break;
             }
@@ -461,7 +467,15 @@ function sellTower() {
 function upgradeTower() {
     if (hovered === null) return;
     if (typeof hovered.upgrade !== "function") return;
-    hovered.upgrade();
+    var up = hovered.upgrade();
+
+    if (!up) return;
+
+    let asdf = new Audio(towerUpgradeSound.src);
+    asdf.volume = 0.2;
+
+    asdf.play();
+
 }
 
 // Rounds floats to 2 decimals for display; leaves integers alone.

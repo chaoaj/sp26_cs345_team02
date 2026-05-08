@@ -53,12 +53,12 @@ function Sprite(sheet, x, y, n) {
     }
   }
 
-  this.drawEnemy = function() {
+  this.drawEnemy = function(sizeInc = 1) {
     this.frames = 4;
     this.w = sheet.width / this.frames;
-    image(this.sheet, this.x, this.y, this.w, this.h, this.w*floor(this.frame), 0, this.w, this.h);
+    image(this.sheet, this.x, this.y, this.w * sizeInc, this.h * sizeInc, this.w*floor(this.frame), 0, this.w, this.h);
 
-    this.frame += 0.01;
+    this.frame += 0.1;
     if (this.frame > this.frames) {
       this.frame = 0;
     }
@@ -76,7 +76,7 @@ function setupPlayer() {
     health: 100,
     maxHealth: 100,
     facing: "LEFT",
-    money: 200
+    money: 100000 // starting number is 200 
   };
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
@@ -89,7 +89,34 @@ function checkPlayerCollisions() {
       var d3 = dist(enemy.x, enemy.y, playerStats.x, playerStats.y);
       var collisionDist = enemy.size / 2 + playerWidth / 2;
       if (d1 < collisionDist || d2 < collisionDist || d3 < collisionDist) {
+
+        if (enemy.isFinalBoss) {
+          if (frameCount - enemy.lastAttackFrame > 30) {
+            playerStats.health -= damageConfig.enemyToPlayer;
+
+            if (frameCount - lastPlayerHitSoundFrame > 10) {
+              let playerHit = new Audio(playerHitSound.src);
+
+              playerHit.volume = 0.4;
+              playerHit.play();
+
+              lastPlayerHitSoundFrame = frameCount;
+            }
+            enemy.lastAttackFrame = frameCount;
+          }
+
+          continue;
+        }
           playerStats.health -= damageConfig.enemyToPlayer;
+
+          if (frameCount - lastPlayerHitSoundFrame > 10) {
+            let playerHit = new Audio(playerHitSound.src);
+
+            playerHit.volume = 0.4;
+            playerHit.play();
+
+            lastPlayerHitSoundFrame = frameCount;
+          }
           enemyKilled(i, null);
       }
   }
@@ -113,7 +140,7 @@ function moneyAnimation() {
 
           let screenX = killedEnemies[i].x - camera.x + width / 2 + killedEnemies[i].ox;
           let screenY = killedEnemies[i].y - camera.y + height / 2 + killedEnemies[i].oy;
-          text("+" + enemyStats.moneyDropped, screenX, screenY);
+          text("+" + killedEnemies[i].money, screenX, screenY);
           noStroke();
       }
   }
@@ -134,7 +161,7 @@ function drawMoney() {
 // checks the health and restarts the game if it ever hits 0.
 function CheckHealth() {
   if (playerStats.health <= 0) {
-    resetGame();
+    showGameOver();
   }
 }
 

@@ -1,12 +1,19 @@
-html {
-  height: 100%
+html, body  {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 body {
-  margin: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+canvas {
+  display:block;
 }
 
 button {
@@ -29,8 +36,8 @@ button:hover {
   text-decoration: dotted;
   font-style: oblique;
   color:rgba(255, 217, 0, 0);
-  width:130px;
-  height: 40px;
+  width: 170px;
+  height: 55px;
   position: absolute;
   cursor: pointer;
   border: 0; /*change to 2 to see where the actual buttons are*/
@@ -41,4 +48,27 @@ button:hover {
   color: rgba(255, 217, 0);
   width: 80px;
   height: 40px;
+}
+
+#endScreenButton {
+  background-color: #222;
+  border: 2px solid #aaa;
+  color: gold;
+  font-size: 18px;
+  font-weight: bold;
+  width: 130px;
+  height: 48px;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+#endScreenButton:hover {
+  background-color: #555;
+  border-color: gold;
+}
+
+.hovered {
+  /*background-color: yellow;*/
+  outline: 3px solid rgba(255, 217, 10);
+  outline-offset: 2px;
 }

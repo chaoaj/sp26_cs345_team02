@@ -6,8 +6,8 @@
 // test
 const WORLD_SIZE = 2048 // image size of the bg
 // ----- Resolution Size -----
-var windowWidth = 1080
-var windowHeight = 1920
+//var windowWidth = 1080
+//var windowHeight = 1920
 
 // ----- Game Variables -----
 var paused = false;
@@ -25,14 +25,42 @@ var base = {
   maxHealth: healthConfig.base
 };
 
+var previousMaxTowers = effectiveMaxTowers();
 // ----- Sound -----
 let menuMusic = new Audio("audio/mainMenuMusic.mp3");
+
 menuMusic.loop = true;
-menuMusic.volume = 1;
+menuMusic.volume = 0.5;
 
 let musicStarted = false;
 
 let towerPlacementSound = new Audio("audio/PlaceTowerStructure01.wav");
+let arrowProjectileSound = new Audio("audio/arrow_projectile_sound.wav");
+let coinSound = new Audio("audio/Coins.wav");
+let enemyAnnouncementSound = new Audio("audio/enemy_announcement.mp3");
+enemyAnnouncementSound.volume = 0.07;
+let enemyHitSound = new Audio("audio/enemy_hit.wav");
+let enemyKilledSound = new Audio("audio/enemy_killed.wav");
+let explosionSound = new Audio("audio/explosion_sound_effect.wav");
+let gameBackgroundMusic = new Audio("audio/game_background_audio.wav");
+
+gameBackgroundMusic.loop = true;
+gameBackgroundMusic.volume = 0.2;
+
+let menuClickSound = new Audio("audio/menu_click.wav");
+
+menuClickSound.volume = 1;
+
+let playerHitSound = new Audio("audio/player_hit.wav");
+let playerLevelUpSound = new Audio("audio/player_level_up.ogg");
+let towerHealingSound = new Audio("audio/tower_healing.wav");
+let towerUpgradeSound = new Audio("audio/tower_upgrade_sound.wav");
+
+let lastEnemyHitSoundFrame = 0;
+let lastArrowSoundFrame = 0;
+let lastCoinSoundFrame = 0;
+let lastKillSoundFrame = 0;
+let lastPlayerHitSoundFrame = 0;
 
 /**
  * This function is called once to load assets before our game runs.
@@ -51,6 +79,8 @@ function preload() {
 
   // ----- Enemy Image -----
   enemySprite = loadImage("images/enemyNormal.png");
+  enemySpecialSprite = loadImage("images/enemySpecial.png");
+  enemyFinalBossSprite = loadImage("images/FinalBoss.png");
 
   // ----- Tower images -----
   towerImages.normal = loadImage("images/normalTower.png");
@@ -73,11 +103,12 @@ function preload() {
 
 function setup() {
   // ----- Main Game Setup -----
-  createCanvas(windowWidth, windowHeight); // makes the game fit into the window
+  createCanvas(window.innerWidth, window.innerHeight); // makes the game fit into the window
   imageMode(CENTER);
   textAlign(CENTER, CENTER);
 
   setupTitleScreen();
+  setupEndScreens();
   setupPlayer();
   spawnDecorations();
 
@@ -152,7 +183,7 @@ function checkBaseCollisions() {
       enemies.splice(i, 1);
 
       if (base.health <= 0) {
-        resetGame();
+        showGameOver();
         return;
       }
     }
@@ -166,37 +197,77 @@ function resetGame() {
   explosives = [];
   arrows = [];
   troops = [];
+
   base.health = base.maxHealth;
   mainBase.sheet = baseImage;
+
+  // restore mutable enemy/runtime stats to their initial values so a new run
+  // starts clean (these get bumped by updateEnemyStats during play)
+  enemyStats.speed = 1.6;
   enemyStats.moneyDropped = 8;
-  enemyStats.speed = 2;
+  specialEnemyStats.speed = 1.6;
+  specialEnemyStats.moneyDropped = 30;
+
+  damageConfig.enemyToTower = 20;
+  damageConfig.enemyToBase = 8;
+  damageConfig.enemyToPlayer = 10;
+
   waveInProg = false;
   showAnnouncement = false;
   waveNum = 1;
+  enemiesSpawnedThisWave = 0;
+
   resetTowerUpgrades();
+  maxTowers = 16;
+  previousMaxTowers = 16;
+
+
   currentPrepTime = waveConfig.prepTimeStart;
   prepTimeFrames = currentPrepTime;
+
+  // reset run stats (kills, money collected, hasWonGame, timer baseline)
+  setupGameStats();
+
   paused = false;
   pauseMenuTab = null;
+
+  hideEndScreenButtons();
+  setMenuButtons("title");
+
+  gameBackgroundMusic.pause();
+  gameBackgroundMusic.currentTime = 0
+
+  menuMusic.pause();
+  menuMusic.currentTime = 0;
+
+  if (!isMuted) {
+    menuMusic.volume = 0.5;
+    menuMusic.play();
+  }
+
   currentScreen = "title";
+  updateButtonHighlight();
   showTitleScreenElements();
   setupPlayer();
   spawnDecorations();
   resetInventory();
+
   cursor(ARROW);
 }
 
 function draw() {
   controller.draw(width/2, height/2);
 
-  if (currentScreen == "title") {
-    drawTitleScreen();
-  } else if (controller.controllersNotCalibrated().length > 0) {
+  if (controller.controllersNotCalibrated().length > 0) {
     controller.calibrate(true);
-    return
+    return;
+  } if (currentScreen == "title") {
+    drawTitleScreen();
   } else if (currentScreen == "game") {
 
+    trackPausedFrame();
     if (!paused) {
+
       movePlayer();
       updateCamera();
       updateEnemies();
@@ -234,18 +305,39 @@ function draw() {
     drawMoney();
     drawWaveNumber();
     drawInventory();
+    drawLiveTimer();
+
+    var currentMax = effectiveMaxTowers();
+
+    if (currentMax > previousMaxTowers) {
+
+      // notification
+      console.log("Max towers increased to " + currentMax);
+
+      previousMaxTowers = currentMax;
+    }
 
     // pause menu overlay (settings/keybinds/tower-types)
     if (paused) {
       drawPauseMenu();
     }
+  } else if (currentScreen == "fading") {
+    drawFadeTransition();
+  } else if (currentScreen == "gameover") {
+    drawGameOverScreen();
+  } else if (currentScreen == "win") {
+    drawWinScreen();
   } else if (currentScreen == "settings") {
     drawSettingsScreen();
   } else if (currentScreen == "encyclopedia") {
     drawEncyclopediaScreen();
+  } else if (currentScreen == "story") {
+    drawStoryScreen();
+  } else if (currentScreen == "enemies") {
+    drawEnemyScreen();
   }
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(window.innerWidth, window.innerHeight);
 }

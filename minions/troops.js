@@ -20,10 +20,13 @@ class Troop {
         // upgrading the AttackTower's "Troop Power" raises tower.troopLevel
         this.level = (tower && tower.troopLevel) ? tower.troopLevel : 1;
 
-        this.health = 60 * this.level;
+        // troops scale with waveNum so they stay relevant alongside enemy scaling
+        this.health = 60 * this.level + 5 * waveNum;
         this.maxHealth = this.health;
 
-        this.attackRate = 1.0 * this.level; // damage dealt per frame during combat
+        this.attackRate = 6.0 * this.level + 0.4 * waveNum; // damage dealt per attack cycle (every attackCooldown frames)
+        this.lastAttackFrame = 0;
+        this.attackCooldown = 15;
 
         this.engagedEnemy = null;
         this.inCombat = false;
@@ -32,6 +35,27 @@ class Troop {
 
     update() {
         if (this.isDead) return;
+
+        for (var i = 0; i < enemies.length; i++) {
+            if (!enemies[i].isFinalBoss) continue;
+
+            var distanceToBoss = dist(this.x, this.y, enemies[i].x, enemies[i].y);
+            var collisionDist = this.size / 2 + enemies[i].size / 2;
+
+            if (distanceToBoss < collisionDist) {
+                if (enemies[i].engagedTroop === this) {
+                    enemies[i].engagedTroop = null;
+                }
+
+                this.engagedEnemy = null;
+                this.inCombat = false;
+                this.health = 0;
+                this.isDead = true;
+
+                return;
+            }
+        }
+
 
         //  ----- attackers stuff ------
         var attackers = [];
@@ -59,7 +83,7 @@ class Troop {
                 }
 
                 if (!foundEnemy) {
-                    this.engagedEnemy == null;
+                    this.engagedEnemy = null;
                 }
             }
 
@@ -70,13 +94,31 @@ class Troop {
 
             // deal damage to our target
             if (this.engagedEnemy !== null) {
-                this.engagedEnemy.health -= this.attackRate;
+                
+                if (frameCount - this.lastAttackFrame >= this.attackCooldown) {
+
+                    // damage applies every attack cycle regardless of sound throttle
+                    this.engagedEnemy.health -= this.attackRate;
+
+                    // sound is throttled separately so we don't spam audio
+                    if (frameCount - lastEnemyHitSoundFrame > 15) {
+                        let hitSound = new Audio(enemyHitSound.src);
+                        hitSound.volume = 0.2;
+                        hitSound.play();
+
+                        lastEnemyHitSoundFrame = frameCount;
+                    }
+
+                    this.lastAttackFrame = frameCount;
+                }
 
                 if (this.engagedEnemy.health <= 0) {
+
                     for (var i = 0; i < enemies.length; i++) {
+
                         if (enemies[i] == this.engagedEnemy) {
-                            enemies.splice(i, 1);
-                            playerStats.money += enemyStats.moneyDropped;
+
+                            enemyKilled(i, this.tower);
                             break;
                         }
                     }
@@ -115,7 +157,6 @@ class Troop {
         var closest = Infinity;
 
         for (var i = 0; i < enemies.length; i++) {
-
             var distanceToTower = dist(enemies[i].x, enemies[i].y, this.towerX, this.towerY)
 
             if (distanceToTower > this.leashRange) continue;

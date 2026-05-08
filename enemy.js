@@ -10,32 +10,40 @@ var waveConfig = {
     prepTimeMin: 300,       // cooldown floor (5s at 60fps)
     prepTimeDecay: 30,      // frames shaved off per wave (0.5s)
     baseSpawnRate: 1,       // enemies/sec on wave 1
-    spawnIncreasePerWave: 0.5,
+    spawnIncreasePerWave: 0.3,
     maxSpawnRate: 8
 };
 
 // damage dealt per enemy contact — edit these to tune difficulty
 var damageConfig = {
-    enemyToTower: 25,   // flat hit; enemy is removed on contact
-    enemyToBase: 10,    // flat hit; enemy is removed on contact
+    enemyToTower: 20,   // flat hit; enemy is removed on contact
+    enemyToBase: 8,     // flat hit; enemy is removed on contact
     enemyToPlayer: 10   // flat hit; enemy is removed on contact
 };
 
 // just an object that holds the stats of the enemy
 var enemyStats = {
-    // size of the enemy (circle);
     size: 30,
-    // movement speed
-    speed: 2,
-    // how far from the center enemies spawn on the canvas
-    // bigger num = farther
+    speed: 1.6,
+    maxSpeed: 5,
     spawnRadius: 1500,
-    // decides how much money is given to the player when this enemy is killed
     moneyDropped: 8,
-    // decides the max money a player can receive from a killed enemy
     maxMoneyDropped: 30,
-    // decides how much to increase moneyDropped by
-    moneyIncrement: 3
+    moneyIncrement: 1,
+    maxHealthLevel: 8,
+    maxAttackLevel: 8
+};
+
+var specialEnemyStats = {
+    size: 50,
+    speed: 1.6,
+    maxSpeed: 6,
+    spawnRadius: 1500,
+    moneyDropped: 30,
+    maxMoneyDropped: 90,
+    moneyIncrement: 3,
+    maxHealthLevel: 10,
+    maxAttackLevel: 10
 };
 
 var waveNum = 1;
@@ -57,39 +65,72 @@ var enemyDelay = spawnRateToDelay(waveConfig.baseSpawnRate);
 // counts down the remaining frames in the current wave
 var waveTimer = 0;
 
+// how many enemies were spawned during the most recent wave; used to gate the
+// next wave's prep countdown until enough of them are cleared
+var enemiesSpawnedThisWave = 0;
+
+// fraction of last wave's spawn count that must remain before the next wave's
+// prep countdown can begin (1/3 = countdown starts once 2/3 are cleared)
+var nextWaveThreshold = 1 / 2;
+
 function updateEnemyStats() {
-    if (waveNum % 10 == 0) {
-        enemyStats.speed += 1;
-        enemyStats.enemyToBase += 3;
+
+    if (enemyStats.speed < enemyStats.maxSpeed) {
+        enemyStats.speed = min(enemyStats.speed + 0.02, enemyStats.maxSpeed);
     }
+
+    damageConfig.enemyToBase = min(damageConfig.enemyToBase + 0.05, 20);
+    damageConfig.enemyToTower = min(damageConfig.enemyToTower + 0.05, 20);
+    damageConfig.enemyToPlayer = min(damageConfig.enemyToPlayer + 0.05, 20);
 
     if (enemyStats.moneyDropped + enemyStats.moneyIncrement > enemyStats.maxMoneyDropped) {
         enemyStats.moneyDropped = enemyStats.maxMoneyDropped;
     } else {
         enemyStats.moneyDropped += enemyStats.moneyIncrement;
     }
-    enemyStats.damageToTower += 5
-    enemyStats.damageToPlayer += 5
+
+    if (specialEnemyStats.speed < specialEnemyStats.maxSpeed) {
+        specialEnemyStats.speed = min(specialEnemyStats.speed + 0.2, specialEnemyStats.maxSpeed);
+    }
+
+    if (specialEnemyStats.moneyDropped + specialEnemyStats.moneyIncrement > specialEnemyStats.maxMoneyDropped) {
+        specialEnemyStats.moneyDropped =specialEnemyStats.maxMoneyDropped;
+    } else {
+        specialEnemyStats.moneyDropped += specialEnemyStats.moneyIncrement;
+    }
 
     announcement = new Announcement("Enemy stats have increased.");
     showAnnouncement = true;
+    enemyAnnouncementSound.play();
+
 }
 
 function updateEnemies() {
     if (waveInProg == false) {
-        prepTimeFrames--;
+        // start the next wave's prep countdown once the remaining enemies are
+        // below `nextWaveThreshold` of what last wave spawned (so waves can
+        // overlap a bit, but the next one only triggers after most are cleared)
+        var clearTarget = Math.ceil(enemiesSpawnedThisWave * nextWaveThreshold);
+        if (enemies.length <= clearTarget) {
+            prepTimeFrames--;
 
-        if (prepTimeFrames <= 0) {
-            beginWave();
+            if (prepTimeFrames <= 0) {
+                beginWave();
+            }
         }
     } else {
-        waveTimer--;
-        enemyTimer--;
 
+        if(!bossPhaseActive) {
+            waveTimer--;
+            enemyTimer--;
+        }
+        
         if (enemyTimer <= 0){
             spawnEnemy();
+            enemiesSpawnedThisWave++;
             enemyTimer = enemyDelay;
         }
+
 
         if (waveTimer <= 0) {
             stopWave();
@@ -98,6 +139,11 @@ function updateEnemies() {
 
     for (var i = enemies.length - 1; i >= 0; i--) {
         // halted while locked in melee combat with a troop
+
+        if (enemies[i].isFinalBoss) {
+            enemies[i].engagedTroop = null
+        }
+        
         if (enemies[i].engagedTroop !== null) continue;
 
         // recalculate direction toward nearest tower or base each frame
@@ -106,12 +152,21 @@ function updateEnemies() {
         var dy = target.y - enemies[i].y;
         var d = dist(enemies[i].x, enemies[i].y, target.x, target.y);
         if (d > 0) {
-            enemies[i].xSpeed = (dx / d) * enemyStats.speed;
-            enemies[i].ySpeed = (dy / d) * enemyStats.speed;
+            enemies[i].xSpeed = (dx / d) * enemies[i].speed;
+            enemies[i].ySpeed = (dy / d) * enemies[i].speed;
         }
 
         enemies[i].x += enemies[i].xSpeed;
         enemies[i].y += enemies[i].ySpeed;
+
+        if (enemies[i].isFinalBoss) {
+            var bossBaseDist = dist(enemies[i].x, enemies[i].y, base.x, base.y);
+
+            if (bossBaseDist < enemies[i].size / 2 + base.size / 2) {
+                finalBossReachedBase();
+                return;
+            }
+        }
 
         // if the target is a troop and we've reached it, engage (multiple enemies can pile on)
         if (troops.includes(target) && !target.isDead) {
@@ -128,7 +183,7 @@ function updateEnemies() {
             {
             enemies.splice(i, 1);
             }
-    }
+    } 
 }
 
 /**
@@ -136,6 +191,11 @@ function updateEnemies() {
  * Enemies will break off and engage any troop spotted within troopDetectionRange.
  */
 function getNearestTarget(enemy) {
+
+    if (enemy.isFinalBoss) {
+        return base;
+    }
+
     var nearest = base;
     var nearestDist = dist(enemy.x, enemy.y, base.x, base.y);
 
@@ -167,9 +227,40 @@ function spawnRateToDelay(enemiesPerSecond) {
 }
 
 function beginWave() {
+
+    console.log("BEGIN WAVE:", waveNum);
+    console.log("FINAL BOSS WAVE:", finalBossWave);
+
     waveInProg = true;
     waveTimer = waveConfig.waveLength;
     enemyTimer = 0;
+
+    if (waveNum == finalBossWave) {
+        console.log("FINAL BOSS WAVE STARTED");
+        bossPhaseActive = true;
+        
+        //enemies = [];
+        enemyTimer = 1000000
+        waveTimer = 1000000
+
+        // ^^ to stop them from spawning cause its on a timer
+
+        if (!finalBossSpawned) {
+            spawnFinalBoss();
+
+            announcement = new Announcement("The Final Boss has Spawned!", 40);
+            showAnnouncement = true;
+            enemyAnnouncementSound.play();
+        }
+        return;
+    }
+    bossPhaseActive = false;
+
+    if (waveNum > 1) {
+        updateMaxTowers(maxTowers + 2);
+    }
+
+    enemiesSpawnedThisWave = 0;
     var rate = min(waveConfig.maxSpawnRate,
                    waveConfig.baseSpawnRate + waveNum * waveConfig.spawnIncreasePerWave);
     enemyDelay = spawnRateToDelay(rate);
@@ -183,22 +274,55 @@ function stopWave() {
     prepTimeFrames = currentPrepTime;
 
 
+    //updateMaxTowers(maxTowers + 2);
 
 
-    if (waveNum % 5 == 0) {
+    if (waveNum % 3 == 0) {
         updateEnemyStats();
     }
 }
 
 function spawnEnemy() {
+
+    if (bossPhaseActive || waveNum == finalBossWave) {
+        return;
+    }
+
     var enemy = {};
 
+    // ----- Regular Enemy Stats -----
+    enemy.isSpecial = false;
+    enemy.isFinalBoss = false;
+
     enemy.size = enemyStats.size;
-    enemy.level = Math.ceil(waveNum / 3);
+    enemy.speed = enemyStats.speed;
+    enemy.level = min(Math.ceil(waveNum / 3), enemyStats.maxHealthLevel);
     enemy.health = 60 * enemy.level;
     enemy.maxHealth = enemy.health;
-    enemy.attackRate = 0.5 * enemy.level; // damage dealt per frame during combat
+    enemy.attackRate = 0.5 * min(Math.ceil(waveNum / 3), enemyStats.maxAttackLevel);
+    enemy.moneyDropped = enemyStats.moneyDropped;
     enemy.engagedTroop = null;
+    enemy.lastAttackFrame = 0;
+    enemy.spriteSheet = enemySprite;
+
+    // ----- Special Enemy Stuff  -----
+
+    var specialEnemyChance = min(0.01 + waveNum * 0.005, 0.40); // u can change to 1 for testing
+
+    if (random() < specialEnemyChance) {
+        enemy.isSpecial = true;
+        enemy.size = specialEnemyStats.size;
+        enemy.speed = specialEnemyStats.speed;
+        // recompute level using special's own cap so specials keep scaling
+        // past the regular-enemy cap
+        enemy.level = min(Math.ceil(waveNum / 3), specialEnemyStats.maxHealthLevel);
+        enemy.health = 60 * enemy.level * 2.5;
+        enemy.attackRate = 0.5 * min(Math.ceil(waveNum / 3), specialEnemyStats.maxAttackLevel) * 2;
+        enemy.maxHealth = enemy.health;
+        enemy.moneyDropped = specialEnemyStats.moneyDropped;
+        enemy.spriteSheet = enemySpecialSprite;
+    }
+
 
     // this is the center of the map (or the base)
     var baseCenterX = base.x;
@@ -221,7 +345,7 @@ function spawnEnemy() {
     enemy.xSpeed = distanceX / totalDistance * enemyStats.speed;
     enemy.ySpeed = distanceY / totalDistance * enemyStats.speed;
 
-    enemyToDraw = new Sprite(enemySprite, enemy.x, enemy.y, 4);
+    enemy.spriteObj = new Sprite(enemy.spriteSheet, enemy.x, enemy.y, 4);
 
     enemies.push(enemy);
 }
@@ -230,12 +354,18 @@ function drawEnemies() {
     for (var i = 0; i < enemies.length; i++) {
         var ox = enemies[i].engagedTroop !== null ? random(-2, 2) : 0;
         var oy = enemies[i].engagedTroop !== null ? random(-2, 2) : 0;
-        fill(255, 0, 0);
-        noStroke();
-        // circle(enemies[i].x + ox, enemies[i].y + oy, enemies[i].size);
-        enemyToDraw.x = enemies[i].x + ox;
-        enemyToDraw.y = enemies[i].y + oy;
-        enemyToDraw.drawEnemy();
+
+        enemies[i].spriteObj.x = enemies[i].x + ox;
+        enemies[i].spriteObj.y = enemies[i].y + oy;
+
+        if (enemies[i].isFinalBoss) {
+            enemies[i].spriteObj.drawEnemy(3);
+        } else if (enemies[i].isSpecial){
+            enemies[i].spriteObj.drawEnemy(1.2);
+        } else {
+            enemies[i].spriteObj.drawEnemy();
+        }
+
         if (enemies[i].health < enemies[i].maxHealth) {
             drawHealthBar(enemies[i].x, enemies[i].y, enemies[i].size, enemies[i].health, enemies[i].maxHealth);
         }
@@ -278,6 +408,7 @@ function drawWaveNumber() {
     strokeWeight(2);
     textSize(textHeight);
     textAlign(LEFT);
+    textFont("Trebuchet MS");
     text("Wave: " + waveNum, width - textOffset, height - textHeight);
     drawWaveAnimation(textOffset);
     noStroke();
@@ -285,14 +416,63 @@ function drawWaveNumber() {
 
 function enemyKilled(enemyIndex, tower = null) {
     // free any troop locked in combat so it can resume
-    if (enemies[enemyIndex].engagedTroop !== null) {
-        enemies[enemyIndex].engagedTroop.engagedEnemy = null;
+    var enemy = enemies[enemyIndex];
+    var moneyEarned = enemy.moneyDropped;
+
+    if (enemy.engagedTroop !== null) {
+        enemy.engagedTroop.engagedEnemy = null;
     }
+
+
+    if (frameCount - lastKillSoundFrame > 5) {
+
+        let killAudio = new Audio(enemyKilledSound.src);
+
+        killAudio.volume = 0.1;
+        killAudio.play();
+
+        lastKillSoundFrame = frameCount;
+    }
+
     if (tower != null) {
-        killedEnemies.push({x: enemies[enemyIndex].x, y: enemies[enemyIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
+        killedEnemies.push({
+            x: enemy.x,
+            y: enemy.y,
+            frame: frameCount,
+            ox: random(-20, 20),
+            oy: random(-20, 20),
+            money: moneyEarned});
     } else {
-        killedEnemies.push({x: playerStats.x, y: playerStats.y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
+        killedEnemies.push({
+            x: playerStats.x,
+            y: playerStats.y,
+            frame: frameCount,
+            ox: random(-20, 20),
+            oy: random(-20, 20),
+            money: moneyEarned});
     }
+
     enemies.splice(enemyIndex, 1);
-    playerStats.money += enemyStats.moneyDropped;
+
+    playerStats.money += moneyEarned;
+
+    if (frameCount - lastCoinSoundFrame > 5) {
+
+        let moneyAudio = new Audio(coinSound.src);
+
+        moneyAudio.volume = 0.2;
+        moneyAudio.play();
+
+        lastCoinSoundFrame = frameCount;
+    }
+    trackEnemyKill(moneyEarned);
+
+    if (enemy.isFinalBoss && !finalBossDefeated) {
+        finalBossDefeated = true;
+        bossPhaseActive = false;
+        waveInProg = false;
+        hasWonGame = true;
+
+        showWinScreen();
+    }
 }
