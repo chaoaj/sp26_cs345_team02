@@ -405,7 +405,6 @@ function checkTowerCollisions() {
 
                 if (towers[j].health <= 0) {
                     towers.splice(j, 1);
-                    onTowerRemoved();
                     break;
                 }
 
