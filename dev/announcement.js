@@ -77,7 +77,7 @@ class TowerHUD {
         textAlign(LEFT);
 
         let label = "Towers: " + towers.length + " / " + effectiveMaxTowers();
-        let bbox = textFonts.nunito.textBounds(label, 20, 130, this.size);
+        let bbox = textFonts.nunito.textBounds(label, 40, 130, this.size);
 
         fill(0, 120);
         rect(
@@ -88,7 +88,7 @@ class TowerHUD {
         );
 
         fill(255);
-        text(label, 20, 130);
+        text(label, 40, 130);
         pop();
     }
 }
@@ -104,6 +104,12 @@ function updateMaxTowers(newMax) {
     if (newMax > maxTowers) {
         maxTowers = newMax;
         announcement = new Announcement(`Tower limit increased to ${maxTowers}!`, 32);
+
+        let levelUp = new Audio(playerLevelUpSound.src);
+
+        levelUp.volume = 0.6;
+        levelUp.play();
+        
         showAnnouncement = true;
     }
 }
