@@ -51,7 +51,7 @@ function preload() {
 
   // ----- Enemy Image -----
   enemySprite = loadImage("images/enemyNormal.png");
-  
+
   // ----- Tower images -----
   towerImages.normal = loadImage("images/normalTower.png");
   towerImages.attack = loadImage("images/towerAttack.png");
@@ -227,6 +227,7 @@ function draw() {
 
     pop();
     if (showAnnouncement) announcement.show();
+    towerHUD.show();
 
     drawTowerPlaceCoolDownAnimation();
     moneyAnimation();

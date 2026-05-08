@@ -81,7 +81,7 @@ function preload() {
   enemySprite = loadImage("images/enemyNormal.png");
   enemySpecialSprite = loadImage("images/enemySpecial.png");
   enemyFinalBossSprite = loadImage("images/FinalBoss.png");
-  
+
   // ----- Tower images -----
   towerImages.normal = loadImage("images/normalTower.png");
   towerImages.attack = loadImage("images/towerAttack.png");
@@ -208,7 +208,7 @@ function resetGame() {
   waveInProg = false;
   showAnnouncement = false;
   waveNum = 1;
-  
+
   resetTowerUpgrades();
 
   currentPrepTime = waveConfig.prepTimeStart;
@@ -281,6 +281,7 @@ function draw() {
 
     pop();
     if (showAnnouncement) announcement.show();
+    towerHUD.show();
 
     drawTowerPlaceCoolDownAnimation();
     moneyAnimation();
@@ -288,7 +289,7 @@ function draw() {
     drawWaveNumber();
     drawInventory();
     drawLiveTimer();
-    
+
     var currentMax = effectiveMaxTowers();
 
     if (currentMax > previousMaxTowers) {
@@ -298,18 +299,6 @@ function draw() {
 
       previousMaxTowers = currentMax;
     }
-    fill(255);
-    stroke(0);
-    strokeWeight(2);
-    textSize(28);
-    textAlign(LEFT);
-
-    // RIGHT SIDE tower counter
-    text(
-    "Towers: " + towers.length + "/" + effectiveMaxTowers(),
-      width - 200,
-      height - 65
-    );
 
     // pause menu overlay (settings/keybinds/tower-types)
     if (paused) {

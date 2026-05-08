@@ -72,8 +72,8 @@ class TowerHUD {
         textSize(this.size);
         textAlign(LEFT);
 
-        let label = "Towers: " + placedTowers + " / " + maxTowers;
-        let bbox = textFonts.nunito.textBounds(label, 20, 40, this.size);
+        let label = "Towers: " + towers.length + " / " + effectiveMaxTowers();
+        let bbox = textFonts.nunito.textBounds(label, 20, 130, this.size);
 
         fill(0, 120);
         rect(
@@ -84,7 +84,7 @@ class TowerHUD {
         );
 
         fill(255);
-        text(label, 20, 40);
+        text(label, 20, 130);
         pop();
     }
 }
