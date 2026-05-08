@@ -150,6 +150,29 @@ function keepPlaying() {
     hideEndScreenButtons();
     gameStartFrame = frameCount - frozenSeconds * 60;
     currentScreen = "game";
+    paused = false;
+
+    bossPhaseActive = false
+    finalBossDefeated = false
+    finalBossSpawned = false
+    hasWonGame = false
+
+    if (waveNum <= finalBossWave) {
+        waveNum = finalBossWave + 1;
+    }
+
+    waveInProg = false;
+    currentPrepTime = waveConfig.prepTimeMin;
+    prepTimeFrames = currentPrepTime;
+    waveTimer = 0;
+    enemyTimer = 0;
+    enemiesSpawnedThisWave = 0;
+
+    if (!isMuted) {
+        gameBackgroundMusic.currentTime = 0;
+        gameBackgroundMusic.volume = 0.2;
+        gameBackgroundMusic.play();
+    }
 }
 
 function hideEndScreenButtons() {

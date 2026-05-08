@@ -7,7 +7,7 @@ var finalBossDefeated = false;
 var bossPhaseActive = false;
 
 var finalBossStats = {
-    health: 3000, // can edit this if its too much
+    health: 2500, // can edit this if its too much, 2500
     size: 100,
     speed: 1, // base is 1
     maxSpeed: 1,
