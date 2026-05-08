@@ -82,7 +82,7 @@ function setMenuButtons(screen) {
  */
 function updateButtonHighlight() {
     menuButtons.forEach((btn, i) => {
-        if (i === selectedIndex) {
+        if (i === selectedIndex && lastInput.type === "CONTROLLER") {
             btn.addClass("hovered");
         } else {
             btn.removeClass("hovered");

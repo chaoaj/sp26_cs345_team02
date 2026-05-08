@@ -13,7 +13,7 @@
  */
 
 var pauseMenuTab = null;
-var pauseSelectedIndex = 0;
+var pauseSelectedIndex = null;
 
 // Single source of truth for keybind documentation.
 // Format: [keyboard, controller, action]
@@ -139,12 +139,14 @@ function drawPauseMenuFooter(origin) {
          origin.y + L.panelH - 60);
 }
 
-function drawPauseMenuButton(box, isSelected = 0) {
+function drawPauseMenuButton(box, isSelected = null) {
     push();
     rectMode(CORNER);
     fill(60);
-    stroke(isSelected ? color(255, 217, 10) : 180);
-    strokeWeight(isSelected ? 3 : 2);
+    if (isSelected != null) {
+        stroke(isSelected ? color(255, 217, 10) : 180);
+        strokeWeight(isSelected ? 3 : 2);
+    }
     rect(box.x, box.y, box.w, box.h, 8);
     noStroke();
     fill(255);

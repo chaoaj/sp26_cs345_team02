@@ -71,7 +71,11 @@ function movePlayer() {
  * - Cycling inventory (1-4, ",", and ".")
  */
 function keyPressed() {
-  lastInput.type = "KEYBOARD";
+  if (lastInput.type != "KEYBOARD") {
+    lastInput.type = "KEYBOARD";
+    updateButtonHighlight();
+    pauseSelectedIndex = -1;
+  }
   console.log(keyCode);
 
   // ----- MOVEMENT -----
@@ -95,6 +99,7 @@ function keyPressed() {
   if (keyCode == 80 && currentScreen == "game") {
     paused = !paused;
     pauseMenuTab = null;
+    pauseSelectedIndex = lastInput.type === "CONTROLLER" ? 0 : -1;
   }
 
   // Shift + R: Reset
@@ -200,7 +205,11 @@ function mousePressed() {
 }
 
 function mouseMoved() {
-  lastInput.type = "KEYBOARD";
+  if (lastInput.type != "KEYBOARD") {
+    lastInput.type = "KEYBOARD";
+    updateButtonHighlight();
+    pauseSelectedIndex = -1;
+  }
 }
 
 /**
@@ -212,10 +221,10 @@ function mouseMoved() {
  * @param {Object} e - Controller event that handles controller input
  */
 function onPress(e) {
+  lastInput.type = "CONTROLLER";
+
   if (paused || (currentScreen != "game" && currentScreen != "fading")) processControllerSelections(e);
   console.log("key:", e.name);
-
-  lastInput.type = "CONTROLLER";
 
   const CONTROLLER_MAP = {
     axesUp: "UP",
@@ -310,6 +319,9 @@ function processControllerSelections(e) {
       updateButtonHighlight();
   }
   if (paused && currentScreen == "game") {
+    if (pauseSelectedIndex === null) {
+      pauseSelectedIndex = 0;
+    }
     var rects = pauseMenuButtonRects();
     var keys = Object.keys(rects);
     if (e.name == "axesDown") pauseSelectedIndex = (pauseSelectedIndex + 1) % keys.length;
