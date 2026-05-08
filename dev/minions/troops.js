@@ -24,6 +24,8 @@ class Troop {
         this.maxHealth = this.health;
 
         this.attackRate = 1.0 * this.level; // damage dealt per frame during combat
+        this.lastAttackFrame = 0;
+        this.attackCooldown = 20;
 
         this.engagedEnemy = null;
         this.inCombat = false;
@@ -70,13 +72,30 @@ class Troop {
 
             // deal damage to our target
             if (this.engagedEnemy !== null) {
-                this.engagedEnemy.health -= this.attackRate;
+                
+                if (frameCount - this.lastAttackFrame >= this.attackCooldown) {
+
+                    if (frameCount - lastEnemyHitSoundFrame > 15) {
+
+                        this.engagedEnemy.health -= this.attackRate;
+
+                        let hitSound = new Audio(enemyHitSound.src);
+                        hitSound.volume = 0.2;
+                        hitSound.play();
+
+                        lastEnemyHitSoundFrame = frameCount;
+                    }
+
+                    this.lastAttackFrame = frameCount;
+                }  
 
                 if (this.engagedEnemy.health <= 0) {
+
                     for (var i = 0; i < enemies.length; i++) {
+
                         if (enemies[i] == this.engagedEnemy) {
-                            enemies.splice(i, 1);
-                            playerStats.money += enemyStats.moneyDropped;
+
+                            enemyKilled(i, this.tower);
                             break;
                         }
                     }

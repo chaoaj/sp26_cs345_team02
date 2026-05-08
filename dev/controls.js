@@ -183,9 +183,15 @@ function mousePressed() {
   // ^^^^^
   // why? what is the reason for mouse clicks to be reserved for the pause menu?
 
+
+  userStartAudio();
   if (!musicStarted) {
-    menuMusic.play();
     musicStarted = true;
+    menuMusic.play();
+  }
+
+  if (isMuted) {
+    menuMusic.volume = 0;
   }
 
   if (paused && currentScreen == "game") {
@@ -206,7 +212,7 @@ function mouseMoved() {
  * @param {Object} e - Controller event that handles controller input
  */
 function onPress(e) {
-  if (currentScreen != "game" && currentScreen != "fading") processControllerSelections(e);
+  if (paused || (currentScreen != "game" && currentScreen != "fading")) processControllerSelections(e);
   console.log("key:", e.name);
 
   lastInput.type = "CONTROLLER";
@@ -303,7 +309,47 @@ function processControllerSelections(e) {
       selectedIndex = (selectedIndex - 1 + menuButtons.length) % menuButtons.length;
       updateButtonHighlight();
   }
-  if (e.name == "buttonBlue") {
+  if (paused && currentScreen == "game") {
+    var rects = pauseMenuButtonRects();
+    var keys = Object.keys(rects);
+    if (e.name == "axesDown") pauseSelectedIndex = (pauseSelectedIndex + 1) % keys.length;
+    if (e.name == "axesUp") pauseSelectedIndex = (pauseSelectedIndex - 1 + keys.length) % keys.length;
+    if (e.name == "buttonRed") {
+      if (pauseMenuTab === "keybinds" || pauseMenuTab === "towers") {
+        pauseMenuTab = null;
+        pauseSelectedIndex = 0;
+      } else if (pauseMenuTab === null){
+        paused = !paused;
+      }
+    }
+    if (e.name == "buttonGreen") {
+        var selected = keys[pauseSelectedIndex];
+        if (selected === "keybinds") {
+          pauseMenuTab = "keybinds";
+          pauseSelectedIndex = 0;
+        }
+        else if (selected === "towers") {
+          pauseMenuTab = "towers";
+          pauseSelectedIndex = 0;
+        }
+        else if (selected === "back") {
+          pauseMenuTab = null;
+          pauseSelectedIndex = 0;
+        }
+    }
+    return;
+  }
+  if (e.name == "buttonRed") {
+    switch (currentScreen) {
+      case "title": break;
+      case "encyclopedia":
+      case "story":
+      case "settings": goToTitle();
+      break;
+      default: break;
+    }
+  }
+  if (e.name == "buttonGreen") {
     switch(currentScreen) {
         case "title":
             switch(selectedIndex) {

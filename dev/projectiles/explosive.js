@@ -38,6 +38,19 @@ class Explosive {
     }
 
     explode() {
+
+
+        if (frameCount - lastEnemyHitSoundFrame > 4) {
+            let explosionSFX = new Audio(explosionSound.src);
+        
+            explosionSFX.volume = 0.08;
+            explosionSFX.play();
+
+            lastEnemyHitSoundFrame = frameCount;
+
+        }
+
+
         this.exploded = true;
         this.explosionFrame = frameCount;
 
@@ -54,7 +67,6 @@ class Explosive {
                         enemies[i].engagedTroop.engagedEnemy = null;
                     }
                     enemyKilled(i, this.tower);
-                    playerStats.money += enemyStats.moneyDropped;
                 }
             }
         }

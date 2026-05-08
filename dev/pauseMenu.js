@@ -13,6 +13,7 @@
  */
 
 var pauseMenuTab = null;
+var pauseSelectedIndex = 0;
 
 // Single source of truth for keybind documentation.
 // Format: [keyboard, controller, action]
@@ -122,7 +123,8 @@ function drawPauseMenu(title) {
 
     // buttons drawn last so they sit on top
     var rects = pauseMenuButtonRects();
-    for (var key in rects) drawPauseMenuButton(rects[key]);
+    var keys = Object.keys(rects);
+    keys.forEach((key, i) => drawPauseMenuButton(rects[key], i === pauseSelectedIndex));
 
     pop();
 }
@@ -137,12 +139,12 @@ function drawPauseMenuFooter(origin) {
          origin.y + L.panelH - 60);
 }
 
-function drawPauseMenuButton(box) {
+function drawPauseMenuButton(box, isSelected = 0) {
     push();
     rectMode(CORNER);
     fill(60);
-    stroke(180);
-    strokeWeight(2);
+    stroke(isSelected ? color(255, 217, 10) : 180);
+    strokeWeight(isSelected ? 3 : 2);
     rect(box.x, box.y, box.w, box.h, 8);
     noStroke();
     fill(255);

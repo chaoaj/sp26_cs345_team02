@@ -1,6 +1,7 @@
 // -------- Vars --------
 
 var towers = []; // stores all placed towers
+var placedTowers = 0;
 
 // keeps track of which tower is hovered
 var hovered = null;
@@ -164,7 +165,7 @@ function drawTowerPlaceCoolDownAnimation() {
 
 /**
  * returns false if (x, y) would overlap an existing tower or the main base
- * @param {*} tower 
+ * @param {*} tower
  * @returns false if (x, y) overlap an existing tower, a tower has been placed too recently, the
  * player does not have enough money, or too many towers are currently placed.
  */
@@ -209,9 +210,9 @@ function canPlaceTower(tower) {
 
 /**
  * Places a tower of activeTowerType at (x, y). Denies if pos is blocked by collision.
- * @param {*} x 
- * @param {*} y 
- * @returns 
+ * @param {*} x
+ * @param {*} y
+ * @returns
  */
 function placeTower(x, y) {
 
@@ -226,16 +227,27 @@ function placeTower(x, y) {
     if (!canPlaceTower(tower)) return;
 
     towers.push(tower);
+    onTowerPlaced();
 
-    towerPlacementSound.volume = 0.4
-    towerPlacementSound.play();
+    let placementSound = new Audio(towerPlacementSound.src);
+
+    placementSound.volume = 0.2;
+    placementSound.play();
 
     lastTowerPlacedFrame = frameCount;
 
     playerStats.money -= tower.price;
 }
 
-/** 
+function onTowerPlaced() {
+    placedTowers++;
+}
+
+function onTowerRemoved() {
+    placedTowers--;
+}
+
+/**
  * Draw a preview of the selected tower type at the players current position.
  * @returns N/A
  */
@@ -334,7 +346,7 @@ function drawTowers() {
             strokeWeight(3);
             ellipse(t.x, t.y, t.size + 10, t.size + 10);
             noStroke();
-            
+
             drawHealthBar(t.x, t.y, t.size, t.health, t.maxHealth);
         }
     }
@@ -400,7 +412,11 @@ function checkTowerCollisions() {
 
             if (d < collisionDist) {
 
-                towers[j].health -= 0.4;
+                if (frameCount - enemies[i].lastAttackFrame > 30) {
+                    towers[j].health -= damageConfig.enemyToTower;
+                    enemies[i].lastAttackFrame = frameCount;
+                }
+
                 enemies[i].health -= (towers[j].wallDamage || 1);
 
                 if (towers[j].health <= 0) {
@@ -414,8 +430,6 @@ function checkTowerCollisions() {
                         enemies[i].engagedTroop.engagedEnemy = null;
                     }
                     enemyKilled(i, towers[j]);
-
-                    playerStats.money += enemyStats.moneyDropped;
                 }
                 break;
             }
@@ -445,11 +459,12 @@ function sellTower() {
                         enemies[j].engagedTroop = null;
                     }
                 }
-                troops.splice(i, 1); 
+                troops.splice(i, 1);
             }
         }
     }
     towers.splice(towers.indexOf(soldTower), 1);
+    onTowerRemoved();
     return;
 }
 
@@ -460,7 +475,15 @@ function sellTower() {
 function upgradeTower() {
     if (hovered === null) return;
     if (typeof hovered.upgrade !== "function") return;
-    hovered.upgrade();
+    var up = hovered.upgrade();
+
+    if (!up) return;
+
+    let asdf = new Audio(towerUpgradeSound.src);
+    asdf.volume = 0.2;
+
+    asdf.play();
+
 }
 
 // Rounds floats to 2 decimals for display; leaves integers alone.

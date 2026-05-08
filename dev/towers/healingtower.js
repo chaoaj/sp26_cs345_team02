@@ -17,6 +17,11 @@ class HealingTower extends Tower {
         this.target = null;
 
         this.beamTargets = [];
+
+        this.lastHealSoundFrame = 0;
+        this.healSound = new Audio(towerHealingSound.src);
+        this.healSound.loop = true;
+        this.healSound.volume = 0.8;
     }
 
     isMassHeal() {
@@ -25,12 +30,14 @@ class HealingTower extends Tower {
 
     update() {
         this.beamTargets = [];
+        var healing = false;
 
         // priority 1: player
         if (playerStats.health < playerStats.maxHealth &&
             dist(this.x, this.y, playerStats.x, playerStats.y) <= this.healRange) {
 
             playerStats.health = min(playerStats.health + this.healRate, playerStats.maxHealth);
+            healing = true;
             this.beamTargets.push({ x: playerStats.x, y: playerStats.y });
 
             if (!this.isMassHeal()) {
@@ -44,6 +51,7 @@ class HealingTower extends Tower {
             dist(this.x, this.y, base.x, base.y) <= this.healRange) {
 
             base.health = min(base.health + this.healRate, base.maxHealth);
+            healing = true;
             this.beamTargets.push({ x: base.x, y: base.y });
 
             if (!this.isMassHeal()) {
@@ -60,6 +68,7 @@ class HealingTower extends Tower {
                 if (t.health < t.maxHealth &&
                     dist(this.x, this.y, t.x, t.y) <= this.healRange) {
                     t.health = min(t.health + this.healRate, t.maxHealth);
+                    healing = true;
                     this.beamTargets.push({ x: t.x, y: t.y });
                 }
             }
@@ -103,6 +112,8 @@ class HealingTower extends Tower {
 
                 this.target.health = min(this.target.health + this.healRate, this.target.maxHealth);
 
+                healing = true;
+
                 this.beamTargets.push({ x: this.target.x, y: this.target.y });
             }
         }
@@ -115,8 +126,19 @@ class HealingTower extends Tower {
                 if (t.health < t.maxHealth &&
                     dist(this.x, this.y, t.x, t.y) <= this.healRange) {
                     t.health = min(t.health + this.auraHealRate, t.maxHealth);
+                    healing = true;
                 }
             }
+        }
+
+        if (healing) {
+            if (this.healSound.paused) {
+                this.healSound.currentTime = 0;
+                this.healSound.play();
+            }
+        } else {
+            this.healSound.pause();
+            this.healSound.currentTime = 0;
         }
     }
 
