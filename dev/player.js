@@ -76,7 +76,7 @@ function setupPlayer() {
     health: 100,
     maxHealth: 100,
     facing: "LEFT",
-    money: 999999
+    money: 200
   };
   player = new Sprite(playerSprite, playerStats.x, playerStats.y, 8);
 }
