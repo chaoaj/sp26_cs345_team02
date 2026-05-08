@@ -25,6 +25,7 @@ var base = {
   maxHealth: healthConfig.base
 };
 
+var previousMaxTowers = effectiveMaxTowers();
 // ----- Sound -----
 let menuMusic = new Audio("audio/mainMenuMusic.mp3");
 
@@ -288,6 +289,28 @@ function draw() {
     drawWaveNumber();
     drawInventory();
     drawLiveTimer();
+    
+    var currentMax = effectiveMaxTowers();
+
+    if (currentMax > previousMaxTowers) {
+
+      // notification
+      console.log("Max towers increased to " + currentMax);
+
+      previousMaxTowers = currentMax;
+    }
+    fill(255);
+    stroke(0);
+    strokeWeight(2);
+    textSize(28);
+    textAlign(LEFT);
+
+    // RIGHT SIDE tower counter
+    text(
+    "Towers: " + towers.length + "/" + effectiveMaxTowers(),
+      width - 200,
+      height - 65
+    );
 
     // pause menu overlay (settings/keybinds/tower-types)
     if (paused) {

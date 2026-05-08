@@ -336,8 +336,11 @@ function drawWaveNumber() {
 
 function enemyKilled(enemyIndex, tower = null) {
     // free any troop locked in combat so it can resume
-    if (enemies[enemyIndex].engagedTroop !== null) {
-        enemies[enemyIndex].engagedTroop.engagedEnemy = null;
+    var enemy = enemies[enemyIndex];
+    var moneyEarned = enemy.moneyDropped;
+
+    if (enemy.engagedTroop !== null) {
+        enemy.engagedTroop.engagedEnemy = null;
     }
 
 
@@ -352,12 +355,23 @@ function enemyKilled(enemyIndex, tower = null) {
     }
 
     if (tower != null) {
-        killedEnemies.push({x: enemies[enemyIndex].x, y: enemies[enemyIndex].y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20), money: enemies[enemyIndex].moneyDropped});
+        killedEnemies.push({
+            x: enemy.x,
+            y: enemy.y,
+            frame: frameCount,
+            ox: random(-20, 20),
+            oy: random(-20, 20),
+            money: moneyEarned});
     } else {
-        killedEnemies.push({x: playerStats.x, y: playerStats.y, frame: frameCount, ox: random(-20, 20), oy: random(-20, 20)});
+        killedEnemies.push({
+            x: playerStats.x, 
+            y: playerStats.y, 
+            frame: frameCount, 
+            ox: random(-20, 20), 
+            oy: random(-20, 20),
+            money: moneyEarned});
     }
 
-    var moneyEarned = enemies[enemyIndex].moneyDropped;
 
     enemies.splice(enemyIndex, 1);
 

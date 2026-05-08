@@ -201,10 +201,50 @@ function drawEncyclopediaScreen() {
 function drawEnemyScreen() {
     background(50);
     fill(255);
-    textSize(21);
     textAlign(CENTER, CENTER);
-    text("Enemy Types", width / 2, height / 4);
-    text("3/3", width - 60, height - 30);
+
+    let y = 80;   // starting Y position
+    let gap = 18; // spacing control
+
+    // TITLE
+    textSize(26);
+    text("Enemy Encyclopedia", width / 2, y);
+    textSize(14);
+    text("3 / 3 Pages", width - 80, 30);
+
+    // ================= NORMAL ENEMY =================
+    y += 90;
+    textSize(18);
+    text("Normal Enemy", width / 2, y);
+
+    image(enemySprite, width / 2, y + 60, 70, 70);
+
+    textSize(14);
+    text("HP: 60 × wave level", width / 2, y + 130);
+    text("Speed: 2", width / 2, y + 130 + gap);
+    text("Reward: scales from $15+", width / 2, y + 130 + gap * 2);
+
+    // ================= SPECIAL ENEMY =================
+    y += 220;
+    textSize(18);
+    text("Special Enemy", width / 2, y);
+
+    image(enemySpecialSprite, width / 2, y + 60, 70, 70);
+
+    textSize(14);
+    text("HP: Higher than normal", width / 2, y + 130);
+    text("Speed: 3", width / 2, y + 130 + gap);
+    text("Reward: scales from $70+", width / 2, y + 130 + gap * 2);
+
+    // ================= FINAL BOSS =================
+    y += 220;
+    textSize(18);
+    text("FINAL BOSS", width / 2, y);
+
+    textSize(14);
+    text("HP: Very High", width / 2, y + 60);
+    text("Speed: Slow", width / 2, y + 60 + gap);
+    text("Reward: Highest in game", width / 2, y + 60 + gap * 2);
 }
 
 function hideTitleScreenElements() {
