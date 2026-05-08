@@ -2,7 +2,7 @@ var announcement;
 var showAnnouncement = false;
 
 var placedTowers = 0;
-var maxTowers = 16;
+var maxTowers = 5;
 
 /** Display text to the user on the bottom center of the screen.
  *
@@ -112,7 +112,7 @@ function onTowerRemoved() {
 function updateMaxTowers(newMax) {
     if (newMax > maxTowers) {
         maxTowers = newMax;
-        announcement = new Announcement(`You can now place up to ${maxTowers} towers!`, 32);
+        announcement = new Announcement(`Tower limit increased to ${maxTowers}!`, 32);
         showAnnouncement = true;
         let levelUp = new Audio(playerLevelUpSound.src);
 
