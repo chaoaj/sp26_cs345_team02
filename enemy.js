@@ -184,9 +184,6 @@ function stopWave() {
 
 
 
-    updateMaxTowers(maxTowers + 2);
-
-
 
     if (waveNum % 5 == 0) {
         updateEnemyStats();

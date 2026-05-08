@@ -205,7 +205,6 @@ function stopWave() {
     prepTimeFrames = currentPrepTime;
 
 
-    updateMaxTowers(maxTowers + 2);
 
 
     if (waveNum % 3 == 0) {
