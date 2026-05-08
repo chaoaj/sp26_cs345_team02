@@ -1,4 +1,4 @@
-var finalBossWave = 1; // normal is 10
+var finalBossWave = 10; // normal is 10
 
 var finalBossSpawned = false;
 
@@ -9,7 +9,7 @@ var bossPhaseActive = false;
 var finalBossStats = {
     health: 3000, // can edit this if its too much
     size: 100,
-    speed: 2, // base is 1
+    speed: 1, // base is 1
     maxSpeed: 1,
     spawnRadius: 1500,
     moneyDropped: 1000,

@@ -131,14 +131,9 @@ function updateEnemies() {
             enemyTimer = enemyDelay;
         }
 
-            if (enemyTimer <= 0){
-                spawnEnemy();
-                enemyTimer = enemyDelay;
-            }
 
-            if (waveTimer <= 0) {
-                stopWave();
-            }
+        if (waveTimer <= 0) {
+            stopWave();
         }
     }
 
@@ -146,7 +141,7 @@ function updateEnemies() {
         // halted while locked in melee combat with a troop
 
         if (enemies[i].isFinalBoss) {
-            enemies[i].engagedTroop == null
+            enemies[i].engagedTroop = null
         }
         
         if (enemies[i].engagedTroop !== null) continue;
@@ -165,11 +160,11 @@ function updateEnemies() {
         enemies[i].y += enemies[i].ySpeed;
 
         if (enemies[i].isFinalBoss) {
-        var bossBaseDist = dist(enemies[i].x, enemies[i].y, base.x, base.y);
+            var bossBaseDist = dist(enemies[i].x, enemies[i].y, base.x, base.y);
 
-        if (bossBaseDist < enemies[i].size / 2 + base.size / 2) {
-            finalBossReachedBase();
-            return;
+            if (bossBaseDist < enemies[i].size / 2 + base.size / 2) {
+                finalBossReachedBase();
+                return;
             }
         }
 
@@ -188,7 +183,8 @@ function updateEnemies() {
             {
             enemies.splice(i, 1);
             }
-    }   
+    } 
+}
 
 /**
  * Return the nearest tower to the enemy, or the base if no towers exist.
@@ -243,7 +239,7 @@ function beginWave() {
         console.log("FINAL BOSS WAVE STARTED");
         bossPhaseActive = true;
         
-        enemies = [];
+        //enemies = [];
         enemyTimer = 1000000
         waveTimer = 1000000
 
